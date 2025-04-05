@@ -112,16 +112,6 @@ if __name__ == "__main__":
     pygame.quit()
 
 
-"""    for i in range(80):
-        update(frame, grid, all_tetrominos, continue_game, gravity_cooldown, cell_owners, focused_tetromino, piece_sequence, movement_cooldown, piece_spawn_cooldown)
-        if not continue_game:
-            break
-        frame += 1
-        sleep(0.1)"""
-
-
-
-
 """
 TODO:
 get_range - utility_funcs

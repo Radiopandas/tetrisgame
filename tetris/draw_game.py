@@ -23,9 +23,11 @@ screen_h -= 60
 
 screen = pygame.display.set_mode((screen_w, screen_h))
 
+cell_width: int 
+
 # Sets up the font
-font_size: int = screen_h // (height + 2) * 2
-my_font = pygame.font.SysFont('Arial', font_size)
+font_size: int
+my_font: pygame.font.SysFont = None
 
 
 background_colour = pygame.Color(150, 150, 150)
@@ -69,10 +71,11 @@ def print_grid(grid, ghost_tiles):
     print("┗" + "━━" * len(grid[0]) + "┛")
 
 def draw_grid(grid, cell_owners, board_offset: int, ghost_tiles: list):
+    global cell_width
     # Calculates the width of each printed cell
     cell_width = screen_h // (height + 2)
     # Width of the area that the actual game board is printed in
-    play_area_width: int = cell_width * (width + 2)
+
     
     # Prints the tetrominos
     for y, row in enumerate(grid):
@@ -103,11 +106,22 @@ def draw_grid(grid, cell_owners, board_offset: int, ghost_tiles: list):
         new_rect = pygame.Rect(cell_width * (x + board_offset), cell_width * (height + 1), cell_width, cell_width)
         pygame.draw.rect(screen, "black", new_rect) 
 
-
+def draw_score(score: int, board_offset: list):
+    global my_font, font_size, cell_width
+    if not my_font:
+        font_size = screen_h // (height + 2) * 2
+        my_font = pygame.font.SysFont('Arial', font_size)
+    
+    play_area_width: int = cell_width * (width + 2)
+    score_position = (play_area_width + cell_width * (board_offset + 1), 5 * cell_width)
+    score_display = my_font.render(f"Score: {score:05}", False, (0, 0, 0))
+    screen.blit(score_display, score_position)
 
 
 def draw_game(grid, cell_owners, board_offset, ghost_tiles):
     draw_grid(grid, cell_owners, board_offset, ghost_tiles)
+
+    draw_score(100, board_offset)
 
     # Flips the updated display onto the screen
     pygame.display.flip()
