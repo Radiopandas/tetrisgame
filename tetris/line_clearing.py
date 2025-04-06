@@ -47,7 +47,7 @@ def delete_rows(
 
     
     if len(to_be_checked) > 0:
-        #split_tetrominos(to_be_checked, cell_owners, all_tets)
+        split_tetrominos(to_be_checked, cell_owners, all_tets)
         pass
             
 
