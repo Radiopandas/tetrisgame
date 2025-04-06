@@ -44,8 +44,6 @@ def delete_rows(
             cell_owners[row][x] = None
             grid[row][x] = False
 
-            #if len(cur_tet.cells) == 0:
-                #all_tets.remove(cur_tet)
 
     
     if len(to_be_checked) > 0:
@@ -53,7 +51,7 @@ def delete_rows(
         pass
             
 
-def check_rows(grid, cell_owners: list[list[Tetromino | None]], all_tets):
+def check_rows(grid, cell_owners: list[list[Tetromino | None]], all_tets) -> int:
     rows_to_delete: list[int] = []
 
     for y, row in enumerate(grid):
@@ -73,4 +71,6 @@ def check_rows(grid, cell_owners: list[list[Tetromino | None]], all_tets):
             rows_to_delete.append(y)
     
     delete_rows(grid, rows_to_delete, cell_owners, all_tets)
+
+    return len(rows_to_delete)
     

@@ -16,7 +16,6 @@ def add_tetromino(tetromino: Tetromino, grid, owners):
 
 
 
-
 def tet_to_pattern(tet_type: int) -> list[list[bool]]:
     """Returns an array containing the pattern for a given tetromino type"""
     match tet_type:
@@ -85,3 +84,18 @@ def spawn_tetromino(
         return [True, new_tet]
     else:
         return [False, focused_tetromino]
+
+
+def update_scores(lines_just_cleared: int) -> None:
+    match lines_just_cleared:
+        case 1:
+            return 40
+        case 2:
+            return 100
+        case 3:
+            return 300
+        case 4:
+            return 1200
+        case _:
+            return 0
+

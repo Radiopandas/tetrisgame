@@ -118,10 +118,10 @@ def draw_score(score: int, board_offset: list):
     screen.blit(score_display, score_position)
 
 
-def draw_game(grid, cell_owners, board_offset, ghost_tiles):
+def draw_game(grid, cell_owners, board_offset, ghost_tiles, score):
     draw_grid(grid, cell_owners, board_offset, ghost_tiles)
 
-    draw_score(100, board_offset)
+    draw_score(score, board_offset)
 
     # Flips the updated display onto the screen
     pygame.display.flip()

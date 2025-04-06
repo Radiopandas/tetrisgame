@@ -3,6 +3,9 @@ from utility_funcs import get_range
 import rotation
 from keyboard import is_pressed
 from time import sleep
+import pygame
+
+pygame.init()
 
 ghost_piece: Tetromino = None
 
@@ -86,6 +89,8 @@ def quick_drop(grid, focused_tet: Tetromino, cell_owners, hard_drop: bool = True
                 cell_owners[y][x] = focused_tet
         else:
             can_drop = False
+    if hard_drop:
+        focused_tet.can_move = False
 
 
 def update_ghost_piece(grid, focused_tet: Tetromino, ghost_tiles: list):
@@ -135,6 +140,7 @@ def update_ghost_piece(grid, focused_tet: Tetromino, ghost_tiles: list):
         ghost_tiles[y][x] = True
 
 def get_movement(grid: list[list[bool]], focused_tet: Tetromino, cell_owners):
+    """Used to get keyboard inputs that can be repeated by being held down"""
     if is_pressed("a"):
         move_tet(grid, focused_tet, cell_owners, -1)
         return True
@@ -152,3 +158,32 @@ def get_movement(grid: list[list[bool]], focused_tet: Tetromino, cell_owners):
         return True
     if is_pressed("s"):
         quick_drop(grid, focused_tet, cell_owners, False)
+
+def get_movement_2(grid, focused_tet: Tetromino, cell_owners):
+    """
+    Used to get keyboard inputs that can be repeated by being held down.
+    Similar to 'get_movement' except this uses 'pygame' instead of 'keyboard'
+    to handle inputs
+    """
+    keys = pygame.key.get_pressed()
+    if keys[pygame.K_a]:
+        move_tet(grid, focused_tet, cell_owners, -1)
+        return True
+    elif keys[pygame.K_d]:
+        move_tet(grid, focused_tet, cell_owners, 1)
+        return True
+    elif keys[pygame.K_s]:
+        quick_drop(grid, focused_tet, cell_owners, False)
+        return True
+
+def pygame_event_handler(grid, focused_tet: Tetromino, cell_owners, event) -> bool:
+    """Used to get keyboard inputs that can't be repeated by being held down"""
+    if event.key == pygame.K_e:
+        rotation.rotate_tet(grid, focused_tet, cell_owners, True)
+        return True
+    elif event.key == pygame.K_q:
+        rotation.rotate_tet(grid, focused_tet, cell_owners, False)
+        return True
+    elif event.key == pygame.K_w:
+        quick_drop(grid, focused_tet, cell_owners, True)
+        return True
