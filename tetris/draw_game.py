@@ -91,20 +91,11 @@ def draw_grid(grid, cell_owners, board_offset: int, ghost_tiles: list):
                     pygame.draw.rect(screen, colour, new_rect)
     
     # Prints the grid outline
-    # Top row
-    for x in range(width + 2):
-        new_rect = pygame.Rect(cell_width * (x + board_offset), 0, cell_width, cell_width)
-        pygame.draw.rect(screen, "black", new_rect)
-    # Edges
-    for y in range(height):
-        new_rect = pygame.Rect(cell_width * (board_offset), cell_width * (y+1), cell_width, cell_width)
-        pygame.draw.rect(screen, "black", new_rect)
-        new_rect = pygame.Rect(cell_width * (width +1 + board_offset), cell_width * (y+1), cell_width, cell_width)
-        pygame.draw.rect(screen, "black", new_rect)
-    # Bottom row
-    for x in range(width + 2):
-        new_rect = pygame.Rect(cell_width * (x + board_offset), cell_width * (height + 1), cell_width, cell_width)
-        pygame.draw.rect(screen, "black", new_rect) 
+    outline_rect = pygame.Rect((board_offset * cell_width), 0, cell_width * (width + 2), cell_width * (height + 2))
+    pygame.draw.rect(screen, "black", outline_rect, cell_width)
+
+
+
 
 def draw_score(score: int, board_offset: list):
     global my_font, font_size, cell_width

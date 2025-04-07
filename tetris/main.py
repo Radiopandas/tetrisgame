@@ -87,18 +87,10 @@ if __name__ == "__main__":
     draw_game.set_grid_size(width, height)
     
     # Stuff for testing
-    focused_tetromino = Tetromino([[0, 1], [1, 1], [2, 1], [3, 1], [4, 1], [5, 1], [6, 1], [7, 1], [8, 1], [9, 1]])
+    focused_tetromino = Tetromino([[0, 1], [1, 1], [2, 1], [3, 1], [4, 1], [5, 1], [6, 1], [7, 1], [8, 1]])
     all_tetrominos.append(focused_tetromino)
     utility_funcs.add_tetromino(focused_tetromino, grid, cell_owners)
-    
 
-
-    
-
-    #while continue_game:
-        #update(frame, grid, all_tetrominos, continue_game, gravity_cooldown, cell_owners, focused_tetromino, piece_sequence)
-        #frame += 1
-        #sleep(0.02)
 
     print(f"Score: {score}")
     score += utility_funcs.update_scores(4)
@@ -152,11 +144,11 @@ get_movement - movement
 pygame_get_movement - movement
 event_handler - movement
 
-set_draw_colour
-draw_grid
-draw_score
+set_draw_colour - draw_grid  
+draw_grid - draw_grid
+draw_score - draw_grid
 draw_cleared_lines
 draw_next_piece
-draw_gui
+draw_gui - draw_grid
 
 """

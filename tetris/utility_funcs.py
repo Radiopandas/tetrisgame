@@ -86,7 +86,7 @@ def spawn_tetromino(
         return [False, focused_tetromino]
 
 
-def update_scores(lines_just_cleared: int) -> None:
+def update_scores(lines_just_cleared: int) -> int:
     match lines_just_cleared:
         case 1:
             return 40
