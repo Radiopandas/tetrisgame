@@ -64,7 +64,7 @@ def try_move_down(grid, tetromino: Tetromino, cell_owners):
         tetromino.has_moved = True
 
 
-def apply_gravity(grid, tetrominos: list[Tetromino], cell_owners: list[Tetromino]):
+def apply_gravity(grid, tetrominos: list[Tetromino], cell_owners: list[list[Tetromino | None]]):
     for tetromino in tetrominos:
         tetromino.can_move = True
         tetromino.has_moved = False

@@ -30,6 +30,7 @@ movement_cooldown: int = 0
 piece_spawn_cooldown: int = 0
 frame: int = 0
 
+
 def update(
         frame: int, 
         grid, 
@@ -93,7 +94,7 @@ if __name__ == "__main__":
 
 
     print(f"Score: {score}")
-    score += utility_funcs.update_scores(4)
+    #score += utility_funcs.update_scores(4)
     print(f"Score: {score}")
     sleep(1)
 
@@ -103,14 +104,15 @@ if __name__ == "__main__":
         frame += 1
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                running = False
+                #running = False
+                pass
             elif event.type == pygame.KEYDOWN:
                 if movement.pygame_event_handler(grid, focused_tetromino, cell_owners, event):
                     movement.update_ghost_piece(grid, focused_tetromino, ghost_piece_tiles)
         
         draw_game.screen.fill(draw_game.background_colour)
 
-        draw_game.draw_game(grid, cell_owners, 15, ghost_piece_tiles, score)
+        draw_game.draw_game(grid, cell_owners, 13, ghost_piece_tiles, score)
 
         update(frame, grid, all_tetrominos, continue_game, gravity_cooldown, cell_owners, focused_tetromino, piece_sequence)
 

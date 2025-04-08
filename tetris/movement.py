@@ -178,7 +178,7 @@ def get_movement_2(grid, focused_tet: Tetromino, cell_owners):
 
 def pygame_event_handler(grid, focused_tet: Tetromino, cell_owners, event) -> bool:
     """Used to get keyboard inputs that can't be repeated by being held down"""
-    if event.key == pygame.K_e:
+    if event.key == pygame.K_e or event.key:
         rotation.rotate_tet(grid, focused_tet, cell_owners, True)
         return True
     elif event.key == pygame.K_q:
@@ -187,3 +187,5 @@ def pygame_event_handler(grid, focused_tet: Tetromino, cell_owners, event) -> bo
     elif event.key == pygame.K_w:
         quick_drop(grid, focused_tet, cell_owners, True)
         return True
+
+    return False
