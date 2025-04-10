@@ -194,3 +194,79 @@ def pygame_event_handler(grid, focused_tet: Tetromino, cell_owners, event) -> bo
         return True
 
     return False
+
+def update_ghost_piece_2(grid, focused_tet: Tetromino, ghost_tiles: list):
+    global ghost_piece
+    # Initialises a ghost piece if there isn't one
+    if not ghost_piece:
+        ghost_piece = Tetromino([])
+    
+    # Deletes its cells
+    for y, row in enumerate(ghost_tiles):
+        for x, cell in enumerate(row):
+            if cell:
+                ghost_tiles[y][x] = False
+    
+    ghost_piece.cells = focused_tet.cells
+
+    # Gets the columns that the ghost piece is in.
+    ghost_columns: list = []
+    for cell in ghost_piece.cells:
+        x = cell[0]
+        if x not in ghost_columns:
+            ghost_columns.append(x)
+    
+    # Gets the lowest ghost piece cell in each column.
+    lowest_ghost_cells: dict = {}
+    for cell in ghost_piece.cells:
+        x, y = cell[0], cell[1]
+        if x not in lowest_ghost_cells.keys():
+            lowest_ghost_cells[x] = y
+        else:
+            if lowest_ghost_cells[x] < y:
+                lowest_ghost_cells[x] = y
+    
+    # Gets the highest blocked cell in each column.
+    ghost_column_heights: dict = {}
+    for column in ghost_columns:
+        y = lowest_ghost_cells[column]
+        while y != height - 1 and not grid[y + 1][column]:
+            if y == height - 2:
+                y += 1
+                break
+            y += 1
+        ghost_column_heights[column] = y
+    
+    # Calculates the height differences in each column.
+    height_diffs: list = []
+    for column in ghost_columns:
+        height_diffs.append(ghost_column_heights[column] - lowest_ghost_cells[column])
+    
+    distance_to_move = min(height_diffs)
+    new_cells: list = []
+    for cell in ghost_piece.cells:
+        x, y = cell[0], cell[1]
+        new_cells.append([x, y + distance_to_move])
+    
+    ghost_piece.cells = new_cells
+    for cell in new_cells:
+        x, y = cell[0], cell[1]
+        ghost_tiles[y][x] = True
+
+    #print(f"Ghost columns: {ghost_columns}")
+    #print(f"Lowest ghost cells: {lowest_ghost_cells}")
+    #print(f"Ghost column heights: {ghost_column_heights}")
+    #print(f"Ghost column height diffs: {height_diffs}")
+    #sleep(10)
+
+
+
+
+"""
+New update_ghost_piece
+
+For every column that has a ghost_tile, find the highest blocked cell
+Find the distance between the lowest ghost tile in each column and this blocked cell
+Find the minimum of these values, then move everything down by that amount
+
+"""

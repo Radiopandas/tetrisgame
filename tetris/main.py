@@ -50,18 +50,18 @@ def update(
     if frame % gravity_rate == 0:
         draw_game.print_grid(grid, ghost_piece_tiles)
         gravity.apply_gravity(grid, all_tets, cell_owners)
-        #movement.update_ghost_piece(grid, focused_tet, ghost_piece_tiles)
+        movement.update_ghost_piece_2(grid, focused_tet, ghost_piece_tiles)
         
         lines_just_cleared = line_clearing.check_rows(grid, cell_owners, all_tets)
         score += utility_funcs.update_scores(lines_just_cleared)
         lines_cleared += lines_just_cleared
-        #movement.update_ghost_piece(grid, focused_tet, ghost_piece_tiles)
+        movement.update_ghost_piece_2(grid, focused_tet, ghost_piece_tiles)
     
     if not focused_tet.can_move and piece_spawn_cooldown == 0:
         spawn_results = utility_funcs.spawn_tetromino(grid, focused_tet, piece_sequence, all_tets, cell_owners)
         continue_game = spawn_results[0]
         focused_tetromino = spawn_results[1]
-        #movement.update_ghost_piece(grid, focused_tet, ghost_piece_tiles)
+        movement.update_ghost_piece_2(grid, focused_tet, ghost_piece_tiles)
         piece_spawn_cooldown = 20
     if piece_spawn_cooldown > 0:
         piece_spawn_cooldown -= 1
@@ -70,7 +70,7 @@ def update(
         
         if movement.get_movement_2(grid, focused_tetromino, cell_owners):
         #if movement.get_movement(grid, focused_tet, cell_owners):
-            #movement.update_ghost_piece(grid, focused_tet, ghost_piece_tiles)
+            movement.update_ghost_piece_2(grid, focused_tet, ghost_piece_tiles)
             draw_game.print_grid(grid, ghost_piece_tiles)
             movement_cooldown += 5
     elif movement_cooldown > 0:
@@ -104,7 +104,8 @@ if __name__ == "__main__":
                 running = False 
             elif event.type == pygame.KEYDOWN:
                 if movement.pygame_event_handler(grid, focused_tetromino, cell_owners, event):
-                    #movement.update_ghost_piece(grid, focused_tetromino, ghost_piece_tiles)
+                    movement.update_ghost_piece_2(grid, focused_tetromino, ghost_piece_tiles)
+                    movement.update_ghost_piece_2(grid, focused_tetromino, ghost_piece_tiles)
                     pass
         
         draw_game.screen.fill(draw_game.background_colour)
