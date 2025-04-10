@@ -100,9 +100,14 @@ def update_ghost_piece(grid, focused_tet: Tetromino, ghost_tiles: list):
         ghost_piece = Tetromino([])
     
     # Deletes its cells
-    for cell in ghost_piece.cells:
-        x, y = cell[0], cell[1]
-        ghost_tiles[y][x] = False
+    #for cell in ghost_piece.cells:
+    #    x, y = cell[0], cell[1]
+    #    ghost_tiles[y][x] = False
+    for y, row in enumerate(ghost_tiles):
+        for x, cell in enumerate(row):
+            if cell:
+                ghost_tiles[y][x] = False
+
     ghost_piece.cells = focused_tet.cells
     
     # Attempts to drop it down
@@ -178,7 +183,7 @@ def get_movement_2(grid, focused_tet: Tetromino, cell_owners):
 
 def pygame_event_handler(grid, focused_tet: Tetromino, cell_owners, event) -> bool:
     """Used to get keyboard inputs that can't be repeated by being held down"""
-    if event.key == pygame.K_e or event.key:
+    if event.key == pygame.K_e:
         rotation.rotate_tet(grid, focused_tet, cell_owners, True)
         return True
     elif event.key == pygame.K_q:
