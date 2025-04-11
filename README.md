@@ -7,3 +7,8 @@ S - Soft drop. Can be held down\
 W - Hard drop\
 E - Rotate clockwise\
 Q - Rotate counter-clockwise
+
+## TODO:
+Drawing the next piece\
+Holding a piece\
+Comments/documentation

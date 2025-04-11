@@ -1,4 +1,4 @@
-import tetromino
+from utility_funcs import tet_to_pattern
 import pygame
 
 width: int = 0
@@ -95,17 +95,6 @@ def draw_grid(grid, cell_owners, board_offset: int, ghost_tiles: list, outline_t
     pygame.draw.rect(screen, "white", outline_rect, outline_thickness)
 
 
-def draw_score(score: int, board_offset: int):
-    global base_font, font_size, cell_width
-    if not base_font:
-        font_size = screen_h // (height + 2)
-        base_font = pygame.font.SysFont('Lexus', font_size)
-    
-    play_area_width: int = cell_width * (width + 2)
-    score_position = (play_area_width + cell_width * (board_offset + 1), 5 * cell_width)
-    score_display = base_font.render(f"Score: {score:05}", False, (0, 0, 0))
-    screen.blit(score_display, score_position)
-
 def draw_stats(board_offset, score, lines, level):
     global base_font, font_size
     # Initialises the font for displaying the text
@@ -118,8 +107,8 @@ def draw_stats(board_offset, score, lines, level):
 
     # Calculates the positions to display each stat
     level_position = (text_area_offset + cell_width, 3 * cell_width)
-    lines_position = (text_area_offset + cell_width, 6 * cell_width)
-    score_position = (text_area_offset + cell_width, 8 * cell_width)
+    lines_position = (text_area_offset + cell_width, 5 * cell_width)
+    score_position = (text_area_offset + cell_width, 7 * cell_width)
     
 
 
@@ -134,12 +123,30 @@ def draw_stats(board_offset, score, lines, level):
     screen.blit(score_display, score_position)
 
 
-def draw_game(grid, cell_owners, board_offset, ghost_tiles, score):
+def draw_next_piece(next_piece: int, board_offset: int) -> None:
+    # Creates a grid of which tiles to draw
+    pattern: list = tet_to_pattern(next_piece)
+
+    piece_colour = set_draw_colour(next_piece)
+
+    # Calculates the position to display the next tet.
+    text_area_offset: int = cell_width * (width + board_offset + 2)
+    position = (text_area_offset + cell_width, 9 * cell_width)
+
+    for y, row in enumerate(pattern):
+        for x, cell in enumerate(row):
+            if cell:
+                new_rect = pygame.Rect(position[0] + cell_width * x, position[1] + cell_width * y, cell_width, cell_width)
+                pygame.draw.rect(screen, piece_colour, new_rect)
+
+
+def draw_game(grid, cell_owners, board_offset, ghost_tiles, score, lines_cleared, next_piece) -> None:
     """Calls several other functions to draw everything onto the screen."""
     draw_grid(grid, cell_owners, board_offset, ghost_tiles, 5)
 
-    #draw_score(score, board_offset)
-    draw_stats(board_offset, score, 10, 10)
+    draw_stats(board_offset, score, lines_cleared, lines_cleared // 10)
+
+    draw_next_piece(next_piece, board_offset)
 
     # Flips the updated display onto the screen
     pygame.display.flip()

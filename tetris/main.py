@@ -6,6 +6,7 @@ from tetromino import Tetromino
 import utility_funcs
 import movement
 import pygame
+from random import shuffle
 
 from time import sleep
 
@@ -13,7 +14,7 @@ from time import sleep
 width: int = 10
 height: int = 22
 
-focused_tetromino: Tetromino | None = None
+focused_tetromino: Tetromino = Tetromino([])
 grid: list[list[bool]] = []
 cell_owners: list[list[Tetromino | None]]
 all_tetrominos: list[Tetromino] = []
@@ -23,7 +24,7 @@ score: int = 0
 lines_cleared: int = 0
 
 gravity_cooldown: int = 15
-piece_sequence: list[int] = []
+piece_sequence: list[int] = [1, 2, 3, 4, 5, 6, 7]
 
 continue_game: bool = True
 movement_cooldown: int = 0
@@ -55,6 +56,8 @@ def update(
         lines_just_cleared = line_clearing.check_rows(grid, cell_owners, all_tets)
         score += utility_funcs.update_scores(lines_just_cleared)
         lines_cleared += lines_just_cleared
+        if gravity_rate > 10:
+            gravity_rate -= utility_funcs.update_gravity_rate(lines_cleared, lines_just_cleared)
         movement.update_ghost_piece_2(grid, focused_tet, ghost_piece_tiles)
     
     if not focused_tet.can_move and piece_spawn_cooldown == 0:
@@ -63,7 +66,7 @@ def update(
         focused_tetromino = spawn_results[1]
         movement.update_ghost_piece_2(grid, focused_tet, ghost_piece_tiles)
         piece_spawn_cooldown = 20
-    if piece_spawn_cooldown > 0:
+    if piece_spawn_cooldown > 0:  
         piece_spawn_cooldown -= 1
     
     if movement_cooldown == 0:
@@ -72,7 +75,7 @@ def update(
         #if movement.get_movement(grid, focused_tet, cell_owners):
             movement.update_ghost_piece_2(grid, focused_tet, ghost_piece_tiles)
             draw_game.print_grid(grid, ghost_piece_tiles)
-            movement_cooldown += 5
+            movement_cooldown += 7
     elif movement_cooldown > 0:
         movement_cooldown -= 1
 
@@ -86,6 +89,7 @@ if __name__ == "__main__":
     movement.set_grid_size(width, height)
     rotation.set_grid_size(width, height)
     draw_game.set_grid_size(width, height)
+    shuffle(piece_sequence)
     
     # Stuff for testing
     focused_tetromino = Tetromino([[0, 1], [1, 1], [2, 1], [3, 1]])#, [4, 1], [5, 1], [6, 1], [7, 1], [8, 1]])
@@ -95,7 +99,7 @@ if __name__ == "__main__":
 
     #focused_tetromino = utility_funcs.start_game(grid, focused_tetromino, piece_sequence, all_tetrominos, cell_owners)
 
-    clock = pygame.time.Clock()
+    clock = pygame.time.Clock() 
     running: bool = True
     while running:
         frame += 1
@@ -110,7 +114,7 @@ if __name__ == "__main__":
         
         draw_game.screen.fill(draw_game.background_colour)
 
-        draw_game.draw_game(grid, cell_owners, 13, ghost_piece_tiles, score)
+        draw_game.draw_game(grid, cell_owners, 13, ghost_piece_tiles, score, lines_cleared, piece_sequence[0])
 
         update(frame, grid, all_tetrominos, continue_game, gravity_cooldown, cell_owners, focused_tetromino, piece_sequence)
 
@@ -146,9 +150,8 @@ event_handler - movement
 
 set_draw_colour - draw_grid  
 draw_grid - draw_grid
-draw_score - draw_grid
-draw_cleared_lines
-draw_next_piece
+draw_stats - draw_grid
+draw_next_piece - draw_grid
 draw_gui - draw_grid
 
 """
