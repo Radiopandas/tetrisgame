@@ -96,4 +96,7 @@ def update_scores(lines_just_cleared: int) -> int:
         case _:
             return 0
 
-
+def update_gravity_rate(total_lines_cleared: int, lines_just_cleared: int) -> int:
+    if total_lines_cleared // 10 != (total_lines_cleared - lines_just_cleared) // 10:
+        return 20
+    return 0
