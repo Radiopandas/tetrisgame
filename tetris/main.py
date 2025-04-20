@@ -25,6 +25,7 @@ lines_cleared: int = 0
 
 gravity_cooldown: int = 15
 piece_sequence: list[int] = [1, 2, 3, 4, 5, 6, 7]
+held_piece: int = 0
 
 continue_game: bool = True
 movement_cooldown: int = 0
@@ -43,7 +44,7 @@ def update(
         piece_sequence: list[int],
         ):
     # For some fucking reason if I don't do it like this everything breaks
-    global focused_tetromino, continue_game, piece_spawn_cooldown, movement_cooldown, score, lines_cleared
+    global focused_tetromino, continue_game, piece_spawn_cooldown, movement_cooldown, score, lines_cleared, gravity_cooldown
 
     if not keep_playing:
         return
@@ -57,7 +58,7 @@ def update(
         score += utility_funcs.update_scores(lines_just_cleared)
         lines_cleared += lines_just_cleared
         if gravity_rate > 10:
-            gravity_rate -= utility_funcs.update_gravity_rate(lines_cleared, lines_just_cleared)
+            gravity_cooldown -= utility_funcs.update_gravity_rate(lines_cleared, lines_just_cleared)
         movement.update_ghost_piece_2(grid, focused_tet, ghost_piece_tiles)
     
     if not focused_tet.can_move and piece_spawn_cooldown == 0:
@@ -95,6 +96,10 @@ if __name__ == "__main__":
     focused_tetromino = Tetromino([[0, 1], [1, 1], [2, 1], [3, 1]])#, [4, 1], [5, 1], [6, 1], [7, 1], [8, 1]])
     all_tetrominos.append(focused_tetromino)
     utility_funcs.add_tetromino(focused_tetromino, grid, cell_owners)
+
+    #utility_funcs.hold_piece(piece_sequence)
+    #print(f"Piece sequence: {piece_sequence}")
+    #sleep(3)
     
 
     #focused_tetromino = utility_funcs.start_game(grid, focused_tetromino, piece_sequence, all_tetrominos, cell_owners)
@@ -107,7 +112,7 @@ if __name__ == "__main__":
             if event.type == pygame.QUIT:
                 running = False 
             elif event.type == pygame.KEYDOWN:
-                if movement.pygame_event_handler(grid, focused_tetromino, cell_owners, event):
+                if movement.pygame_event_handler(event, grid, focused_tetromino, cell_owners, piece_sequence):
                     movement.update_ghost_piece_2(grid, focused_tetromino, ghost_piece_tiles)
                     movement.update_ghost_piece_2(grid, focused_tetromino, ghost_piece_tiles)
                     pass
@@ -149,7 +154,7 @@ pygame_get_movement - movement
 event_handler - movement
 
 set_draw_colour - draw_grid  
-draw_grid - draw_grid
+draw_grid - draw_gride
 draw_stats - draw_grid
 draw_next_piece - draw_grid
 draw_gui - draw_grid

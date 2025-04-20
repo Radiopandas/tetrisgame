@@ -2,7 +2,9 @@ from tetromino import Tetromino
 from random import shuffle
 from time import sleep # Delete after
 
-
+piece_sequence: list[int] = []
+spawn_held_piece: bool = False
+held_piece: int = 0
 
 def create_grid(width: int, height: int, value = False): return [[value for x in range(width)] for y in range(height)]
 
@@ -52,7 +54,7 @@ def spawn_tetromino(
                 can_spawn = False
                 break
     
-    # Uses 'random bag' to add pieces to the queue
+    # Uses 'random bag' to add pieces to the queue if they are needed
     if len(piece_sequence) < 7:
         to_add = [1, 2, 3, 4, 5, 6, 7]
         shuffle(to_add)
@@ -98,5 +100,24 @@ def update_scores(lines_just_cleared: int) -> int:
 
 def update_gravity_rate(total_lines_cleared: int, lines_just_cleared: int) -> int:
     if total_lines_cleared // 10 != (total_lines_cleared - lines_just_cleared) // 10:
-        return 20
+        print("Gravity changed I guess")
+        sleep(5)
+        return 5
     return 0
+
+
+def hold_piece(sequence: list[int]) -> None:
+    global held_piece, spawn_held_piece
+    """Pops the current piece at the start of piece_sequence"""
+    _held_piece = sequence.pop(0)
+
+    # If a piece is already held, adds it to the start of the queue
+    if held_piece:
+        sequence.insert(0, held_piece)
+
+    print(f"Held piece: {_held_piece}")
+    print(f"Sequence: {sequence}")
+
+    held_piece = 0 + _held_piece
+
+    #sleep(5)

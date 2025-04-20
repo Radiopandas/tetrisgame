@@ -1,8 +1,9 @@
 from tetromino import Tetromino
-from utility_funcs import get_range
+from utility_funcs import hold_piece
 import rotation
 from keyboard import is_pressed
 from time import sleep
+import main
 import pygame
 
 pygame.init()
@@ -181,7 +182,8 @@ def get_movement_2(grid, focused_tet: Tetromino, cell_owners):
         quick_drop(grid, focused_tet, cell_owners, False)
         return True
 
-def pygame_event_handler(grid, focused_tet: Tetromino, cell_owners, event) -> bool:
+
+def pygame_event_handler(event, grid, focused_tet: Tetromino, cell_owners, piece_sequence: list[int]) -> bool:
     """Used to get keyboard inputs that can't be repeated by being held down"""
     if event.key == pygame.K_e:
         rotation.rotate_tet(grid, focused_tet, cell_owners, True)
@@ -191,6 +193,9 @@ def pygame_event_handler(grid, focused_tet: Tetromino, cell_owners, event) -> bo
         return True
     elif event.key == pygame.K_w:
         quick_drop(grid, focused_tet, cell_owners, True)
+        return True
+    elif event.key == pygame.K_h:
+        hold_piece(piece_sequence)
         return True
 
     return False
