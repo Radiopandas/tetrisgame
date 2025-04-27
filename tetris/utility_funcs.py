@@ -3,7 +3,7 @@ from random import shuffle
 from time import sleep # Delete after
 
 piece_sequence: list[int] = []
-spawn_held_piece: bool = False
+piece_has_been_held: bool = False
 held_piece: int = 0
 
 def create_grid(width: int, height: int, value = False): return [[value for x in range(width)] for y in range(height)]
@@ -85,6 +85,20 @@ def spawn_tetromino(
     else:
         return [False, focused_tetromino]
 
+def clear_tetromino(
+        tet: Tetromino,
+        grid: list[list[bool]],
+        all_tets: list[Tetromino],
+        cell_owners: list[list[Tetromino | None]]
+    ) -> None:
+    #all_tets.remove(tet)
+    for cell in tet.cells:
+        x, y = cell[0], cell[1]
+        grid[y][x] = False
+        cell_owners[y][x] = None
+    
+
+
 def update_scores(lines_just_cleared: int) -> int:
     match lines_just_cleared:
         case 1:
@@ -100,24 +114,26 @@ def update_scores(lines_just_cleared: int) -> int:
 
 def update_gravity_rate(total_lines_cleared: int, lines_just_cleared: int) -> int:
     if total_lines_cleared // 10 != (total_lines_cleared - lines_just_cleared) // 10:
-        print("Gravity changed I guess")
-        sleep(5)
+        #print("Gravity changed I guess")
+        #sleep(5)
         return 5
     return 0
 
 
-def hold_piece(sequence: list[int]) -> None:
-    global held_piece, spawn_held_piece
-    """Pops the current piece at the start of piece_sequence"""
-    _held_piece = sequence.pop(0)
+def hold_piece(sequence: list[int], focused_tet: Tetromino) -> None:
+    global held_piece, piece_has_been_held
 
-    # If a piece is already held, adds it to the start of the queue
-    if held_piece:
-        sequence.insert(0, held_piece)
+    if not piece_has_been_held:
+        """Moves the current piece to be held and immediately spawns the next piece"""
+        _held_piece = focused_tet.tet_type
 
-    print(f"Held piece: {_held_piece}")
-    print(f"Sequence: {sequence}")
+        # If a piece is already held, adds it to the start of the queue
+        if held_piece:
+            sequence.insert(0, held_piece)
+        
+        # Marks that a piece has been held
 
-    held_piece = 0 + _held_piece
+        print(f"Held piece: {_held_piece}")
+        print(f"Sequence: {sequence}")
 
-    #sleep(5)
+        held_piece = 0 + _held_piece

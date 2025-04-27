@@ -112,7 +112,7 @@ if __name__ == "__main__":
             if event.type == pygame.QUIT:
                 running = False 
             elif event.type == pygame.KEYDOWN:
-                if movement.pygame_event_handler(event, grid, focused_tetromino, cell_owners, piece_sequence):
+                if movement.pygame_event_handler(event, grid, focused_tetromino, cell_owners, piece_sequence, all_tetrominos):
                     movement.update_ghost_piece_2(grid, focused_tetromino, ghost_piece_tiles)
                     movement.update_ghost_piece_2(grid, focused_tetromino, ghost_piece_tiles)
                     pass
@@ -154,9 +154,11 @@ pygame_get_movement - movement
 event_handler - movement
 
 set_draw_colour - draw_grid  
-draw_grid - draw_gride
+draw_grid - draw_grid
 draw_stats - draw_grid
 draw_next_piece - draw_grid
 draw_gui - draw_grid
+
+Add an easy way to reset variables to their initial values. Maybe store them in a dict (hardcoded ofc)
 
 """
