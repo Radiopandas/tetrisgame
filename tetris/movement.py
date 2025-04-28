@@ -145,26 +145,6 @@ def update_ghost_piece(grid, focused_tet: Tetromino, ghost_tiles: list):
         x, y = cell[0], cell[1]
         ghost_tiles[y][x] = True
 
-def get_movement(grid: list[list[bool]], focused_tet: Tetromino, cell_owners):
-    """Used to get keyboard inputs that can be repeated by being held down"""
-    if is_pressed("a"):
-        move_tet(grid, focused_tet, cell_owners, -1)
-        return True
-    if is_pressed("d"):
-        move_tet(grid, focused_tet, cell_owners, 1)
-        return True
-    if is_pressed("e"):
-        rotation.rotate_tet(grid, focused_tet, cell_owners, True)
-        return True
-    if is_pressed("q"):
-        rotation.rotate_tet(grid, focused_tet, cell_owners, False)
-        return True
-    if is_pressed("w"):
-        quick_drop(grid, focused_tet, cell_owners, True)
-        return True
-    if is_pressed("s"):
-        quick_drop(grid, focused_tet, cell_owners, False)
-
 def get_movement_2(grid, focused_tet: Tetromino, cell_owners):
     """
     Used to get keyboard inputs that can be repeated by being held down.
@@ -195,9 +175,25 @@ def pygame_event_handler(event, grid, focused_tet: Tetromino, cell_owners, piece
         quick_drop(grid, focused_tet, cell_owners, True)
         return True
     elif event.key == pygame.K_h:
-        utility_funcs.hold_piece(piece_sequence, focused_tet)
-        utility_funcs.clear_tetromino(focused_tet, grid, all_tets, cell_owners)
-        focused_tet = utility_funcs.spawn_tetromino(grid, focused_tet, piece_sequence, all_tets, cell_owners)[1]
+        # Tries to hold the piece
+        hold_successful = utility_funcs.hold_piece(piece_sequence, focused_tet)
+        if hold_successful:
+            print("Grid before calling \'clear_tetromino\'", end="")
+            print(*grid, sep="\n")
+
+            utility_funcs.clear_tetromino(focused_tet, grid, all_tets, cell_owners)
+
+            print("Grid after calling \'clear_tetromino\'", end="")
+            print(*grid, sep="\n")
+
+            #sleep(10)
+
+            can_spawn, new_tet_cells, new_tet_type = utility_funcs.generate_tetromino(grid, piece_sequence)
+            focused_tet.cells = new_tet_cells
+            focused_tet.tet_type = new_tet_type
+            focused_tet.times_rotated = 0
+
+            utility_funcs.add_tetromino(focused_tet, grid, cell_owners)
         return True
 
     return False

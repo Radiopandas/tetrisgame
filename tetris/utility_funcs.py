@@ -37,6 +37,72 @@ def tet_to_pattern(tet_type: int) -> list[list[bool]]:
             print("Invalid tet_index")
             return []
 
+
+# 
+def generate_tetromino(
+        grid: list[list[bool]], 
+        piece_sequence: list[int],
+    ):
+
+    width: int = len(grid[0])
+
+    # Checks if the spawn location is obstructed
+    can_spawn: bool = True
+    for y in range(2):
+        for x in range(4):
+            if grid[y][int(width / 2) - 2 + x]:
+                can_spawn = False
+                break
+    
+    # Uses 'random bag' to add pieces to the queue if they are needed
+    if len(piece_sequence) < 7:
+        to_add = [1, 2, 3, 4, 5, 6, 7]
+        shuffle(to_add)
+        piece_sequence += to_add
+    
+    # Actually generates the coordinates of the new piece.
+    if can_spawn:
+        tet_cells: list[list[int]] = []
+
+        tetromino_type: int = piece_sequence[0]
+        piece_sequence.pop(0)
+
+        pattern = tet_to_pattern(tetromino_type)
+        for y, row in enumerate(pattern):
+            cell_index: int = 0
+            for cell in row:
+                if cell:
+                    grid[y][int(width / 2) - 2 + cell_index] = True
+                    tet_cells.append([int(width / 2) - 2 + cell_index, y])
+                cell_index += 1
+        
+
+        return [True, tet_cells, tetromino_type]
+    else:
+        return [False, [], 0]
+
+def spawn_tetromino_2(
+        grid: list[list[bool]], 
+        focused_tetromino: Tetromino, 
+        piece_sequence: list[int],
+        all_tets: list[Tetromino],
+        cell_owners: list[list[Tetromino | None]]
+    ):
+    # Gets the coordinates of the new piece's tiles
+    spawn_success, new_tet_cells, new_tet_type = generate_tetromino(grid, piece_sequence)
+
+    # Checks that spawning succeeded (Spawn area wasn't obstructed).
+    if not spawn_success:
+        return [False, focused_tetromino]
+
+    # Turns them into a tetromino
+    new_tet = Tetromino(new_tet_cells)
+    new_tet.tet_type = new_tet_type
+    all_tets.append(new_tet)
+    add_tetromino(new_tet, grid, cell_owners)
+
+    return [True, new_tet]
+
 def spawn_tetromino(
         grid: list[list[bool]], 
         focused_tetromino: Tetromino, 
@@ -132,8 +198,38 @@ def hold_piece(sequence: list[int], focused_tet: Tetromino) -> None:
             sequence.insert(0, held_piece)
         
         # Marks that a piece has been held
+        piece_has_been_held = True
 
         print(f"Held piece: {_held_piece}")
         print(f"Sequence: {sequence}")
 
         held_piece = 0 + _held_piece
+        
+        return True
+
+    return False
+
+def hold_piece_2(
+        grid: list[list[bool]], 
+        focused_tetromino: Tetromino, 
+        piece_sequence: list[int],
+        all_tets: list[Tetromino],
+        cell_owners: list[list[Tetromino | None]]
+    ):
+    global held_piece, piece_has_been_held
+    
+    if not piece_has_been_held:
+        _held_piece = focused_tetromino.tet_type
+
+        # If a piece is already held, adds it to the start of the queue
+        if held_piece:
+            piece_sequence.insert(0, held_piece)
+
+        # Marks that a piece has been held already
+        piece_has_been_held = True
+
+        held_piece = 0 + _held_piece
+
+
+
+    

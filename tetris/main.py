@@ -62,18 +62,21 @@ def update(
         movement.update_ghost_piece_2(grid, focused_tet, ghost_piece_tiles)
     
     if not focused_tet.can_move and piece_spawn_cooldown == 0:
-        spawn_results = utility_funcs.spawn_tetromino(grid, focused_tet, piece_sequence, all_tets, cell_owners)
+        spawn_results = utility_funcs.spawn_tetromino_2(grid, focused_tet, piece_sequence, all_tets, cell_owners)
         continue_game = spawn_results[0]
         focused_tetromino = spawn_results[1]
         movement.update_ghost_piece_2(grid, focused_tet, ghost_piece_tiles)
         piece_spawn_cooldown = 20
+
+        utility_funcs.piece_has_been_held = False
+
     if piece_spawn_cooldown > 0:  
         piece_spawn_cooldown -= 1
     
     if movement_cooldown == 0:
         
         if movement.get_movement_2(grid, focused_tetromino, cell_owners):
-        #if movement.get_movement(grid, focused_tet, cell_owners):
+
             movement.update_ghost_piece_2(grid, focused_tet, ghost_piece_tiles)
             draw_game.print_grid(grid, ghost_piece_tiles)
             movement_cooldown += 7
@@ -147,7 +150,6 @@ rotate_tet - rotation
 quick_drop - movement
 ghost_piece - movement
 update_score - utility_funcs
-get_movement - movement
 
 # TODO pygame specific
 pygame_get_movement - movement
@@ -160,5 +162,11 @@ draw_next_piece - draw_grid
 draw_gui - draw_grid
 
 Add an easy way to reset variables to their initial values. Maybe store them in a dict (hardcoded ofc)
+
+Replace spawn_piece (utility_funcs) with two functions: 
+ - One that generates and returns a list of coordinates
+ - One that calls the previous functions, converts that 
+    list of coordinates into a tetromino and returns it plus 
+    a boolean value (this func would be called wherever spawn_piece is currently called).
 
 """
