@@ -4,7 +4,6 @@ import pygame
 
 width: int = 0
 height: int = 0
-_held_piece: int = 0
 
 def set_held_piece(_held_piece: int):
     pass
@@ -28,14 +27,21 @@ screen_h -= 60
 
 screen = pygame.display.set_mode((screen_w, screen_h))
 
-cell_width: int 
+cell_width: int = 0
 
 # Sets up the font
-font_size: int
+font_size: int = 0
 base_font = None
 
 
 background_colour = pygame.Color(20, 20, 20)
+
+var_defaults = [0, 0, 0, 0, None]
+
+def reset():
+    global width, height, cell_width, font_size, base_font, var_defaults
+
+    width, height, cell_width, font_size, base_font = var_defaults
 
 def set_draw_colour(piece_type: int) -> pygame.Color:
     match piece_type:
@@ -167,8 +173,6 @@ def draw_held_piece(held_piece: int, board_offset: int):
 
 def draw_game(grid, cell_owners, board_offset, ghost_tiles, score, lines_cleared, piece_sequence, held_piece = None) -> None:
     """Calls several other functions to draw everything onto the screen."""
-
-    global _held_piece
 
     draw_grid(grid, cell_owners, board_offset, ghost_tiles, 5)
 

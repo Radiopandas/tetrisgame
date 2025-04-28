@@ -1,7 +1,6 @@
 from tetromino import Tetromino
 import utility_funcs
 import rotation
-from keyboard import is_pressed
 from time import sleep
 import main
 import pygame
@@ -12,6 +11,13 @@ ghost_piece: Tetromino = None
 
 width: int = 0
 height: int = 0
+
+var_defaults = None, 0, 0
+
+def reset():
+    global ghost_piece, width, height, var_defaults
+
+    ghost_piece, width, height = var_defaults
 
 def set_grid_size(_width: int, _height: int):
     global height, width

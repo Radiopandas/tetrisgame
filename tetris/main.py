@@ -6,6 +6,7 @@ from tetromino import Tetromino
 import utility_funcs
 import movement
 import pygame
+import copy
 from random import shuffle
 
 from time import sleep
@@ -16,7 +17,7 @@ height: int = 22
 
 focused_tetromino: Tetromino = Tetromino([])
 grid: list[list[bool]] = []
-cell_owners: list[list[Tetromino | None]]
+cell_owners: list[list[Tetromino | None]] = []
 all_tetrominos: list[Tetromino] = []
 ghost_piece_tiles: list[list[bool]] = utility_funcs.create_grid(width, height, False)
 
@@ -31,6 +32,58 @@ continue_game: bool = True
 movement_cooldown: int = 0
 piece_spawn_cooldown: int = 0
 frame: int = 0
+
+all_vars = [
+    width, height, focused_tetromino, grid, cell_owners, all_tetrominos,
+    ghost_piece_tiles, score, lines_cleared, gravity_cooldown,
+    piece_sequence, held_piece, continue_game, movement_cooldown,
+    piece_spawn_cooldown, frame
+    ]
+
+var_defaults = [
+    10, 22, Tetromino([]), [], [], [],
+    utility_funcs.create_grid(width, height, False), 0, 0, 15,
+    [1, 2, 3, 4, 5, 6, 7], 0, True, 0, 0, 0
+]
+
+def reset_game():
+    """Resets all local variables and calls reset() on all other scripts."""
+
+    # Resets the variables in all loaded modules
+    utility_funcs.reset()
+    rotation.reset()
+    movement.reset()
+    gravity.reset()
+    draw_game.reset()
+
+    # Resets local variables
+    global width, height, focused_tetromino, grid, cell_owners, all_tetrominos, \
+        ghost_piece_tiles, score, lines_cleared, gravity_cooldown, \
+        piece_sequence, held_piece, continue_game, movement_cooldown, \
+        piece_spawn_cooldown, frame, var_defaults
+    
+    defaults = copy.deepcopy(var_defaults)
+    width, height, focused_tetromino, grid, cell_owners, all_tetrominos, \
+        ghost_piece_tiles, score, lines_cleared, gravity_cooldown, \
+        piece_sequence, held_piece, continue_game, movement_cooldown, \
+        piece_spawn_cooldown, frame = defaults
+
+
+def start_game():
+    """Resets everything then calls several functions"""
+
+    global grid, cell_owners, width, height, piece_sequence
+
+    reset_game()
+    sleep(0.05)
+
+    grid = utility_funcs.create_grid(width, height, False)
+    cell_owners = utility_funcs.create_grid(width, height, None)
+    gravity.set_grid_size(width, height)
+    movement.set_grid_size(width, height)
+    rotation.set_grid_size(width, height)
+    draw_game.set_grid_size(width, height)
+    shuffle(piece_sequence)
 
 
 def update(
@@ -85,51 +138,61 @@ def update(
 
 
 if __name__ == "__main__":
-    
-    # Set up functions
-    grid = utility_funcs.create_grid(width, height, False)
-    cell_owners = utility_funcs.create_grid(width, height, None)
-    gravity.set_grid_size(width, height)
-    movement.set_grid_size(width, height)
-    rotation.set_grid_size(width, height)
-    draw_game.set_grid_size(width, height)
-    shuffle(piece_sequence)
-    
-    # Stuff for testing
-    focused_tetromino = Tetromino([[0, 1], [1, 1], [2, 1], [3, 1]])#, [4, 1], [5, 1], [6, 1], [7, 1], [8, 1]])
-    all_tetrominos.append(focused_tetromino)
-    utility_funcs.add_tetromino(focused_tetromino, grid, cell_owners)
-
-    #utility_funcs.hold_piece(piece_sequence)
-    #print(f"Piece sequence: {piece_sequence}")
-    #sleep(3)
-    
-
-    #focused_tetromino = utility_funcs.start_game(grid, focused_tetromino, piece_sequence, all_tetrominos, cell_owners)
-
-    clock = pygame.time.Clock() 
-    running: bool = True
-    while running:
-        frame += 1
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                running = False 
-            elif event.type == pygame.KEYDOWN:
-                if movement.pygame_event_handler(event, grid, focused_tetromino, cell_owners, piece_sequence, all_tetrominos):
-                    movement.update_ghost_piece_2(grid, focused_tetromino, ghost_piece_tiles)
-                    movement.update_ghost_piece_2(grid, focused_tetromino, ghost_piece_tiles)
-                    pass
+    while True:
+        #reset_game()
         
-        draw_game.screen.fill(draw_game.background_colour)
+        """
+        # Set up functions
+        grid = utility_funcs.create_grid(width, height, False)
+        cell_owners = utility_funcs.create_grid(width, height, None)
+        gravity.set_grid_size(width, height)
+        movement.set_grid_size(width, height)
+        rotation.set_grid_size(width, height)
+        draw_game.set_grid_size(width, height)
+        shuffle(piece_sequence)
+        """
 
-        draw_game.draw_game(grid, cell_owners, 13, ghost_piece_tiles, score, lines_cleared, piece_sequence, utility_funcs.held_piece)
+        start_game()
 
-        print(f"Held_piece: {utility_funcs.held_piece}")
+        # Stuff for testing
+        focused_tetromino = Tetromino([[0, 1], [1, 1], [2, 1], [3, 1]])#, [4, 1], [5, 1], [6, 1], [7, 1], [8, 1]])
+        all_tetrominos.append(focused_tetromino)
+        utility_funcs.add_tetromino(focused_tetromino, grid, cell_owners)
 
-        update(frame, grid, all_tetrominos, continue_game, gravity_cooldown, cell_owners, focused_tetromino, piece_sequence)
+        #utility_funcs.hold_piece(piece_sequence)
+        #print(f"Piece sequence: {piece_sequence}")
+        #sleep(3)
+        
 
-        dt = clock.tick(60) / 1000
-    
+        #focused_tetromino = utility_funcs.start_game(grid, focused_tetromino, piece_sequence, all_tetrominos, cell_owners)
+
+        clock = pygame.time.Clock() 
+        running: bool = True
+        while running:
+            frame += 1
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    running = False 
+                elif event.type == pygame.KEYDOWN:
+                    if movement.pygame_event_handler(event, grid, focused_tetromino, cell_owners, piece_sequence, all_tetrominos):
+                        movement.update_ghost_piece_2(grid, focused_tetromino, ghost_piece_tiles)
+                        movement.update_ghost_piece_2(grid, focused_tetromino, ghost_piece_tiles)
+                        pass
+            
+            draw_game.screen.fill(draw_game.background_colour)
+
+            draw_game.draw_game(grid, cell_owners, 13, ghost_piece_tiles, score, lines_cleared, piece_sequence, utility_funcs.held_piece)
+
+            update(frame, grid, all_tetrominos, continue_game, gravity_cooldown, cell_owners, focused_tetromino, piece_sequence)
+
+            dt = clock.tick(60) / 1000
+
+            if not continue_game:
+                break
+        
+        print("Player lost lollllll")
+        sleep(3)
+        
     pygame.quit()
 
 
@@ -164,11 +227,9 @@ draw_next_piece - draw_grid
 draw_gui - draw_grid
 
 Add an easy way to reset variables to their initial values. Maybe store them in a dict (hardcoded ofc)
+Add a startup function
+Add a resetting function
+Add a home_screen sort of thing
 
-Replace spawn_piece (utility_funcs) with two functions: 
- - One that generates and returns a list of coordinates
- - One that calls the previous functions, converts that 
-    list of coordinates into a tetromino and returns it plus 
-    a boolean value (this func would be called wherever spawn_piece is currently called).
 
 """

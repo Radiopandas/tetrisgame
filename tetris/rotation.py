@@ -27,6 +27,12 @@ i_wall_kicks: dict = {
 width: int = 0
 height: int = 0
 
+var_defaults = [0, 0]
+
+def reset():
+    global width, height, var_defaults
+    width, height = var_defaults
+
 def set_grid_size(_width: int, _height: int):
     global height, width
     height = _height

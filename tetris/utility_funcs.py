@@ -6,6 +6,14 @@ piece_sequence: list[int] = []
 piece_has_been_held: bool = False
 held_piece: int = 0
 
+var_defaults = [[], False, 0]
+
+def reset():
+    global piece_sequence, piece_has_been_held, held_piece, var_defaults
+
+    piece_sequence, piece_has_been_held, held_piece = var_defaults
+    
+
 def create_grid(width: int, height: int, value = False): return [[value for x in range(width)] for y in range(height)]
 
 def get_range(nums: list): return max(nums) - min(nums) + 1
