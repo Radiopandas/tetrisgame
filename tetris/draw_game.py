@@ -1,8 +1,13 @@
-from utility_funcs import tet_to_pattern
+#from utility_funcs import tet_to_pattern, held_piece
+import utility_funcs
 import pygame
 
 width: int = 0
 height: int = 0
+_held_piece: int = 0
+
+def set_held_piece(_held_piece: int):
+    pass
 
 def set_grid_size(_width: int, _height: int):
     global height, width
@@ -102,16 +107,14 @@ def draw_stats(board_offset, score, lines, level):
         font_size = screen_h // (height + 2)
         base_font = pygame.font.SysFont('Lexus', font_size)
     
-    # How many pixels from the left the stats are should be offset
-    text_area_offset: int = cell_width * (width + board_offset + 2)
+    # How many pixels from the left the stats area should be offset
+    text_area_offset = cell_width * (width + board_offset + 2)
 
     # Calculates the positions to display each stat
     level_position = (text_area_offset + cell_width, 3 * cell_width)
     lines_position = (text_area_offset + cell_width, 5 * cell_width)
     score_position = (text_area_offset + cell_width, 7 * cell_width)
     
-
-
     # Renders all the stats.
     level_display = base_font.render(f"Level: {level:02}", False, (255, 255, 255), (155, 155, 155))
     lines_display = base_font.render(f"Lines cleared: {lines:03}", False, (255, 255, 255), (155, 155, 155))
@@ -126,7 +129,7 @@ def draw_stats(board_offset, score, lines, level):
 def draw_next_pieces(next_pieces: list[int], board_offset: int):
     for i in range(len(next_pieces)):
         # Creates a grid of which tiles to draw
-        pattern: list = tet_to_pattern(next_pieces[i])
+        pattern: list = utility_funcs.tet_to_pattern(next_pieces[i])
 
         piece_colour = set_draw_colour(next_pieces[i])
 
@@ -140,13 +143,40 @@ def draw_next_pieces(next_pieces: list[int], board_offset: int):
                     new_rect = pygame.Rect(position[0] + cell_width * x, position[1] + cell_width * y, cell_width, cell_width)
                     pygame.draw.rect(screen, piece_colour, new_rect)
 
-def draw_game(grid, cell_owners, board_offset, ghost_tiles, score, lines_cleared, piece_sequence) -> None:
+
+def draw_held_piece(held_piece: int, board_offset: int):
+    if not held_piece:
+        print("Hold piece == 0")
+        return
+        
+    # Gets the pattern of the held piece
+    pattern: list = utility_funcs.tet_to_pattern(held_piece)
+
+    piece_colour = set_draw_colour(held_piece)
+
+    # Calculates the position to display the held piece
+    offset: int = cell_width * (board_offset - 5)
+    position = (offset + cell_width, 4 * cell_width)
+
+    for y, row in enumerate(pattern):
+            for x, cell in enumerate(row):
+                if cell:
+                    new_rect = pygame.Rect(position[0] + cell_width * x, position[1] + cell_width * y, cell_width, cell_width)
+                    pygame.draw.rect(screen, piece_colour, new_rect)
+    
+
+def draw_game(grid, cell_owners, board_offset, ghost_tiles, score, lines_cleared, piece_sequence, held_piece = None) -> None:
     """Calls several other functions to draw everything onto the screen."""
+
+    global _held_piece
+
     draw_grid(grid, cell_owners, board_offset, ghost_tiles, 5)
 
     draw_stats(board_offset, score, lines_cleared, lines_cleared // 10)
 
     draw_next_pieces(piece_sequence[0:3], board_offset)
+
+    draw_held_piece(held_piece, board_offset)
 
     # Flips the updated display onto the screen
     pygame.display.flip()

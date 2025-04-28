@@ -10,6 +10,9 @@ def create_grid(width: int, height: int, value = False): return [[value for x in
 
 def get_range(nums: list): return max(nums) - min(nums) + 1
 
+def get_held_piece() -> int:
+    global held_piece
+    return held_piece
 
 def add_tetromino(tetromino: Tetromino, grid, owners):
     for cell in tetromino.cells:
@@ -180,13 +183,11 @@ def update_scores(lines_just_cleared: int) -> int:
 
 def update_gravity_rate(total_lines_cleared: int, lines_just_cleared: int) -> int:
     if total_lines_cleared // 10 != (total_lines_cleared - lines_just_cleared) // 10:
-        #print("Gravity changed I guess")
-        #sleep(5)
         return 5
-    return 0
+    return 0    
 
 
-def hold_piece(sequence: list[int], focused_tet: Tetromino) -> None:
+def hold_piece(sequence: list[int], focused_tet: Tetromino) -> bool:
     global held_piece, piece_has_been_held
 
     if not piece_has_been_held:
