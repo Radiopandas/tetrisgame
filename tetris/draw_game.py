@@ -123,30 +123,30 @@ def draw_stats(board_offset, score, lines, level):
     screen.blit(score_display, score_position)
 
 
-def draw_next_piece(next_piece: int, board_offset: int) -> None:
-    # Creates a grid of which tiles to draw
-    pattern: list = tet_to_pattern(next_piece)
+def draw_next_pieces(next_pieces: list[int], board_offset: int):
+    for i in range(len(next_pieces)):
+        # Creates a grid of which tiles to draw
+        pattern: list = tet_to_pattern(next_pieces[i])
 
-    piece_colour = set_draw_colour(next_piece)
+        piece_colour = set_draw_colour(next_pieces[i])
 
-    # Calculates the position to display the next tet.
-    text_area_offset: int = cell_width * (width + board_offset + 2)
-    position = (text_area_offset + cell_width, 9 * cell_width)
+        # Calculates the position to display the next tet.
+        text_area_offset: int = cell_width * (width + board_offset + 2)
+        position = (text_area_offset + cell_width, (9 +(3 * i)) * cell_width)
 
-    for y, row in enumerate(pattern):
-        for x, cell in enumerate(row):
-            if cell:
-                new_rect = pygame.Rect(position[0] + cell_width * x, position[1] + cell_width * y, cell_width, cell_width)
-                pygame.draw.rect(screen, piece_colour, new_rect)
+        for y, row in enumerate(pattern):
+            for x, cell in enumerate(row):
+                if cell:
+                    new_rect = pygame.Rect(position[0] + cell_width * x, position[1] + cell_width * y, cell_width, cell_width)
+                    pygame.draw.rect(screen, piece_colour, new_rect)
 
-
-def draw_game(grid, cell_owners, board_offset, ghost_tiles, score, lines_cleared, next_piece) -> None:
+def draw_game(grid, cell_owners, board_offset, ghost_tiles, score, lines_cleared, piece_sequence) -> None:
     """Calls several other functions to draw everything onto the screen."""
     draw_grid(grid, cell_owners, board_offset, ghost_tiles, 5)
 
     draw_stats(board_offset, score, lines_cleared, lines_cleared // 10)
 
-    draw_next_piece(next_piece, board_offset)
+    draw_next_pieces(piece_sequence[0:3], board_offset)
 
     # Flips the updated display onto the screen
     pygame.display.flip()

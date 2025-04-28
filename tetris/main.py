@@ -122,7 +122,7 @@ if __name__ == "__main__":
         
         draw_game.screen.fill(draw_game.background_colour)
 
-        draw_game.draw_game(grid, cell_owners, 13, ghost_piece_tiles, score, lines_cleared, piece_sequence[0])
+        draw_game.draw_game(grid, cell_owners, 13, ghost_piece_tiles, score, lines_cleared, piece_sequence)
 
         update(frame, grid, all_tetrominos, continue_game, gravity_cooldown, cell_owners, focused_tetromino, piece_sequence)
 
