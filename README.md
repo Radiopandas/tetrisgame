@@ -1,6 +1,6 @@
 # tetrisgame
 ## About
-Tetris written entirely in python, using `pygame` to draw the game in a seperate window. Requires you to install the pygame and keyboard libraries: `pip install keyboard` & `pip install pygame`
+Tetris written entirely in python, using `pygame` to draw the game in a seperate window. Requires you to install the pygame library: `pip install pygame`
 ## Controls
 A & D - Move left and right. Can be held down\
 S - Soft drop. Can be held down\
@@ -9,6 +9,7 @@ E - Rotate clockwise\
 Q - Rotate counter-clockwise
 
 ## TODO:
-Drawing the next piece\
-Holding a piece\
 Comments/documentation
+Start menu
+'Loading screen thingy'
+Make the game look prettier
