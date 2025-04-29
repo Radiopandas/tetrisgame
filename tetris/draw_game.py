@@ -184,3 +184,33 @@ def draw_game(grid, cell_owners, board_offset, ghost_tiles, score, lines_cleared
 
     # Flips the updated display onto the screen
     pygame.display.flip()
+
+def draw_start_menu(board_offset: int) -> bool:
+    global screen_w
+
+    # Initialises the fonts
+    title_font = pygame.font.SysFont('Lexus', 100)
+
+    # Calculates the offset required to be in the centre of the screen
+    screen_midpoint = screen_w // 2
+
+    # Draw the title
+    title_position = (screen_midpoint - 50, 100)
+    title_display = title_font.render("SIRTET", False, (255, 255, 255), (155, 155, 155))
+
+    screen.blit(title_display, title_position)
+    
+    
+    # Prints instructions ('Press enter to begin')
+
+
+    pygame.display.flip()
+    
+    for event in pygame.event.get():
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_0:
+                print("akjsdhkgjasdhj")
+                return True
+        elif event.type == pygame.QUIT:
+            pygame.quit()
+    return False

@@ -146,6 +146,10 @@ if __name__ == "__main__":
         utility_funcs.add_tetromino(focused_tetromino, grid, cell_owners)
 
         #TODO: Add a start menu.
+        display_start_menu = True
+        while display_start_menu:
+            draw_game.screen.fill(draw_game.background_colour)
+            display_start_menu = False if draw_game.draw_start_menu(13) else True
 
         # Main game loop
         clock = pygame.time.Clock() 
@@ -172,8 +176,6 @@ if __name__ == "__main__":
 
             if not continue_game:
                 break
-        
-        
 
         print("Player lost lollllll")
         sleep(3)

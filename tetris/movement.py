@@ -158,13 +158,13 @@ def get_movement_2(grid, focused_tet: Tetromino, cell_owners):
     to handle inputs
     """
     keys = pygame.key.get_pressed()
-    if keys[pygame.K_a]:
+    if keys[pygame.K_a] or keys[pygame.K_LEFT]:
         move_tet(grid, focused_tet, cell_owners, -1)
         return True
-    elif keys[pygame.K_d]:
+    elif keys[pygame.K_d] or keys[pygame.K_RIGHT]:
         move_tet(grid, focused_tet, cell_owners, 1)
         return True
-    elif keys[pygame.K_s]:
+    elif keys[pygame.K_s] or keys[pygame.K_DOWN]:
         quick_drop(grid, focused_tet, cell_owners, False)
         return True
 
@@ -177,7 +177,7 @@ def pygame_event_handler(event, grid, focused_tet: Tetromino, cell_owners, piece
     elif event.key == pygame.K_q:
         rotation.rotate_tet(grid, focused_tet, cell_owners, False)
         return True
-    elif event.key == pygame.K_w:
+    elif event.key == pygame.K_w or event.key == pygame.K_UP:
         quick_drop(grid, focused_tet, cell_owners, True)
         return True
     elif event.key == pygame.K_h:
