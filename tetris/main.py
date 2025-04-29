@@ -139,40 +139,23 @@ def update(
 
 if __name__ == "__main__":
     while True:
-        #reset_game()
-        
-        """
-        # Set up functions
-        grid = utility_funcs.create_grid(width, height, False)
-        cell_owners = utility_funcs.create_grid(width, height, None)
-        gravity.set_grid_size(width, height)
-        movement.set_grid_size(width, height)
-        rotation.set_grid_size(width, height)
-        draw_game.set_grid_size(width, height)
-        shuffle(piece_sequence)
-        """
-
         start_game()
 
-        # Stuff for testing
-        focused_tetromino = Tetromino([[0, 1], [1, 1], [2, 1], [3, 1]])#, [4, 1], [5, 1], [6, 1], [7, 1], [8, 1]])
+        focused_tetromino = utility_funcs.spawn_tetromino(grid, focused_tetromino, piece_sequence, all_tetrominos, cell_owners)[1]
         all_tetrominos.append(focused_tetromino)
         utility_funcs.add_tetromino(focused_tetromino, grid, cell_owners)
 
-        #utility_funcs.hold_piece(piece_sequence)
-        #print(f"Piece sequence: {piece_sequence}")
-        #sleep(3)
-        
+        #TODO: Add a start menu.
 
-        #focused_tetromino = utility_funcs.start_game(grid, focused_tetromino, piece_sequence, all_tetrominos, cell_owners)
-
+        # Main game loop
         clock = pygame.time.Clock() 
         running: bool = True
         while running:
             frame += 1
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    running = False 
+                    running = False
+                    pygame.quit() 
                 elif event.type == pygame.KEYDOWN:
                     if movement.pygame_event_handler(event, grid, focused_tetromino, cell_owners, piece_sequence, all_tetrominos):
                         movement.update_ghost_piece_2(grid, focused_tetromino, ghost_piece_tiles)
@@ -190,6 +173,8 @@ if __name__ == "__main__":
             if not continue_game:
                 break
         
+        
+
         print("Player lost lollllll")
         sleep(3)
         
