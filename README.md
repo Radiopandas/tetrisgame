@@ -9,7 +9,7 @@ E - Rotate clockwise\
 Q - Rotate counter-clockwise
 
 ## TODO:
-Comments/documentation
-Start menu
-'Loading screen thingy'
+Comments/documentation \
+Start menu \
+'Loading screen thingy' \
 Make the game look prettier
