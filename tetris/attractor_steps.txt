@@ -1,14 +1,54 @@
-    #
-1
+    # Hard coded instructions for the attractor to follow
+    # Every line should contain 1 character representing the command you want to be run
+    # For movement commands(sideways movement, quick/hard drop, rotation) use the relevant keys
+    # To specify what piece spawns, use the relevant number
+    # To add delay, use any character that isn't an actual command, or use blank lines
+    # Any command containing a '#' is skipped when running the attractor
+3
+e
+a
 a
 a
 a
 w
     #
+2
+a
+w
+    #
+7
+e
+a
+a
+a
+w
+    #
+5
+e
+w
+    #
 1
+q
+a
+w
+    #
+4
 a
 a
 a
+a
+w
+    #
+6
+q
+d
+w
+    #
+    # Second set of 7 tiles
+    #
+4
+d
+d
 w
     #
 1
@@ -17,12 +57,255 @@ d
 d
 w
     #
+2
+q
+d
+d
+d
+d
+d
+w
+    #
+3
+q
+d
+d
+w
+    #
+6
+q
+d
+d
+d
+d
+w
+    #
+5
+e
+d
+d
+d
+d
+w
+    #
+7
+q
+a
+w
+    #
+    # Third set of 7 tiles
+    #
+2
+e
+w
+    #
+6
+e
+a
+a
+a
+w
+    #
+5
+e
+d
+d
+d
+d
+w
+    #
+3
+q
+d
+d
+d
+w
+    #
+7
+a
+a
+w
+    #
 1
-d
-d
 d
 w
     #
 4
+a
 w
     #
+    # Fourth set of 7 tiles
+    #
+2
+e
+a
+a
+a
+a
+w
+    #
+3
+q
+d
+w
+    #
+4
+d
+d
+w
+    #
+5
+q
+d
+d
+d
+d
+d
+w
+    #
+6
+e
+e
+a
+a
+w
+    #
+1
+q
+a
+a
+a
+a
+w
+    #
+7
+d
+d
+w
+    #
+    # Fifth set of 7 tiles. Note that this set isn't proper & replaces the '6' with '1'
+    #
+4
+d
+d
+d
+w
+    #
+3
+e
+e
+d
+d
+d
+w
+    #
+7
+a
+a
+a
+w
+    #
+2
+q
+q
+a
+a
+a
+w
+    #
+5
+w
+    #
+3
+e
+e
+w
+    #
+1
+e
+d
+d
+d
+d
+w
+
+    # Stalls
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

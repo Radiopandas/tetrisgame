@@ -152,10 +152,10 @@ def update(
                     movement.update_ghost_piece_2(grid, focused_tet, ghost_piece_tiles)
                 elif next_input == "w":
                     movement.process_given_input(next_input, grid, focused_tetromino, cell_owners, piece_sequence, all_tetrominos, ghost_piece_tiles)
-                    attractor_needs_to_wait = True
+                    #attractor_needs_to_wait = True
                 else:
                     movement.process_given_input(next_input, grid, focused_tetromino, cell_owners, piece_sequence, all_tetrominos, ghost_piece_tiles)
-                movement_cooldown += 10
+                movement_cooldown += 1 # TESTING ONLY, replace with 10 once done creating the attractor steps
             elif movement_cooldown > 0:
                 movement_cooldown -= 1
         else:
@@ -173,10 +173,10 @@ if __name__ == "__main__":
         
 
         #TODO: Add a start menu.
-        piece_sequence.insert(0, 1)
-        focused_tetromino = utility_funcs.spawn_tetromino(grid, focused_tetromino, piece_sequence, all_tetrominos, cell_owners)[1]
-        all_tetrominos.append(focused_tetromino)
-        utility_funcs.add_tetromino(focused_tetromino, grid, cell_owners)
+        #piece_sequence.insert(0, 1)
+        #focused_tetromino = utility_funcs.spawn_tetromino(grid, focused_tetromino, piece_sequence, all_tetrominos, cell_owners)[1]
+        #all_tetrominos.append(focused_tetromino)
+        #utility_funcs.add_tetromino(focused_tetromino, grid, cell_owners)
 
         display_start_menu = True
         background_iter = 0
@@ -270,7 +270,7 @@ draw_next_piece - draw_grid
 draw_gui - draw_grid
 
 Make pretty
-Add a home_screen sort of thing
+Make the attractor change the next_pieces display.
 
 
 """
