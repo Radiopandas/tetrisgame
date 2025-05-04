@@ -59,6 +59,7 @@ def reset_game():
     movement.reset()
     gravity.reset()
     draw_game.reset()
+    attractor.reset()
 
     # Resets local variables
     global width, height, focused_tetromino, grid, cell_owners, all_tetrominos, \
@@ -155,7 +156,7 @@ def update(
                     #attractor_needs_to_wait = True
                 else:
                     movement.process_given_input(next_input, grid, focused_tetromino, cell_owners, piece_sequence, all_tetrominos, ghost_piece_tiles)
-                movement_cooldown += 3 # TESTING ONLY, replace with 10 once done creating the attractor steps
+                movement_cooldown += 7 # TESTING ONLY, replace with 10 once done creating the attractor steps
             elif movement_cooldown > 0:
                 movement_cooldown -= 1
         else:
@@ -174,7 +175,6 @@ if __name__ == "__main__":
         display_start_menu = True
         background_iter = 0
         piece_sequence = attractor.setup_piece_sequence(piece_sequence)
-        attractor.attractor_step = 0
         while display_start_menu:
             
             draw_game.screen.fill(draw_game.background_colour)

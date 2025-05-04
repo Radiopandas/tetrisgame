@@ -4,6 +4,8 @@ steps: list[str] = []
 
 spawn_instructions: list[str] = []
 
+var_defaults: list = [0]
+
 # Converts the instructions file to a list
 with open("attractor_steps.txt") as file:
     steps = file.readlines()
@@ -29,10 +31,10 @@ with open("attractor_steps.txt") as file:
 
 print(f"steps: {steps}")
 
-a = 1
-
-def return_attractor_spawn_steps():
-    return spawn_instructions
+def reset():
+    global attractor_step
+    attractor_step = var_defaults[0]
+    pass
 
 def setup_piece_sequence(piece_sequence: list[int]):
     

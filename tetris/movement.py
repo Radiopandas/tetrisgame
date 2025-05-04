@@ -13,7 +13,7 @@ ghost_piece: Tetromino = None
 width: int = 0
 height: int = 0
 
-var_defaults = None, 0, 0
+var_defaults = [None, 0, 0]
 
 def reset():
     global ghost_piece, width, height, var_defaults
