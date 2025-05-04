@@ -152,7 +152,6 @@ def draw_next_pieces(next_pieces: list[int], board_offset: int):
 
 def draw_held_piece(held_piece: int, board_offset: int):
     if not held_piece:
-        print("Hold piece == 0")
         return
         
     # Gets the pattern of the held piece
@@ -182,8 +181,8 @@ def draw_game(grid, cell_owners, board_offset, ghost_tiles, score, lines_cleared
 
     draw_held_piece(held_piece, board_offset)
 
-    # Flips the updated display onto the screen
-    pygame.display.flip()
+    #draw_grid_lines(20)
+
 
 def draw_start_menu(board_offset: int) -> bool:
     global screen_w
@@ -195,16 +194,19 @@ def draw_start_menu(board_offset: int) -> bool:
     screen_midpoint = screen_w // 2
 
     # Draw the title
-    title_position = (screen_midpoint - 50, 100)
+    title_position = (screen_midpoint - 126, 100)
     title_display = title_font.render("SIRTET", False, (255, 255, 255), (155, 155, 155))
 
     screen.blit(title_display, title_position)
     
     
     # Prints instructions ('Press enter to begin')
+    instructions_position = (screen_midpoint - 281, 300)
+    instructions_display = title_font.render("Press \'0\' to begin", False, (255, 255, 255), (155, 155, 155))
 
+    screen.blit(instructions_display, instructions_position)
 
-    pygame.display.flip()
+    #draw_grid_lines(20)
     
     for event in pygame.event.get():
         if event.type == pygame.KEYDOWN:
@@ -214,3 +216,20 @@ def draw_start_menu(board_offset: int) -> bool:
         elif event.type == pygame.QUIT:
             pygame.quit()
     return False
+
+def draw_grid_lines(h_lines):
+    spacing = screen_w // h_lines
+
+    #print(f"Gridline spacing: {spacing}")
+
+    v_lines = screen_h // spacing
+
+    for x in range(h_lines):
+        pygame.draw.line(screen, (0, 0, 0), (spacing * x, 0), (spacing * x, screen_h), width = 5)
+    
+    for y in range(v_lines):
+        pygame.draw.line(screen, (0, 0, 0), (0, spacing * y), (screen_w, spacing * y), width = 5)
+    
+    for event in pygame.event.get():
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            print(pygame.mouse.get_pos())

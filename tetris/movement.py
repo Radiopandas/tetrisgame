@@ -2,6 +2,7 @@ from tetromino import Tetromino
 import utility_funcs
 import rotation
 from time import sleep
+from copy import deepcopy
 import main
 import pygame
 
@@ -206,6 +207,12 @@ def pygame_event_handler(event, grid, focused_tet: Tetromino, cell_owners, piece
 
 def update_ghost_piece_2(grid, focused_tet: Tetromino, ghost_tiles: list):
     global ghost_piece
+
+    if not focused_tet.can_move:
+        return
+    if len(focused_tet.cells) == 0:
+        return
+
     # Initialises a ghost piece if there isn't one
     if not ghost_piece:
         ghost_piece = Tetromino([])
@@ -216,7 +223,7 @@ def update_ghost_piece_2(grid, focused_tet: Tetromino, ghost_tiles: list):
             if cell:
                 ghost_tiles[y][x] = False
     
-    ghost_piece.cells = focused_tet.cells
+    ghost_piece.cells = deepcopy(focused_tet.cells)
 
     # Gets the columns that the ghost piece is in.
     ghost_columns: list = []
@@ -262,20 +269,36 @@ def update_ghost_piece_2(grid, focused_tet: Tetromino, ghost_tiles: list):
         x, y = cell[0], cell[1]
         ghost_tiles[y][x] = True
 
-    #print(f"Ghost columns: {ghost_columns}")
-    #print(f"Lowest ghost cells: {lowest_ghost_cells}")
-    #print(f"Ghost column heights: {ghost_column_heights}")
-    #print(f"Ghost column height diffs: {height_diffs}")
-    #sleep(10)
+
+# Function used for the attractor.
+def process_given_input(
+        event: str, 
+        grid: list[list[bool]],
+        focused_tet: Tetromino, 
+        cell_owners: list[list[Tetromino | None]], 
+        piece_sequence: list[int], 
+        all_tets: list[Tetromino],
+        ghost_tiles: list[list[bool]]
+    ):
+    match event:
+        case "a":
+            move_tet(grid, focused_tet, cell_owners, -1)
+
+        case "d":
+            move_tet(grid, focused_tet, cell_owners, 1)
+
+        case "w":
+            quick_drop(grid, focused_tet, cell_owners, True)
+        case "s":
+            quick_drop(grid, focused_tet, cell_owners, False)
+        case "e":
+            rotation.rotate_tet(grid, focused_tet, cell_owners, True)
+        case "q":
+            rotation.rotate_tet(grid, focused_tet, cell_owners, False)
+        case "h":
+            print("Sorry, holding not implemented yet.")
+        case _:
+            print("Not a valid input oopsie you done fucked up you bloody idiot!!!")
+    update_ghost_piece_2(grid, focused_tet, ghost_tiles)
 
 
-
-
-"""
-New update_ghost_piece
-
-For every column that has a ghost_tile, find the highest blocked cell
-Find the distance between the lowest ghost tile in each column and this blocked cell
-Find the minimum of these values, then move everything down by that amount
-
-"""
