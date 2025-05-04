@@ -146,7 +146,7 @@ def update(
             if movement_cooldown == 0:
                 next_input: str = attractor.return_attractor_input()
                 if next_input in ["1", "2", "3", "4", "5", "6", "7"]:
-                    piece_sequence.insert(0, int(next_input))
+                    #piece_sequence.insert(0, int(next_input))
                     spawn_results = utility_funcs.spawn_tetromino_2(grid, focused_tet, piece_sequence, all_tets, cell_owners)
                     focused_tetromino = spawn_results[1]
                     movement.update_ghost_piece_2(grid, focused_tet, ghost_piece_tiles)
@@ -155,7 +155,7 @@ def update(
                     #attractor_needs_to_wait = True
                 else:
                     movement.process_given_input(next_input, grid, focused_tetromino, cell_owners, piece_sequence, all_tetrominos, ghost_piece_tiles)
-                movement_cooldown += 1 # TESTING ONLY, replace with 10 once done creating the attractor steps
+                movement_cooldown += 3 # TESTING ONLY, replace with 10 once done creating the attractor steps
             elif movement_cooldown > 0:
                 movement_cooldown -= 1
         else:
@@ -170,17 +170,13 @@ if __name__ == "__main__":
     while True:
         start_game()
 
-        
-
-        #TODO: Add a start menu.
-        #piece_sequence.insert(0, 1)
-        #focused_tetromino = utility_funcs.spawn_tetromino(grid, focused_tetromino, piece_sequence, all_tetrominos, cell_owners)[1]
-        #all_tetrominos.append(focused_tetromino)
-        #utility_funcs.add_tetromino(focused_tetromino, grid, cell_owners)
 
         display_start_menu = True
         background_iter = 0
+        piece_sequence = attractor.setup_piece_sequence(piece_sequence)
+        attractor.attractor_step = 0
         while display_start_menu:
+            
             draw_game.screen.fill(draw_game.background_colour)
             draw_game.draw_game(grid, cell_owners, 13, ghost_piece_tiles, score, lines_cleared, piece_sequence, utility_funcs.held_piece)
             display_start_menu = False if draw_game.draw_start_menu(13) else True
@@ -197,6 +193,10 @@ if __name__ == "__main__":
                     pygame.quit()
             
             dt = clock.tick(60) / 1000
+
+            if attractor.attractor_step == len(attractor.steps) - 1:
+                #attractor.attractor_step = 0
+                piece_sequence = attractor.setup_piece_sequence(piece_sequence)
 
         start_game()
         focused_tetromino = utility_funcs.spawn_tetromino(grid, focused_tetromino, piece_sequence, all_tetrominos, cell_owners)[1]
@@ -272,5 +272,6 @@ draw_gui - draw_grid
 Make pretty
 Make the attractor change the next_pieces display.
 
+Whenever the attractor loops again, it needs to reinsert the pieces into piece_sequence
 
 """
