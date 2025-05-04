@@ -1,13 +1,12 @@
 from tetromino import Tetromino
 import utility_funcs
 import rotation
-from time import sleep
 from copy import deepcopy
 import pygame
 
 pygame.init()
 
-ghost_piece: Tetromino = None
+ghost_piece: Tetromino
 
 width: int = 0
 height: int = 0
