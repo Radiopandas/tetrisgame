@@ -17,8 +17,7 @@ class Tetromino:
     # Prevents gravity being applied multiple times
     has_moved: bool = False
 
-    # What type of piece it is (1: I, 2: J, 3: L, 4: O, 5: S, 6: T or 7: Z)
-    # a 'tet_type' of 0 represents miscellaneous pieces such as lone cells.
+    # What type of piece it is (1: I, 2: J, 3: L, 4: O, 5: S, 6: T or 7: Z).
     tet_type: int = 0
 
     # Determines the layout of the piece for rotation
@@ -32,10 +31,16 @@ class Tetromino:
         return f"Tet with cells: {self.cells}"
 
     # Checks if the cells in the tetromino are split up
-    def get_split_cell(self):
+    def get_split_cell(self) -> list[int]:
+        """Returns the cell that is split up from the main Tetromino
+        if it exists."""
+        # If there is only one cell total, it can't possibly be split up.
         if len(self.cells) == 1:
             return []
         
+        # Every cell checks for another cell in each of the 4 directions.
+        # If it doesn't find another cell, it must be the split off cell.
+        # If every cell is connected to another, returns an empty cell.
         for cell in self.cells:
             is_connected: bool = False
             x, y = cell[0], cell[1]
