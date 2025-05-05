@@ -104,7 +104,7 @@ def spawn_tetromino(
         piece_sequence: list[int],
         all_tets: list[Tetromino],
         cell_owners: list[list[Tetromino | None]]
-    ) -> list[bool | Tetromino]:
+    ) -> tuple[bool, Tetromino]:
     """Spawns and returns a new Tetromino, as well as whether the spawn area
     is obstructed by other pieces."""
 
@@ -113,7 +113,8 @@ def spawn_tetromino(
 
     # Checks that spawning succeeded (Spawn area wasn't obstructed).
     if not spawn_success:
-        return [False, focused_tetromino]
+        results = (False, focused_tetromino)
+        return results
 
     # Turns them into a tetromino
     new_tet = Tetromino(new_tet_cells)
@@ -121,7 +122,8 @@ def spawn_tetromino(
     all_tets.append(new_tet)
     add_tetromino(new_tet, grid, cell_owners)
 
-    return [True, new_tet]
+    results = (True, new_tet)
+    return results
 
 
 def clear_tetromino(
