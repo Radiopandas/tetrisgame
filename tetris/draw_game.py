@@ -269,8 +269,6 @@ def draw_start_menu(board_offset: int) -> bool:
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_0:
                 return True
-        elif event.type == pygame.QUIT:
-            pygame.quit()
     return False
 
 def draw_grid_lines(h_lines: int):

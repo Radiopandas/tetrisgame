@@ -37,6 +37,9 @@ movement_cooldown: int = 0
 piece_spawn_cooldown: int = 0
 frame: int = 0
 
+# Only to be used when displaying the game to people
+can_quit: bool = True
+
 all_vars = [
     width, height, focused_tetromino, grid, cell_owners, all_tetrominos,
     ghost_piece_tiles, score, lines_cleared, gravity_cooldown,
@@ -51,7 +54,7 @@ var_defaults = [
 ]
 
 def reset_game():
-    """Resets all local variables and calls reset() on all other scripts."""
+    """Resets all local global variables and calls reset() on all other scripts."""
 
     # Resets the variables in all loaded modules
     utility_funcs.reset()
@@ -75,7 +78,7 @@ def reset_game():
 
 
 def start_game():
-    """Resets everything then calls several functions"""
+    """Resets everything then calls several setup functions."""
 
     global grid, cell_owners, width, height, piece_sequence
 
@@ -108,78 +111,111 @@ def update(
     if not keep_playing:
         return
 
+    # Calls the gravity functions, as well as several related functions
+    # periodically instead of every single frame.
     if frame % gravity_rate == 0:
+        # Applies gravity to every piece, then updates the ghost piece
+        # To account for the new changes.
         draw_game.print_grid(grid, ghost_piece_tiles)
         gravity.apply_gravity(grid, all_tets, cell_owners)
-        movement.update_ghost_piece_2(grid, focused_tet, ghost_piece_tiles)
+        movement.update_ghost_piece(grid, focused_tet, ghost_piece_tiles)
         
+        # Checks for and clears filled rows.
         lines_just_cleared = line_clearing.check_rows(grid, cell_owners, all_tets)
+        # Increments the number of lines cleared, updates the score and potentially
+        # updates the gravity rate.
         score += utility_funcs.update_scores(lines_just_cleared)
         lines_cleared += lines_just_cleared
         if gravity_rate > 10:
             gravity_cooldown -= utility_funcs.update_gravity_rate(lines_cleared, lines_just_cleared)
-        movement.update_ghost_piece_2(grid, focused_tet, ghost_piece_tiles)
+        movement.update_ghost_piece(grid, focused_tet, ghost_piece_tiles)
     
+    # If the current focused piece can't move, it must be on the ground
+    # Thus it needs to spawn a new piece for the player to control.
+    # Overridden by display_start_menu, since it uses its own functions
+    # to do things such as spawning pieces.
     if not focused_tet.can_move and piece_spawn_cooldown == 0 and not display_start_menu:
-        spawn_results = utility_funcs.spawn_tetromino_2(grid, focused_tet, piece_sequence, all_tets, cell_owners)
+        # Attempts to spawn a new piece, then assigns it to focused_tetromino.
+        spawn_results = utility_funcs.spawn_tetromino(grid, focused_tet, piece_sequence, all_tets, cell_owners)
         continue_game = spawn_results[0]
         focused_tetromino = spawn_results[1]
-        movement.update_ghost_piece_2(grid, focused_tet, ghost_piece_tiles)
+        # As always, updates the ghost piece after messing with the pieces.
+        movement.update_ghost_piece(grid, focused_tet, ghost_piece_tiles)
+        # Adds a cooldown to prevent pieces being spammed.
         piece_spawn_cooldown = 20
 
+        # Allows piece holding to be used again.
         utility_funcs.piece_has_been_held = False
 
+    # Increments the piece spawning cooldown every frame.
     if piece_spawn_cooldown > 0:  
         piece_spawn_cooldown -= 1
+    
+    # 
     if not display_start_menu:
         if movement_cooldown == 0:
-            
-            if movement.get_movement_2(grid, focused_tetromino, cell_owners):
+            # Gets player inputs, then calls other functions if movement
+            # occurred / tried to occur.
+            if movement.get_movement(grid, focused_tetromino, cell_owners):
 
-                movement.update_ghost_piece_2(grid, focused_tet, ghost_piece_tiles)
+                movement.update_ghost_piece(grid, focused_tet, ghost_piece_tiles)
                 draw_game.print_grid(grid, ghost_piece_tiles)
+                # Prevents pieces being moved too quickly, especially when 
+                # the input is being held.
                 movement_cooldown += 7
+        
         elif movement_cooldown > 0:
             movement_cooldown -= 1
     else:
-        # Need to create a function in movement.py that mimics the current input handlers, except it gets passed an input
-        if not attractor_needs_to_wait:
-            if movement_cooldown == 0:
-                next_input: str = attractor.return_attractor_input()
-                if next_input in ["1", "2", "3", "4", "5", "6", "7"]:
-                    #piece_sequence.insert(0, int(next_input))
-                    spawn_results = utility_funcs.spawn_tetromino_2(grid, focused_tet, piece_sequence, all_tets, cell_owners)
-                    focused_tetromino = spawn_results[1]
-                    movement.update_ghost_piece_2(grid, focused_tet, ghost_piece_tiles)
-                elif next_input == "w":
-                    movement.process_given_input(next_input, grid, focused_tetromino, cell_owners, piece_sequence, all_tetrominos, ghost_piece_tiles)
-                    #attractor_needs_to_wait = True
-                else:
-                    movement.process_given_input(next_input, grid, focused_tetromino, cell_owners, piece_sequence, all_tetrominos, ghost_piece_tiles)
-                movement_cooldown += 7 # TESTING ONLY, replace with 10 once done creating the attractor steps
-            elif movement_cooldown > 0:
-                movement_cooldown -= 1
-        else:
-            if frame % gravity_rate == 0:
-                attractor_needs_to_wait = False
+        # Implements the attractor whenever the start menu is open.
+        # Cooldown is to prevent the attractor running in ~4 seconds.
+        # The cooldown is also required to allow gravity 
+        # and line clearing time to be run. 
+        if movement_cooldown == 0:
+            next_input: str = attractor.return_attractor_input()
+            # Seperates out piece spawning inputs from movement inputs.
+            if next_input in ["1", "2", "3", "4", "5", "6", "7"]:
+                spawn_results = utility_funcs.spawn_tetromino(
+                    grid, focused_tet, piece_sequence, 
+                    all_tets, cell_owners
+                )
+                focused_tetromino = spawn_results[1]
+                movement.update_ghost_piece(grid, focused_tet, ghost_piece_tiles)
+            else:
+                movement.process_given_input(
+                    next_input, grid, focused_tetromino, 
+                    cell_owners, piece_sequence, all_tetrominos, 
+                    ghost_piece_tiles
+                )
+            movement_cooldown += 7 # TESTING ONLY, replace with 7 once done creating the attractor steps
+        elif movement_cooldown > 0:
+            movement_cooldown -= 1
 
 
 
 if __name__ == "__main__":
-
     clock = pygame.time.Clock() 
-    while True:
+    # Runs basically forever
+    run_game: bool = True
+    while run_game:
+        # Resets (almost) all variables before running the game
         start_game()
 
-
+        # Displays the start menu and the attractor until the user
+        # presses <key> to start the game
         display_start_menu = True
         background_iter = 0
         piece_sequence = attractor.setup_piece_sequence(piece_sequence)
         while display_start_menu:
-            
+            # Draws the start menu and attractor onto the screen.
             draw_game.screen.fill(draw_game.background_colour)
-            draw_game.draw_game(grid, cell_owners, 13, ghost_piece_tiles, score, lines_cleared, piece_sequence, utility_funcs.held_piece)
+            draw_game.draw_game(
+                grid, cell_owners, 13, ghost_piece_tiles, 
+                score, lines_cleared, piece_sequence, 
+                utility_funcs.held_piece
+            )
             display_start_menu = False if draw_game.draw_start_menu(13) else True
+
 
             frame += 1
             update(frame, grid, all_tetrominos, continue_game, gravity_cooldown, cell_owners, focused_tetromino, piece_sequence)
@@ -188,17 +224,25 @@ if __name__ == "__main__":
             pygame.display.flip()
 
             # Allows you to quit whilst the attractor runs
+            # TODO FIX THIS IT IS BROKEN
             for event in pygame.event.get():
-                if event.type == pygame.QUIT:
+                if event.type == pygame.QUIT and can_quit:
                     pygame.quit()
+                    run_game = False
+                    break
             
+            # Waits ~1/60 seconds to try and make the game run at 60 fps.
             dt = clock.tick(60) / 1000
 
+            # Reinserts the attractor's piece sequence into 'piece_sequence'
+            # whenever the attractor is about to loop.
             if attractor.attractor_step == len(attractor.steps) - 1:
-                #attractor.attractor_step = 0
                 piece_sequence = attractor.setup_piece_sequence(piece_sequence)
-
+        
+        # Resets (almost) all variables to undo changes made by the attractor.
         start_game()
+        
+        # Spawns the starting piece
         focused_tetromino = utility_funcs.spawn_tetromino(grid, focused_tetromino, piece_sequence, all_tetrominos, cell_owners)[1]
         all_tetrominos.append(focused_tetromino)
         utility_funcs.add_tetromino(focused_tetromino, grid, cell_owners)
@@ -210,33 +254,35 @@ if __name__ == "__main__":
         frame = 0
         while running:
             frame += 1
+            # Uses pygame.event.get() to get pygame.QUIT events and
+            # any controls that can't be held down, such as rotation.
             for event in pygame.event.get():
-                if event.type == pygame.QUIT:
+                if event.type == pygame.QUIT and can_quit:
                     running = False
-                    pygame.quit() 
+                    pygame.quit()
                 elif event.type == pygame.KEYDOWN:
                     if movement.pygame_event_handler(event, grid, focused_tetromino, cell_owners, piece_sequence, all_tetrominos):
-                        movement.update_ghost_piece_2(grid, focused_tetromino, ghost_piece_tiles)
-                        movement.update_ghost_piece_2(grid, focused_tetromino, ghost_piece_tiles)
-                        pass
+                        movement.update_ghost_piece(grid, focused_tetromino, ghost_piece_tiles)
             
+            # Flushes the screen then draws the game.
             draw_game.screen.fill(draw_game.background_colour)
-
             draw_game.draw_game(grid, cell_owners, 13, ghost_piece_tiles, score, lines_cleared, piece_sequence, utility_funcs.held_piece)
-            # Flips the updated display onto the screen
+
+            # Flips the updated display onto the screen.
             pygame.display.flip()
 
+            # Runs all the functions that operate the game.
             update(frame, grid, all_tetrominos, continue_game, gravity_cooldown, cell_owners, focused_tetromino, piece_sequence)
 
+            # Waits ~1/60 seconds to try and make the game run at 60 fps.
             dt = clock.tick(60) / 1000
 
             if not continue_game:
                 break
-
+        
+        # Funny message whenever the player loses.
         print("Player lost lollllll")
         sleep(3)
-        
-    pygame.quit()
 
 
 """
@@ -273,5 +319,16 @@ Make pretty
 Make the attractor change the next_pieces display.
 
 Whenever the attractor loops again, it needs to reinsert the pieces into piece_sequence
+
+Documentation
+ - attractor.py DONE
+ - draw_game.py DONE
+ - gravity.py DONE
+ - line_clearing.py DONE
+ - main.py 
+ - movement.py DONE
+ - rotation.py DONE
+ - tetromino.py DONE
+ - utility_funcs.py DONE
 
 """
