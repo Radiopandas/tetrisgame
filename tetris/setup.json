@@ -1,0 +1,14 @@
+{
+    "controls": {
+        "move_left": "a",
+        "move_right": "d",
+        "soft_drop": "s",
+        "hard_drop": ["w"],
+        "rotate_left": [" ", "q"],
+        "rotate_right": [" ", "e"],
+        "hold_piece": "h"
+    },
+    "displayed_controls": {
+        "Move sideways": "A/D"
+    }
+}

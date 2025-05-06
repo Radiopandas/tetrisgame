@@ -1,6 +1,7 @@
 from tetromino import Tetromino
 import utility_funcs
 import rotation
+import json_parser
 from copy import deepcopy
 import pygame
 
@@ -12,6 +13,8 @@ width: int = 0
 height: int = 0
 
 var_defaults = [None, 0, 0]
+
+controls = json_parser.get_file_data('setup.json', 'controls')
 
 def reset():
     """Resets all necessary local variables."""
@@ -131,29 +134,32 @@ def quick_drop(
 def get_movement(grid, focused_tet: Tetromino, cell_owners):
     """Used to get keyboard inputs that can be repeated by being held down."""
     keys = pygame.key.get_pressed()
-    if keys[pygame.K_a] or keys[pygame.K_LEFT]:
+    
+    # Note: ord() converts unicode characters to decimal form
+    # Which is what they are stored as by default in pygame
+    if keys[ord(controls["move_left"])]:
         move_tet(grid, focused_tet, cell_owners, -1)
         return True
-    elif keys[pygame.K_d] or keys[pygame.K_RIGHT]:
+    if keys[ord(controls["move_right"])]:
         move_tet(grid, focused_tet, cell_owners, 1)
         return True
-    elif keys[pygame.K_s] or keys[pygame.K_DOWN]:
+    if keys[ord(controls["soft_drop"])]:
         quick_drop(grid, focused_tet, cell_owners, False)
         return True
 
 
 def pygame_event_handler(event, grid, focused_tet: Tetromino, cell_owners, piece_sequence: list[int], all_tets: list[Tetromino]) -> bool:
     """Used to get keyboard inputs that can't be repeated by being held down"""
-    if event.key == pygame.K_e:
+    if event.unicode in controls["rotate_right"]:
         rotation.rotate_tet(grid, focused_tet, cell_owners, True)
         return True
-    elif event.key == pygame.K_q:
+    elif event.unicode in controls["rotate_left"]:
         rotation.rotate_tet(grid, focused_tet, cell_owners, False)
         return True
-    elif event.key == pygame.K_w or event.key == pygame.K_UP:
+    elif event.unicode in controls["hard_drop"]:
         quick_drop(grid, focused_tet, cell_owners, True)
         return True
-    elif event.key == pygame.K_h:
+    elif event.unicode in controls["hold_piece"]:
         # Tries to hold the piece
         hold_successful = utility_funcs.hold_piece(piece_sequence, focused_tet)
         if hold_successful:

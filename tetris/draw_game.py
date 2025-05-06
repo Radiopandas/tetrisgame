@@ -353,8 +353,6 @@ def draw_start_menu(board_offset: int) -> bool:
                     return True
         return False
 
-        
-
 
 def draw_grid_lines(h_lines: int):
     """Draws a grid on the screen in solid black lines for the sake

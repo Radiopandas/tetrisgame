@@ -8,6 +8,7 @@ import movement
 import pygame
 import copy
 import attractor
+import json_parser
 from random import shuffle
 
 from time import sleep
@@ -195,6 +196,12 @@ def update(
 
 if __name__ == "__main__":
     clock = pygame.time.Clock() 
+
+    controls = json_parser.get_file_data('setup.json', 'controls')
+    print(f"Controls: {controls}")
+
+    sleep(1)
+
     # Runs basically forever
     run_game: bool = True
     while run_game:
