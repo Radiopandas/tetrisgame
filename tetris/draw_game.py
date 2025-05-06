@@ -36,18 +36,33 @@ screen = pygame.display.set_mode((screen_w, screen_h))
 
 cell_width: int = 0
 
-# Sets up the font.
-font_size: int = 0
+# Sets up the fonts.
 base_font = None
+base_font_size: int = 0
+
+title_font = None
+title_font_size: int = 100
+
+piece_display_font = None
+piece_display_font_size: int = 50
+
 controls_font = None
 controls_font_size: int = 50
 
+controls_title_font = None
+controls_title_font_size: int = 70
 
-background_colour = pygame.Color(20, 20, 20)
+
+
+background_colour = pygame.Color(0, 0, 0)
 
 var_defaults = [0, 0, 0, 0, None]
 
 game_controls: dict = {}
+
+###################################################################################################
+#--------------------------------------- Utility Functions ---------------------------------------#
+###################################################################################################
 
 def get_controls():
     global game_controls
@@ -62,13 +77,13 @@ def get_controls():
 # Reads controls.txt to get all the controls that will need to be displayed.
 get_controls()
 
-game_controls = json_parser.get_file_data('setup.json', 'displayed_controls')
+game_controls = json_parser.get_file_data('settings.json', 'displayed_controls')
 
 def reset():
     """Resets all necessary local global variables."""
-    global width, height, cell_width, font_size, base_font, var_defaults
+    global width, height, cell_width, base_font_size, base_font, var_defaults
 
-    width, height, cell_width, font_size, base_font = var_defaults
+    width, height, cell_width, base_font_size, base_font = var_defaults
 
 
 def set_draw_colour(piece_type: int) -> pygame.Color:
@@ -116,6 +131,10 @@ def print_grid(
     
     print("┗" + "━━" * len(grid[0]) + "┛")
 
+###################################################################################################
+#---------------------------------- Main Game Drawing Functions ----------------------------------#
+###################################################################################################
+
 
 def draw_grid(
         grid: list[list[bool]],
@@ -131,7 +150,7 @@ def draw_grid(
     # Width of the area that the actual game board is printed in
 
     
-    # Prints the tetrominos
+    # Draws the tetrominos
     for y, row in enumerate(grid):
         for x, cell in enumerate(row):
             # If a cell isn't empty, gets relevant colour, calculates the 
@@ -148,7 +167,7 @@ def draw_grid(
                     new_rect = pygame.Rect(cell_width * (x + 1 + board_offset), cell_width * (y + 1), cell_width, cell_width)
                     pygame.draw.rect(screen, colour, new_rect)
     
-    # Prints the grid outline
+    # Draws the grid outline
     outline_rect = pygame.Rect(
         ((board_offset + 1) * cell_width - outline_thickness), 
         cell_width - outline_thickness, 
@@ -161,32 +180,34 @@ def draw_grid(
 def draw_stats(board_offset: int, score: int, lines: int, level: int):
     """Draws the current level, lines cleared and score using pygame
     text displays."""
-    global base_font, font_size
+    global base_font, base_font_size
     # Initialises the font for displaying the text.
     if not base_font:
-        font_size = screen_h // (height + 2)
-        base_font = pygame.font.SysFont('Lexus', font_size)
+        base_font_size = screen_h // (height + 2)
+        if 50 > base_font_size:
+            base_font_size = 50
+        base_font = pygame.font.SysFont('Lexus', base_font_size)
     
     # How many pixels from the left the stats area should be offset.
     text_area_offset = cell_width * (width + board_offset + 2)
 
     # Calculates the positions to display each stat.
-    level_position = (text_area_offset + cell_width, 3 * cell_width)
-    lines_position = (text_area_offset + cell_width, 5 * cell_width)
-    score_position = (text_area_offset + cell_width, 7 * cell_width)
+    level_position = (text_area_offset + cell_width, 3 * cell_width - 20)
+    lines_position = (text_area_offset + cell_width, 5 * cell_width - 20)
+    score_position = (text_area_offset + cell_width, 7 * cell_width - 20)
     
     # Renders all the stats.
     level_display = base_font.render(
         f"Level: {level:02}", False, 
-        (255, 255, 255), (155, 155, 155)
+        (255, 255, 255)
     )
     lines_display = base_font.render(
         f"Lines cleared: {lines:03}", False, 
-        (255, 255, 255), (155, 155, 155)
+        (255, 255, 255)
     )
     score_display = base_font.render(
         f"Score: {score:05}", False, 
-        (255, 255, 255), (155, 155, 155)
+        (255, 255, 255)
     )
 
     # Merges them all onto the screen.
@@ -199,6 +220,8 @@ def draw_next_pieces(next_pieces: list[int], board_offset: int):
     """Draws the next 3 pieces in 'piece_sequence'(main.py) 
     using pygame.draw.rect()."""
 
+    global piece_display_font, piece_display_font_size
+
     for i in range(len(next_pieces)):
         # Creates a grid of which tiles to draw
         pattern: list = utility_funcs.tet_to_pattern(next_pieces[i])
@@ -207,7 +230,10 @@ def draw_next_pieces(next_pieces: list[int], board_offset: int):
 
         # Calculates the position to display the next tetromino.
         text_area_offset: int = cell_width * (width + board_offset + 2)
-        position = (text_area_offset + cell_width, (9 +(3 * i)) * cell_width)
+        position = (
+            text_area_offset + cell_width + (cell_width // 2 if next_pieces[i] not in [1, 4] else 0),
+            (12 +(3 * i)) * cell_width - (cell_width // 2 if next_pieces[i] == 1 else 0)
+        )
 
         # Actually draws each cell in the tetromino
         for y, row in enumerate(pattern):
@@ -218,36 +244,107 @@ def draw_next_pieces(next_pieces: list[int], board_offset: int):
                         position[1] + cell_width * y, 
                         cell_width, 
                         cell_width
-                        )
+                    )
                     pygame.draw.rect(screen, piece_colour, new_rect)
+    
+    # Draws a bounding box around them
+    # Outline thickness is how thick to draw the box
+    # Border thickness is how much of a gap to leave around the pieces
+    outline_thickness: int = 5
+    border_thickness: int = 20
+    outline_rect = pygame.Rect(
+        text_area_offset + cell_width - border_thickness,
+        12 * cell_width - border_thickness,
+        4 * cell_width + 2 * border_thickness,
+        8 * cell_width + 2 * border_thickness
+    )
+    pygame.draw.rect(screen, "white", outline_rect, outline_thickness)
+
+    # Draws text to make clear what is being drawn
+    if not piece_display_font:
+        piece_display_font = pygame.font.SysFont('Lexus', piece_display_font_size)
+    
+    text_pos = (
+        text_area_offset + cell_width - border_thickness // 2,
+        10.4 * cell_width
+    )
+    text_display = piece_display_font.render("Next piece", False, "white")
+    screen.blit(text_display, text_pos)
+
+    # Draws some small lines to differentiate the very next piece.
+    # Left line
+    pygame.draw.line(screen, "white", 
+        (text_area_offset + cell_width - border_thickness,
+            (12+2.5) * cell_width),
+        (text_area_offset + cell_width - border_thickness + cell_width,
+            (12+2.5) * cell_width),
+        5
+    )
+    # Right line
+    pygame.draw.line(screen, "white", 
+        (text_area_offset + cell_width - border_thickness + 5 * cell_width,
+            (12+2.5) * cell_width),
+        (text_area_offset + cell_width - border_thickness + 4 *cell_width,
+            (12+2.5) * cell_width),
+        5
+    )
 
 
 def draw_held_piece(held_piece: int, board_offset: int):
     """Draws the current held piece if there is one, otherwise returns early."""
-    if not held_piece:
-        return
-        
-    # Gets the pattern and colour of the held piece.
-    pattern: list = utility_funcs.tet_to_pattern(held_piece)
-    piece_colour = set_draw_colour(held_piece)
-
-    # Calculates the position to display the held piece.
+    global piece_display_font, piece_display_font_size
+    
     offset: int = cell_width * (board_offset - 5)
-    position = (offset + cell_width, 4 * cell_width)
+    if held_piece:
+        
+        # Gets the pattern and colour of the held piece.
+        pattern: list = utility_funcs.tet_to_pattern(held_piece)
+        piece_colour = set_draw_colour(held_piece)
 
-    # Draws the cells of the held piece according to 'pattern'.
-    for y, row in enumerate(pattern):
-            for x, cell in enumerate(row):
-                if cell:
-                    new_rect = pygame.Rect(position[0] + cell_width * x, position[1] + cell_width * y, cell_width, cell_width)
-                    pygame.draw.rect(screen, piece_colour, new_rect)
+        # Calculates the position to display the held piece.
+        
+        position = (
+            offset + cell_width + (cell_width // 2 if held_piece not in [1, 4] else 0), 
+            3 * cell_width - (cell_width // 2 if held_piece == 1 else 0)
+        )
+
+        # Draws the cells of the held piece according to 'pattern'.
+        for y, row in enumerate(pattern):
+                for x, cell in enumerate(row):
+                    if cell:
+                        new_rect = pygame.Rect(position[0] + cell_width * x, position[1] + cell_width * y, cell_width, cell_width)
+                        pygame.draw.rect(screen, piece_colour, new_rect)
+    
+    # Draws an outline around the held piece
+    outline_thickness: int = 5
+    border_thickness: int = 10
+    outline_rect = pygame.Rect(
+        offset + cell_width - border_thickness,
+        2 * cell_width - border_thickness,
+        4 * cell_width + 2 * border_thickness,
+        4 * cell_width + 2 * border_thickness
+    )
+    pygame.draw.rect(screen, "white", outline_rect, outline_thickness)
+
+    # Draws some text explaining what is being drawn
+    if not piece_display_font:
+        piece_display_font = pygame.font.SysFont('Lexus', piece_display_font_size)
+    
+    text_pos = (
+        offset + cell_width - border_thickness,
+        1 * cell_width - border_thickness
+    )
+    text_display = piece_display_font.render("Held piece", False, "white")
+    screen.blit(text_display, text_pos)
 
 
 def draw_controls(board_offset: int, controls: dict):
-    global controls_font, controls_font_size
-    # Initialises the font
+    global controls_font, controls_font_size, controls_title_font, controls_title_font_size
+    # Initialises the fonts
     if not controls_font:
         controls_font = pygame.font.SysFont('Lexus', controls_font_size)
+    if not controls_title_font:
+        controls_title_font = pygame.font.SysFont('Lexus', controls_title_font_size)
     
     # Calculates the x-offset for the controls display area
     controls_area_offset: int = 100
@@ -257,7 +354,7 @@ def draw_controls(board_offset: int, controls: dict):
     for index, control in enumerate(controls.keys()):
         control_position = (
             controls_area_offset, 
-            index * controls_font_size * 2 + 150 + 350)
+            index * controls_font_size * 2 + 150 + 383)
         control_positions[control] = control_position
 
     # Renders them all to text surfaces
@@ -265,7 +362,7 @@ def draw_controls(board_offset: int, controls: dict):
     for index, control in enumerate(controls.keys()):
         control_display = controls_font.render(
             f"{control} : {controls[control]}", False, 
-            (255, 255, 255), (0, 0, 0)
+            (255, 255, 255)
         )
         rendered_controls[control] = control_display
 
@@ -278,12 +375,22 @@ def draw_controls(board_offset: int, controls: dict):
     border_thickness = 40
     outline_rect = pygame.Rect(
         70, 
-        110+350, 
+        110+383, 
         390, 
         350 + 2 * border_thickness - 2 * outline_thickness
     )
 
     pygame.draw.rect(screen, "white", outline_rect, outline_thickness)
+
+    # Writes 'Controls' above the controls box
+    control_title_pos = (
+        controls_area_offset,
+        150 + 383 - 2 * controls_font_size
+    )
+
+    controls_title_display = controls_title_font.render("Controls", False, (255, 255, 255), (0, 0, 0))
+
+    screen.blit(controls_title_display, control_title_pos)
 
 
 def draw_game(
@@ -315,10 +422,11 @@ def draw_game(
 
 def draw_start_menu(board_offset: int) -> bool:
         """Draws a start menu consisting of the title and basic instructions."""
-        global screen_w
+        global screen_w, title_font
 
-        # Initialises the fonts.
-        title_font = pygame.font.SysFont('Lexus', 100)
+        # Initialises the font.
+        if not title_font:
+            title_font = pygame.font.SysFont('Lexus', title_font_size)
 
         # Calculates the offset required to be in the centre of the screen.
         screen_midpoint = screen_w // 2
@@ -332,24 +440,23 @@ def draw_start_menu(board_offset: int) -> bool:
         
         # Prints instructions ('Press '0' to begin').
         instructions_position = (screen_midpoint - 281, 300)
-        instructions_display = title_font.render("Press \'0\' to begin", False, (255, 255, 255), (155, 155, 155))
+        instructions_display = title_font.render("Press \'0\' to begin", False, (255, 255, 255), (0, 0, 0))
 
         screen.blit(instructions_display, instructions_position)
 
-        # Draws bounding boxes around the title and instructions.
-        title_rect = pygame.Rect(screen_midpoint - 126 - 5, 100 - 5,  251+10, 68+10)
-        pygame.draw.rect(screen, "black", title_rect, 5)
-
-        # Title width: 626 & 877
-        # Title Height: 101 & 169
-        # Instructions width
-        # Instructions height
+        # Draws a bounding box around the title.
+        title_rect = pygame.Rect(screen_midpoint - 126 - 5, 100 - 5,  251+12, 68+3)
+        pygame.draw.rect(screen, "azure4", title_rect, 5)
 
 
         #draw_grid_lines(20)
         
         # Checks for the user pressing <key> to exit the start screen.
         # Returns True if <key> is pressed, else False. 
+
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_0]:
+            return True
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_0:
@@ -380,6 +487,11 @@ def draw_grid_lines(h_lines: int):
             pass
 
 
+###################################################################################################
+#------------------------------------------- TODO LIST -------------------------------------------#
+###################################################################################################
+
+
 """
 Left edge: 100
 Right edge 461
@@ -389,5 +501,7 @@ Bottom 525
 Bottom of text: 485
 
 Add 50 to the horizontal ones
+871
+904
 
 """

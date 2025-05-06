@@ -159,7 +159,7 @@ def update_gravity_rate(total_lines_cleared: int, lines_just_cleared: int) -> in
     """Returns how much to decrease the graivty cooldown by, based on how 
     many lines have been cleared(total) and were just cleared."""
     if total_lines_cleared // 10 != (total_lines_cleared - lines_just_cleared) // 10:
-        return 5
+        return 2
     return 0    
 
 

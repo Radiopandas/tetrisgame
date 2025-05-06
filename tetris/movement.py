@@ -14,7 +14,7 @@ height: int = 0
 
 var_defaults = [None, 0, 0]
 
-controls = json_parser.get_file_data('setup.json', 'controls')
+controls = json_parser.get_file_data('settings.json', 'controls')
 
 def reset():
     """Resets all necessary local variables."""

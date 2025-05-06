@@ -197,11 +197,6 @@ def update(
 if __name__ == "__main__":
     clock = pygame.time.Clock() 
 
-    controls = json_parser.get_file_data('setup.json', 'controls')
-    print(f"Controls: {controls}")
-
-    sleep(1)
-
     # Runs basically forever
     run_game: bool = True
     while run_game:
@@ -224,7 +219,6 @@ if __name__ == "__main__":
             )
             display_start_menu = False if draw_game.draw_start_menu(13) else True
 
-
             frame += 1
             update(frame, grid, all_tetrominos, continue_game, gravity_cooldown, cell_owners, focused_tetromino, piece_sequence)
 
@@ -237,6 +231,8 @@ if __name__ == "__main__":
                 if event.type == pygame.QUIT and can_quit:
                     pygame.quit()
                     run_game = False
+                    print("Hola")
+                    sleep(5)
                     break
             
             # Waits ~1/60 seconds to try and make the game run at 60 fps.
