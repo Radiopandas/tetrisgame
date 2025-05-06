@@ -7,6 +7,7 @@ in a seperate window using pygame.
 import utility_funcs
 import pygame
 from tetromino import Tetromino
+from time import sleep
 
 width: int = 0
 height: int = 0
@@ -37,17 +38,35 @@ cell_width: int = 0
 # Sets up the font.
 font_size: int = 0
 base_font = None
+controls_font = None
+controls_font_size: int = 50
 
 
 background_colour = pygame.Color(20, 20, 20)
 
 var_defaults = [0, 0, 0, 0, None]
 
+game_controls: dict = {}
+
+def get_controls():
+    global game_controls
+
+    with open("controls.txt") as controls:
+        for control in controls.readlines():
+            control = control.strip()
+            if control and ":" in control:
+                name, value = control.split(":", 1)
+                game_controls[name.strip()] = value.strip()
+
+# Reads controls.txt to get all the controls that will need to be displayed.
+get_controls()
+
 def reset():
     """Resets all necessary local global variables."""
     global width, height, cell_width, font_size, base_font, var_defaults
 
     width, height, cell_width, font_size, base_font = var_defaults
+
 
 def set_draw_colour(piece_type: int) -> pygame.Color:
     """Returns a pygame.Color object representing the colour 
@@ -72,6 +91,7 @@ def set_draw_colour(piece_type: int) -> pygame.Color:
         case _:
             return pygame.Color(255, 255, 255)
 
+
 def print_grid(
         grid: list[list[bool]], 
         ghost_tiles: list[list[bool]]
@@ -92,6 +112,7 @@ def print_grid(
         print('┃')
     
     print("┗" + "━━" * len(grid[0]) + "┛")
+
 
 def draw_grid(
         grid: list[list[bool]],
@@ -217,7 +238,50 @@ def draw_held_piece(held_piece: int, board_offset: int):
                 if cell:
                     new_rect = pygame.Rect(position[0] + cell_width * x, position[1] + cell_width * y, cell_width, cell_width)
                     pygame.draw.rect(screen, piece_colour, new_rect)
+
+
+def draw_controls(board_offset: int, controls: dict):
+    global controls_font, controls_font_size
+    # Initialises the font
+    if not controls_font:
+        controls_font = pygame.font.SysFont('Lexus', controls_font_size)
     
+    # Calculates the x-offset for the controls display area
+    controls_area_offset: int = 100
+
+    # Calculates the positions for each control
+    control_positions: dict = {}
+    for index, control in enumerate(controls.keys()):
+        control_position = (
+            controls_area_offset, 
+            index * controls_font_size * 2 + 150 + 350)
+        control_positions[control] = control_position
+
+    # Renders them all to text surfaces
+    rendered_controls: dict = {}
+    for index, control in enumerate(controls.keys()):
+        control_display = controls_font.render(
+            f"{control} : {controls[control]}", False, 
+            (255, 255, 255), (0, 0, 0)
+        )
+        rendered_controls[control] = control_display
+
+    # Displays them all
+    for control in rendered_controls.keys():
+        screen.blit(rendered_controls[control], control_positions[control])
+    
+    # Draws the bounding box
+    outline_thickness = 10
+    border_thickness = 40
+    outline_rect = pygame.Rect(
+        70, 
+        110+350, 
+        390, 
+        350 + 2 * border_thickness - 2 * outline_thickness
+    )
+
+    pygame.draw.rect(screen, "white", outline_rect, outline_thickness)
+
 
 def draw_game(
         grid: list[list[bool]],
@@ -231,6 +295,8 @@ def draw_game(
     ) -> None:
     """Calls several other functions to draw everything onto the screen."""
 
+    global game_controls
+
     draw_grid(grid, cell_owners, board_offset, ghost_tiles, 5)
 
     draw_stats(board_offset, score, lines_cleared, lines_cleared // 10)
@@ -239,37 +305,56 @@ def draw_game(
 
     draw_held_piece(held_piece, board_offset)
 
+    draw_controls(board_offset, game_controls)
+
+    #draw_grid_lines(20)
+
 
 def draw_start_menu(board_offset: int) -> bool:
-    """Draws a start menu consisting of the title and basic instructions."""
-    global screen_w
+        """Draws a start menu consisting of the title and basic instructions."""
+        global screen_w
 
-    # Initialises the fonts.
-    title_font = pygame.font.SysFont('Lexus', 100)
+        # Initialises the fonts.
+        title_font = pygame.font.SysFont('Lexus', 100)
 
-    # Calculates the offset required to be in the centre of the screen.
-    screen_midpoint = screen_w // 2
+        # Calculates the offset required to be in the centre of the screen.
+        screen_midpoint = screen_w // 2
 
-    # Draws the title.
-    title_position = (screen_midpoint - 126, 100)
-    title_display = title_font.render("SIRTET", False, (255, 255, 255), (155, 155, 155))
+        # Draws the title.
+        title_position = (screen_midpoint - 126, 100)
+        title_display = title_font.render("SIRTET", False, (255, 255, 255))
 
-    screen.blit(title_display, title_position)
-    
-    
-    # Prints instructions ('Press '0' to begin').
-    instructions_position = (screen_midpoint - 281, 300)
-    instructions_display = title_font.render("Press \'0\' to begin", False, (255, 255, 255), (155, 155, 155))
+        screen.blit(title_display, title_position)
+        
+        
+        # Prints instructions ('Press '0' to begin').
+        instructions_position = (screen_midpoint - 281, 300)
+        instructions_display = title_font.render("Press \'0\' to begin", False, (255, 255, 255), (155, 155, 155))
 
-    screen.blit(instructions_display, instructions_position)
-    
-    # Checks for the user pressing <key> to exit the start screen.
-    # Returns True if <key> is pressed, else False. 
-    for event in pygame.event.get():
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_0:
-                return True
-    return False
+        screen.blit(instructions_display, instructions_position)
+
+        # Draws bounding boxes around the title and instructions.
+        title_rect = pygame.Rect(screen_midpoint - 126 - 5, 100 - 5,  251+10, 68+10)
+        pygame.draw.rect(screen, "black", title_rect, 5)
+
+        # Title width: 626 & 877
+        # Title Height: 101 & 169
+        # Instructions width
+        # Instructions height
+
+
+        #draw_grid_lines(20)
+        
+        # Checks for the user pressing <key> to exit the start screen.
+        # Returns True if <key> is pressed, else False. 
+        for event in pygame.event.get():
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_0:
+                    return True
+        return False
+
+        
+
 
 def draw_grid_lines(h_lines: int):
     """Draws a grid on the screen in solid black lines for the sake
@@ -290,3 +375,18 @@ def draw_grid_lines(h_lines: int):
     for event in pygame.event.get():
         if event.type == pygame.MOUSEBUTTONDOWN:
             print(pygame.mouse.get_pos())
+            print()
+            pass
+
+
+"""
+Left edge: 100
+Right edge 461
+
+Top: 133
+Bottom 525
+Bottom of text: 485
+
+Add 50 to the horizontal ones
+
+"""
