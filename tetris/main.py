@@ -188,7 +188,7 @@ def update(
                     cell_owners, piece_sequence, all_tetrominos, 
                     ghost_piece_tiles
                 )
-            movement_cooldown += 0 # TESTING ONLY, replace with 7 once done creating the attractor steps
+            movement_cooldown += 7 # TESTING ONLY, replace with 7 once done creating the attractor steps
         elif movement_cooldown > 0:
             movement_cooldown -= 1
 

@@ -7,6 +7,7 @@ in a seperate window using pygame.
 import utility_funcs
 import pygame
 from tetromino import Tetromino
+import json_parser
 from time import sleep
 
 width: int = 0
@@ -60,6 +61,8 @@ def get_controls():
 
 # Reads controls.txt to get all the controls that will need to be displayed.
 get_controls()
+
+game_controls = json_parser.get_file_data('setup.json', 'displayed_controls')
 
 def reset():
     """Resets all necessary local global variables."""

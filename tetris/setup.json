@@ -1,14 +1,21 @@
 {
-    "controls": {
+    "controls": 
+    {
         "move_left": "a",
         "move_right": "d",
         "soft_drop": "s",
         "hard_drop": ["w"],
         "rotate_left": [" ", "q"],
         "rotate_right": [" ", "e"],
-        "hold_piece": "h"
+        "hold_piece": "h",
+        "start_game": "0"
     },
-    "displayed_controls": {
-        "Move sideways": "A/D"
+
+    "displayed_controls": 
+    {
+        "Movement": "A/D",
+        "Soft/hard drop": "S/W",
+        "Rotation": "Space bar",
+        "Hold piece": "H"
     }
 }
