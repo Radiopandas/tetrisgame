@@ -64,20 +64,7 @@ game_controls: dict = {}
 #--------------------------------------- Utility Functions ---------------------------------------#
 ###################################################################################################
 
-def get_controls():
-    global game_controls
-
-    with open("controls.txt") as controls:
-        for control in controls.readlines():
-            control = control.strip()
-            if control and ":" in control:
-                name, value = control.split(":", 1)
-                game_controls[name.strip()] = value.strip()
-
-# Reads controls.txt to get all the controls that will need to be displayed.
-get_controls()
-
-game_controls = json_parser.get_file_data('settings.json', 'displayed_controls')
+game_controls = json_parser.get_file_data('settings.json', "displayed_controls")
 
 def reset():
     """Resets all necessary local global variables."""

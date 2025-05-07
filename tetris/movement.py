@@ -16,6 +16,23 @@ var_defaults = [None, 0, 0]
 
 controls = json_parser.get_file_data('settings.json', 'controls')
 
+for key in controls.keys():
+    # Iterates through every control, converting any controls that are
+    # stored as unicode characters into decimal representations
+    control = controls[key]
+    if isinstance(control, list):
+        new_control = []
+        for sub_control in control:
+            if not isinstance(sub_control, int):
+                new_control.append(ord(sub_control))
+            else:
+                new_control.append(sub_control)
+        controls[key] = new_control
+    else:
+        if not isinstance(control, int):
+            controls[key] = ord(control)
+
+
 def reset():
     """Resets all necessary local variables."""
     global ghost_piece, width, height, var_defaults
@@ -27,6 +44,14 @@ def set_grid_size(_width: int, _height: int):
     global height, width
     height = _height
     width = _width
+
+
+def check_keys(pressed_keys, controls: list) -> bool:
+    for control in controls:
+        if pressed_keys[control]:
+            return True
+    
+    return False
 
 
 def move_tet(
@@ -137,29 +162,29 @@ def get_movement(grid, focused_tet: Tetromino, cell_owners):
     
     # Note: ord() converts unicode characters to decimal form
     # Which is what they are stored as by default in pygame
-    if keys[ord(controls["move_left"])]:
+    if check_keys(keys, controls["move_left"]):
         move_tet(grid, focused_tet, cell_owners, -1)
         return True
-    if keys[ord(controls["move_right"])]:
+    if check_keys(keys, controls["move_right"]):
         move_tet(grid, focused_tet, cell_owners, 1)
         return True
-    if keys[ord(controls["soft_drop"])]:
+    if check_keys(keys, controls["soft_drop"]):
         quick_drop(grid, focused_tet, cell_owners, False)
         return True
 
 
 def pygame_event_handler(event, grid, focused_tet: Tetromino, cell_owners, piece_sequence: list[int], all_tets: list[Tetromino]) -> bool:
     """Used to get keyboard inputs that can't be repeated by being held down"""
-    if event.unicode in controls["rotate_right"]:
+    if event.key in controls["rotate_right"]:
         rotation.rotate_tet(grid, focused_tet, cell_owners, True)
         return True
-    elif event.unicode in controls["rotate_left"]:
+    elif event.key in controls["rotate_left"]:
         rotation.rotate_tet(grid, focused_tet, cell_owners, False)
         return True
-    elif event.unicode in controls["hard_drop"]:
+    elif event.key in controls["hard_drop"]:
         quick_drop(grid, focused_tet, cell_owners, True)
         return True
-    elif event.unicode in controls["hold_piece"]:
+    elif event.key in controls["hold_piece"]:
         # Tries to hold the piece
         hold_successful = utility_funcs.hold_piece(piece_sequence, focused_tet)
         if hold_successful:

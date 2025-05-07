@@ -1,14 +1,14 @@
 {
     "controls": 
     {
-        "move_left": "a",
-        "move_right": "d",
-        "soft_drop": "s",
+        "move_left": ["a", 1073741904],
+        "move_right": ["d", 1073741903],
+        "soft_drop": ["s"],
         "hard_drop": ["w"],
         "rotate_left": [" ", "q"],
         "rotate_right": [" ", "e"],
-        "hold_piece": "h",
-        "start_game": "0"
+        "hold_piece": ["h"],
+        "start_game": ["0"]
     },
 
     "displayed_controls": 
