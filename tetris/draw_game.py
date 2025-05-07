@@ -8,6 +8,10 @@ import utility_funcs
 import pygame
 from tetromino import Tetromino
 import json_parser
+import draw_start_menu
+import draw_main_game
+
+import movement
 from time import sleep
 
 width: int = 0
@@ -23,7 +27,6 @@ def set_grid_size(_width: int, _height: int):
 
 # Some setup stuff for pygame.
 pygame.init()
-pygame.font.init()
 
 # Sets up the screen.
 screen_info = pygame.display.Info()
@@ -32,7 +35,9 @@ screen_h = screen_info.current_h
 # Subtracts 60 to leave room for the control bar at the top.
 screen_h -= 60
 
-screen = pygame.display.set_mode((screen_w, screen_h))
+#screen = pygame.display.set_mode((screen_w, screen_h))
+#screen = pygame.display.set_mode((640, 360))
+screen = pygame.display.set_mode((2560, 1440))
 
 cell_width: int = 0
 
@@ -59,6 +64,9 @@ background_colour = pygame.Color(0, 0, 0)
 var_defaults = [0, 0, 0, 0, None]
 
 game_controls: dict = {}
+
+start_menu_initialised = False
+main_game_initialised = False
 
 ###################################################################################################
 #--------------------------------------- Utility Functions ---------------------------------------#
@@ -387,28 +395,43 @@ def draw_game(
         ghost_tiles: list[list[bool]], 
         score: int, 
         lines_cleared: int, 
-        piece_sequence: list[int], 
+        piece_sequence: list[int],
+        all_tets: list[Tetromino],
         held_piece: int = None
     ) -> None:
     """Calls several other functions to draw everything onto the screen."""
 
-    global game_controls
+    global game_controls, main_game_initialised
 
-    draw_grid(grid, cell_owners, board_offset, ghost_tiles, 5)
+    #draw_grid(grid, cell_owners, board_offset, ghost_tiles, 5)
+    if not main_game_initialised:
+        main_game_initialised = True
+        draw_main_game.set_grid_size(10, 22)
+        draw_main_game.initialise_base_font(16)
+        draw_main_game.initialise_controls_font(16)
+        draw_main_game.initialise_piece_display_font(16)
+        draw_main_game.initialise_controls_title_font(24)
+    draw_main_game.draw_grid(screen, all_tets, movement.ghost_piece, 5)
 
-    draw_stats(board_offset, score, lines_cleared, lines_cleared // 10)
+    #draw_stats(board_offset, score, lines_cleared, lines_cleared // 10)
 
-    draw_next_pieces(piece_sequence[0:3], board_offset)
+    draw_main_game.draw_stats(screen, score, lines_cleared, lines_cleared // 10)
 
-    draw_held_piece(held_piece, board_offset)
+    #draw_next_pieces(piece_sequence[0:3], board_offset)
+    draw_main_game.draw_next_pieces(screen, piece_sequence[0:3])
 
-    draw_controls(board_offset, game_controls)
+    #draw_held_piece(held_piece, board_offset)
+    draw_main_game.draw_held_piece(screen, held_piece)
+
+    #draw_controls(board_offset, game_controls)
+    draw_main_game.draw_controls(screen, game_controls)
 
     #draw_grid_lines(20)
 
 
-def draw_start_menu(board_offset: int) -> bool:
+def start_menu(board_offset: int) -> bool:
         """Draws a start menu consisting of the title and basic instructions."""
+        """       
         global screen_w, title_font
 
         # Initialises the font.
@@ -434,10 +457,20 @@ def draw_start_menu(board_offset: int) -> bool:
         # Draws a bounding box around the title.
         title_rect = pygame.Rect(screen_midpoint - 126 - 5, 100 - 5,  251+12, 68+3)
         pygame.draw.rect(screen, "azure4", title_rect, 5)
+        
 
 
         #draw_grid_lines(20)
+        """
         
+        global start_menu_initialised
+        if not start_menu_initialised:
+            start_menu_initialised = True
+            draw_start_menu.initialise_title_font(33)
+            draw_start_menu.initialise_instructions_font(33)
+
+        draw_start_menu.draw_start_menu(screen)
+
         # Checks for the user pressing <key> to exit the start screen.
         # Returns True if <key> is pressed, else False. 
 
@@ -448,7 +481,6 @@ def draw_start_menu(board_offset: int) -> bool:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_0:
                     return True
-        return False
 
 
 def draw_grid_lines(h_lines: int):

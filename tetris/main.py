@@ -214,10 +214,10 @@ if __name__ == "__main__":
             draw_game.screen.fill(draw_game.background_colour)
             draw_game.draw_game(
                 grid, cell_owners, 13, ghost_piece_tiles, 
-                score, lines_cleared, piece_sequence, 
+                score, lines_cleared, piece_sequence, all_tetrominos,
                 utility_funcs.held_piece
             )
-            display_start_menu = False if draw_game.draw_start_menu(13) else True
+            display_start_menu = False if draw_game.start_menu(13) else True
 
             frame += 1
             update(frame, grid, all_tetrominos, continue_game, gravity_cooldown, cell_owners, focused_tetromino, piece_sequence)
@@ -270,7 +270,7 @@ if __name__ == "__main__":
             
             # Flushes the screen then draws the game.
             draw_game.screen.fill(draw_game.background_colour)
-            draw_game.draw_game(grid, cell_owners, 13, ghost_piece_tiles, score, lines_cleared, piece_sequence, utility_funcs.held_piece)
+            draw_game.draw_game(grid, cell_owners, 13, ghost_piece_tiles, score, lines_cleared, piece_sequence, all_tetrominos, utility_funcs.held_piece)
 
             # Flips the updated display onto the screen.
             pygame.display.flip()

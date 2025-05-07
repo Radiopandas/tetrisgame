@@ -16,7 +16,7 @@ var_defaults = [None, 0, 0]
 
 SETTINGS_PATH = 'settings.json'
 CONTROLS_PATH = 'controls'
-CONTROLS_PRESET = 'Profile2'
+CONTROLS_PRESET = 'Profile1'
 
 controls = json_parser.get_file_data(SETTINGS_PATH, CONTROLS_PRESET, CONTROLS_PATH)
 
