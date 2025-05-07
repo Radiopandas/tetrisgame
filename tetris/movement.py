@@ -14,7 +14,11 @@ height: int = 0
 
 var_defaults = [None, 0, 0]
 
-controls = json_parser.get_file_data('settings.json', 'controls')
+SETTINGS_PATH = 'settings.json'
+CONTROLS_PATH = 'controls'
+CONTROLS_PRESET = 'Profile2'
+
+controls = json_parser.get_file_data(SETTINGS_PATH, CONTROLS_PRESET, CONTROLS_PATH)
 
 for key in controls.keys():
     # Iterates through every control, converting any controls that are

@@ -14,10 +14,12 @@ def read_json_file(file_path: str) -> dict:
         print(f"ERROR: Invalid JSON format in file: {file_path}")
         return {}
 
-def get_file_data(file_path: str, data_path: str) -> dict:
+def get_file_data(file_path: str, profile: str, data_path: str) -> dict:
     if file_path not in read_files.keys():
         read_files[file_path] = read_json_file(file_path)
     
     data = read_files[file_path]
-    return data[data_path]
+    
+    profile_data = data[profile]
+    return profile_data[data_path]
 

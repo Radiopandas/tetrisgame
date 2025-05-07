@@ -335,4 +335,6 @@ Documentation
  - tetromino.py DONE
  - utility_funcs.py DONE
 
+Customisable controls 
+
 """

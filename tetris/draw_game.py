@@ -64,7 +64,7 @@ game_controls: dict = {}
 #--------------------------------------- Utility Functions ---------------------------------------#
 ###################################################################################################
 
-game_controls = json_parser.get_file_data('settings.json', "displayed_controls")
+game_controls = json_parser.get_file_data('settings.json', "Profile1", "displayed_controls")
 
 def reset():
     """Resets all necessary local global variables."""
