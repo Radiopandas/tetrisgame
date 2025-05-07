@@ -184,11 +184,10 @@ def update(
                 focused_tetromino = spawn_results[1]
                 movement.update_ghost_piece(grid, focused_tet, ghost_piece_tiles)
             else:
-                movement.process_given_input(
-                    next_input, grid, focused_tetromino, 
-                    cell_owners, piece_sequence, all_tetrominos, 
-                    ghost_piece_tiles
-                )
+                if input_handling.attractor_input_processor(
+                    next_input, grid, cell_owners, focused_tetromino
+                    ):
+                    movement.update_ghost_piece(grid, focused_tet, ghost_piece_tiles)
             movement_cooldown += 7 # TESTING ONLY, replace with 7 once done creating the attractor steps
         elif movement_cooldown > 0:
             movement_cooldown -= 1

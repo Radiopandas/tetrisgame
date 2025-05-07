@@ -164,6 +164,10 @@ def start_menu(board_offset: int) -> bool:
                     return True
 
 
+def controls_menu():
+    pass
+
+
 def draw_grid_lines(h_lines: int):
     """Draws a grid on the screen in solid black lines for the sake
     of more easily aligning visual elements."""
@@ -185,6 +189,8 @@ def draw_grid_lines(h_lines: int):
             print(pygame.mouse.get_pos())
             print()
             pass
+
+
 
 ###################################################################################################
 #------------------------------------------- TODO LIST -------------------------------------------#

@@ -183,40 +183,6 @@ def hold_piece(
         utility_funcs.add_tetromino(focused_tet, grid, cell_owners)
     
 
-def get_movement(grid, focused_tet: Tetromino, cell_owners):
-    """Used to get keyboard inputs that can be repeated by being held down."""
-    keys = pygame.key.get_pressed()
-    
-    # Note: ord() converts unicode characters to decimal form
-    # Which is what they are stored as by default in pygame
-    if check_keys(keys, controls["move_left"]):
-        move_tet(grid, focused_tet, cell_owners, -1)
-        return True
-    if check_keys(keys, controls["move_right"]):
-        move_tet(grid, focused_tet, cell_owners, 1)
-        return True
-    if check_keys(keys, controls["soft_drop"]):
-        quick_drop(grid, focused_tet, cell_owners, False)
-        return True
-
-
-def pygame_event_handler(event, grid, focused_tet: Tetromino, cell_owners, piece_sequence: list[int], all_tets: list[Tetromino]) -> bool:
-    """Used to get keyboard inputs that can't be repeated by being held down"""
-    if event.key in controls["rotate_right"]:
-        rotation.rotate_tet(grid, focused_tet, cell_owners, True)
-        return True
-    elif event.key in controls["rotate_left"]:
-        rotation.rotate_tet(grid, focused_tet, cell_owners, False)
-        return True
-    elif event.key in controls["hard_drop"]:
-        quick_drop(grid, focused_tet, cell_owners, True)
-        return True
-    elif event.key in controls["hold_piece"]:
-        hold_piece(grid, cell_owners, all_tets, focused_tet, piece_sequence)
-        return True
-
-    return False
-
 def update_ghost_piece(grid, focused_tet: Tetromino, ghost_tiles: list):
     """Updates the position of the 'ghost piece' to show where the 
     current tile would land if hard dropped."""
@@ -292,44 +258,5 @@ def update_ghost_piece(grid, focused_tet: Tetromino, ghost_tiles: list):
     for cell in new_cells:
         x, y = cell[0], cell[1]
         ghost_tiles[y][x] = True
-
-
-# Function used for the attractor.
-def process_given_input(
-        event: str, 
-        grid: list[list[bool]],
-        focused_tet: Tetromino, 
-        cell_owners: list[list[Tetromino | None]], 
-        piece_sequence: list[int], 
-        all_tets: list[Tetromino],
-        ghost_tiles: list[list[bool]]
-    ):
-    """Simulates playing the game by being fed a series of inputs."""
-    match event:
-        case "a":
-            move_tet(grid, focused_tet, cell_owners, -1)
-        case "d":
-            move_tet(grid, focused_tet, cell_owners, 1)
-
-        case "w":
-            quick_drop(grid, focused_tet, cell_owners, True)
-        case "s":
-            quick_drop(grid, focused_tet, cell_owners, False)
-        
-        case "e":
-            rotation.rotate_tet(grid, focused_tet, cell_owners, True)
-        case "q":
-            rotation.rotate_tet(grid, focused_tet, cell_owners, False)
-        
-        case "h":
-            print("Sorry, holding not implemented yet.")
-        case _:
-            # Allows the attractor to have delays between steps.
-            # Returns to prevent update_ghost_piece() being called.
-            print("Stalling for a tick.")
-            return
-
-    # Updates the ghost piece after every change.
-    update_ghost_piece(grid, focused_tet, ghost_tiles)
 
 

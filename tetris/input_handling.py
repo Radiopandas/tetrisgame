@@ -101,5 +101,33 @@ def handle_pygame_events(
     
     return False
 
-def attractor_input_processor():
-    pass
+def attractor_input_processor(
+        event,
+        grid: list[list[bool]],
+        cell_owners: list[list[Tetromino | None]],
+        focused_tet: Tetromino
+    ):
+    match event:
+        case "a":
+            movement.move_tet(grid, focused_tet, cell_owners, -1)
+        case "d":
+            movement.move_tet(grid, focused_tet, cell_owners, 1)
+
+        case "w":
+            movement.quick_drop(grid, focused_tet, cell_owners, True)
+        case "s":
+            movement.quick_drop(grid, focused_tet, cell_owners, False)
+
+        case "e":
+            rotation.rotate_tet(grid, focused_tet, cell_owners, True)
+        case "q":
+            rotation.rotate_tet(grid, focused_tet, cell_owners, False)
+
+        case "h":
+            print("Sorry, holding not implemented yet.")
+        case _:
+            # Allows the attractor to have delays between steps.
+            # Returns to prevent update_ghost_piece() being called.
+            print("Stalling for a tick.")
+            return False
+    return True
