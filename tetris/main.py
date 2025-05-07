@@ -10,6 +10,7 @@ import copy
 import attractor
 import json_parser
 import input_handling
+import draw_buttons
 from random import shuffle
 
 from time import sleep
@@ -268,6 +269,9 @@ if __name__ == "__main__":
                     #if movement.pygame_event_handler(event, grid, focused_tetromino, cell_owners, piece_sequence, all_tetrominos):
                     if input_handling.handle_pygame_events(event, grid, cell_owners, focused_tetromino, piece_sequence, all_tetrominos):
                         movement.update_ghost_piece(grid, focused_tetromino, ghost_piece_tiles)
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    mouse_coords = pygame.mouse.get_pos()
+                    draw_buttons.check_pressed_buttons(mouse_coords)
             
             # Flushes the screen then draws the game.
             draw_game.screen.fill(draw_game.background_colour)

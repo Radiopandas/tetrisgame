@@ -34,7 +34,6 @@ action_map: dict = {
     "hold_piece": movement.hold_piece
 }
 
-
 repeatable_inputs: list = ["move_left", "move_right", "soft_drop"]
 
 ###################################################################################################
@@ -43,7 +42,6 @@ repeatable_inputs: list = ["move_left", "move_right", "soft_drop"]
 
 def initialise_input_map(file_path: str, profile: str, data_path: str):
     pass
-
 
 ###################################################################################################
 #---------------------------------------- Main functions -----------------------------------------#
@@ -75,6 +73,7 @@ def get_repeatable_inputs(
     
     return movement_occured
 
+
 def handle_pygame_events(
         event, 
         grid: list[list[bool]], 
@@ -100,6 +99,7 @@ def handle_pygame_events(
             return True
     
     return False
+
 
 def attractor_input_processor(
         event,
@@ -131,3 +131,8 @@ def attractor_input_processor(
             print("Stalling for a tick.")
             return False
     return True
+
+
+def update_controls(control: str):
+    
+    pass

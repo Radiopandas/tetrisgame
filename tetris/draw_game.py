@@ -10,6 +10,7 @@ from tetromino import Tetromino
 import json_parser
 import draw_start_menu
 import draw_main_game
+import draw_buttons
 
 import movement
 from time import sleep
@@ -106,6 +107,12 @@ def print_grid(
 #---------------------------------- Main Game Drawing Functions ----------------------------------#
 ###################################################################################################
 
+def buttons():
+    draw_buttons.draw_button(screen, 'settings_button')
+    if draw_buttons.settings_menu_open:
+        draw_buttons.draw_controls_buttons(screen, {})
+        
+
 def main_game(
         grid: list[list[bool]],
         cell_owners: list[list[Tetromino | None]], 
@@ -140,28 +147,33 @@ def main_game(
 
     draw_main_game.draw_controls(screen, game_controls)
 
+    buttons()
+    
+
 
 def start_menu(board_offset: int) -> bool:
-        """Draws a start menu consisting of the title and basic instructions."""
-        
-        global start_menu_initialised
-        if not start_menu_initialised:
-            start_menu_initialised = True
-            draw_start_menu.initialise_title_font(33)
-            draw_start_menu.initialise_instructions_font(33)
+    """Draws a start menu consisting of the title and basic instructions."""
+    
+    global start_menu_initialised
+    if not start_menu_initialised:
+        start_menu_initialised = True
+        draw_start_menu.initialise_title_font(33)
+        draw_start_menu.initialise_instructions_font(33)
 
-        draw_start_menu.draw_start_menu(screen)
+    draw_start_menu.draw_start_menu(screen)
 
-        # Checks for the user pressing <key> to exit the start screen.
-        # Returns True if <key> is pressed, else False. 
+    # Checks for the user pressing <key> to exit the start screen.
+    # Returns True if <key> is pressed, else False. 
 
-        keys = pygame.key.get_pressed()
-        if keys[pygame.K_0]:
-            return True
-        for event in pygame.event.get():
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_0:
-                    return True
+    keys = pygame.key.get_pressed()
+    if keys[pygame.K_0]:
+        return True
+    for event in pygame.event.get():
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_0:
+                return True
+
+    buttons()
 
 
 def controls_menu():
