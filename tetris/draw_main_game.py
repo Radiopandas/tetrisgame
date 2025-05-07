@@ -347,15 +347,3 @@ def draw_controls(screen: pygame.Surface, controls: dict):
     )
     controls_title_display = controls_title_font.render("Controls", False, "white")
     screen.blit(controls_title_display, controls_title_pos)
-
-
-"""
-Needed functions:
-set_draw_colour DONE
-print_grid
-draw_grid DONE
-draw_stats DONE
-draw_next_pieces DONE
-draw_held_piece DONE
-draw_controls
-"""

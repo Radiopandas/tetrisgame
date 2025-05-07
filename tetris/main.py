@@ -212,7 +212,7 @@ if __name__ == "__main__":
         while display_start_menu:
             # Draws the start menu and attractor onto the screen.
             draw_game.screen.fill(draw_game.background_colour)
-            draw_game.draw_game(
+            draw_game.main_game(
                 grid, cell_owners, 13, ghost_piece_tiles, 
                 score, lines_cleared, piece_sequence, all_tetrominos,
                 utility_funcs.held_piece
@@ -270,7 +270,7 @@ if __name__ == "__main__":
             
             # Flushes the screen then draws the game.
             draw_game.screen.fill(draw_game.background_colour)
-            draw_game.draw_game(grid, cell_owners, 13, ghost_piece_tiles, score, lines_cleared, piece_sequence, all_tetrominos, utility_funcs.held_piece)
+            draw_game.main_game(grid, cell_owners, 13, ghost_piece_tiles, score, lines_cleared, piece_sequence, all_tetrominos, utility_funcs.held_piece)
 
             # Flips the updated display onto the screen.
             pygame.display.flip()
