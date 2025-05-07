@@ -9,6 +9,7 @@ import pygame
 import copy
 import attractor
 import json_parser
+import input_handling
 from random import shuffle
 
 from time import sleep
@@ -157,8 +158,8 @@ def update(
         if movement_cooldown == 0:
             # Gets player inputs, then calls other functions if movement
             # occurred / tried to occur.
-            if movement.get_movement(grid, focused_tetromino, cell_owners):
-
+            #if movement.get_movement(grid, focused_tetromino, cell_owners):
+            if input_handling.get_repeatable_inputs(grid, cell_owners, focused_tetromino):
                 movement.update_ghost_piece(grid, focused_tet, ghost_piece_tiles)
                 draw_game.print_grid(grid, ghost_piece_tiles)
                 # Prevents pieces being moved too quickly, especially when 
@@ -265,7 +266,8 @@ if __name__ == "__main__":
                     running = False
                     pygame.quit()
                 elif event.type == pygame.KEYDOWN:
-                    if movement.pygame_event_handler(event, grid, focused_tetromino, cell_owners, piece_sequence, all_tetrominos):
+                    #if movement.pygame_event_handler(event, grid, focused_tetromino, cell_owners, piece_sequence, all_tetrominos):
+                    if input_handling.handle_pygame_events(event, grid, cell_owners, focused_tetromino, piece_sequence, all_tetrominos):
                         movement.update_ghost_piece(grid, focused_tetromino, ghost_piece_tiles)
             
             # Flushes the screen then draws the game.

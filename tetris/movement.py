@@ -160,6 +160,29 @@ def quick_drop(
         focused_tet.can_move = False
 
 
+def hold_piece(
+        grid: list[list[bool]], 
+        cell_owners: list[list[Tetromino | None]], 
+        all_tets: list[Tetromino], 
+        focused_tet: Tetromino, 
+        piece_sequence: list[int]
+    ) -> None:
+    # Tries to hold the piece
+    hold_successful = utility_funcs.hold_piece(piece_sequence, focused_tet)
+    if hold_successful:
+        # Clears it from the grid so it can be replaced by a new piece.
+        utility_funcs.clear_tetromino(focused_tet, grid, all_tets, cell_owners)
+
+        # Gets that new piece. Note: 'can_spawn' isn't currently used.
+        can_spawn, new_tet_cells, new_tet_type = utility_funcs.generate_tetromino(grid, piece_sequence)
+        focused_tet.cells = new_tet_cells
+        focused_tet.tet_type = new_tet_type
+        focused_tet.times_rotated = 0
+
+        # Spawns the new piece in.
+        utility_funcs.add_tetromino(focused_tet, grid, cell_owners)
+    
+
 def get_movement(grid, focused_tet: Tetromino, cell_owners):
     """Used to get keyboard inputs that can be repeated by being held down."""
     keys = pygame.key.get_pressed()
@@ -189,20 +212,7 @@ def pygame_event_handler(event, grid, focused_tet: Tetromino, cell_owners, piece
         quick_drop(grid, focused_tet, cell_owners, True)
         return True
     elif event.key in controls["hold_piece"]:
-        # Tries to hold the piece
-        hold_successful = utility_funcs.hold_piece(piece_sequence, focused_tet)
-        if hold_successful:
-            # Clears it from the grid so it can be replaced by a new piece.
-            utility_funcs.clear_tetromino(focused_tet, grid, all_tets, cell_owners)
-
-            # Gets that new piece. Note: 'can_spawn' isn't currently used.
-            can_spawn, new_tet_cells, new_tet_type = utility_funcs.generate_tetromino(grid, piece_sequence)
-            focused_tet.cells = new_tet_cells
-            focused_tet.tet_type = new_tet_type
-            focused_tet.times_rotated = 0
-
-            # Spawns the new piece in.
-            utility_funcs.add_tetromino(focused_tet, grid, cell_owners)
+        hold_piece(grid, cell_owners, all_tets, focused_tet, piece_sequence)
         return True
 
     return False

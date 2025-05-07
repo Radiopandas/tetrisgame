@@ -31,7 +31,6 @@ def initialise_instructions_font(size: int):
     instructions_font_size = size * screen_scale
     instructions_font = pygame.font.SysFont('Lexus', instructions_font_size)
 
-
 ###################################################################################################
 #---------------------------------------- Main functions -----------------------------------------#
 ###################################################################################################
