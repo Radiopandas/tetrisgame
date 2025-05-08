@@ -11,6 +11,8 @@ pygame.init()
 ###################################################################################################
 screen_dimensions = pygame.display.Info()
 
+cur_h = screen_dimensions.current_h
+
 screen_w = 640
 screen_h = 360
 
@@ -330,7 +332,7 @@ def draw_controls(screen: pygame.Surface, controls: dict):
         screen.blit(rendered_controls[control], control_positions[control])
     
     # Draws the bounding box.
-    outline_thickness: int = 3 * screen_scale
+    outline_thickness: int = 2 * screen_scale
     border_thickness: int = 13 * screen_scale
     outline_rect = pygame.Rect(
         controls_area_x_offset - border_thickness,

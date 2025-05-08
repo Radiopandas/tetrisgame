@@ -13,7 +13,6 @@ import draw_main_game
 import draw_buttons
 
 import movement
-from time import sleep
 
 width: int = 0
 height: int = 0
@@ -36,9 +35,8 @@ screen_h = screen_info.current_h
 # Subtracts 60 to leave room for the control bar at the top.
 screen_h -= 60
 
-#screen = pygame.display.set_mode((screen_w, screen_h))
-#screen = pygame.display.set_mode((640, 360))
-screen = pygame.display.set_mode((2560, 1440))
+screen = pygame.display.set_mode((1920, 1080))
+pygame.display.set_caption("SIRTET")
 
 cell_width: int = 0
 
@@ -109,6 +107,7 @@ def print_grid(
 
 def buttons():
     draw_buttons.draw_button(screen, 'settings_button')
+    draw_buttons.draw_button(screen, "move_left_btn")
     if draw_buttons.settings_menu_open:
         draw_buttons.draw_controls_buttons(screen, {})
         

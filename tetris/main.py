@@ -8,7 +8,6 @@ import movement
 import pygame
 import copy
 import attractor
-import json_parser
 import input_handling
 import draw_buttons
 from random import shuffle
@@ -162,7 +161,7 @@ def update(
             #if movement.get_movement(grid, focused_tetromino, cell_owners):
             if input_handling.get_repeatable_inputs(grid, cell_owners, focused_tetromino):
                 movement.update_ghost_piece(grid, focused_tet, ghost_piece_tiles)
-                draw_game.print_grid(grid, ghost_piece_tiles)
+                draw_game.print_grid(grid, ghost_piece_tiles)   
                 # Prevents pieces being moved too quickly, especially when 
                 # the input is being held.
                 movement_cooldown += 7
@@ -215,7 +214,7 @@ if __name__ == "__main__":
             draw_game.screen.fill(draw_game.background_colour)
             draw_game.main_game(
                 grid, cell_owners, 13, ghost_piece_tiles, 
-                score, lines_cleared, piece_sequence, all_tetrominos,
+                score, lines_cleared, piece_sequence, all_tetrominos, 
                 utility_funcs.held_piece
             )
             display_start_menu = False if draw_game.start_menu(13) else True
@@ -234,10 +233,11 @@ if __name__ == "__main__":
                     run_game = False
                     print("Hola")
                     sleep(5)
-                    break
+                    break   
             
             # Waits ~1/60 seconds to try and make the game run at 60 fps.
             dt = clock.tick(60) / 1000
+            
 
             # Reinserts the attractor's piece sequence into 'piece_sequence'
             # whenever the attractor is about to loop.

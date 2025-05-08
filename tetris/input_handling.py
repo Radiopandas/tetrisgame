@@ -1,12 +1,9 @@
 from tetromino import Tetromino
-import utility_funcs
 import rotation
 from json_parser import get_file_data
 import pygame
 import movement
 
-# TESTING
-from time import sleep
 
 pygame.init()
 
@@ -42,6 +39,19 @@ repeatable_inputs: list = ["move_left", "move_right", "soft_drop"]
 
 def initialise_input_map(file_path: str, profile: str, data_path: str):
     pass
+
+###################################################################################################
+#--------------------------------------- Utility functions ---------------------------------------#
+###################################################################################################
+
+def update_input_map(new_input, action: str):
+    for key, value in input_map.items():
+        if value == action:
+            input_map.pop(key)
+            input_map[new_input] = action
+            return True
+    
+    return False
 
 ###################################################################################################
 #---------------------------------------- Main functions -----------------------------------------#
@@ -90,6 +100,7 @@ def handle_pygame_events(
         "hold_piece": [grid, cell_owners, all_tets, focused_tet, piece_sequence]
     }
 
+    # Iterates through the entire input map, checking if each input has been pressed.
     if event.key in input_map.keys():
         if input_map[event.key] not in repeatable_inputs:
             action_name = input_map[event.key]
@@ -133,6 +144,5 @@ def attractor_input_processor(
     return True
 
 
-def update_controls(control: str):
-    
+def handle_button_presses(button_name: str):
     pass
