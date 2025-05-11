@@ -355,15 +355,7 @@ draw_stats - draw_grid
 draw_next_piece - draw_grid
 draw_gui - draw_grid
 
-Make pretty
-Make the attractor change the next_pieces display.
+Make the buttons change colour slightly when being hovered over
 
-Whenever the attractor loops again, it needs to reinsert the pieces into piece_sequence
-
-Customisable controls 
-
-Seperate 'screen'(pygame.display.set_mode()) into a screen and a canvas
-Draw stuff onto the canvas then blit it onto the screen, thus allowing for multiple drawing layers
-
-Make the controls menu more intuitive (Draw on screen smth like "Press new key")
+Change how certain text is positioned to use Surface.get_rect(midleft=(x, y)) 
 """

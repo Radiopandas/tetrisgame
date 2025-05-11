@@ -45,32 +45,39 @@ def draw_start_menu(screen: pygame.Surface):
 
     # Calculates the positions for the title and instructions
     title_pos = pygame.math.Vector2(
-        screen_midpoint - (42 * screen_scale),
+        screen_midpoint,
         33 * screen_scale
     )
 
     instructions_pos = pygame.math.Vector2(
-        screen_midpoint - 115 * screen_scale,
+        screen_midpoint,
         120 * screen_scale
     )
 
     # Draws the title and instructions
     title_display = title_font.render("SIRTET", False, "white")
     instructions_display = instructions_font.render("Press \'Enter\' to begin", False, "white", "black")
-
+    
+    # Positions them both
+    title_rect = title_display.get_rect(midtop=title_pos)
+    instructions_rect = instructions_display.get_rect(midtop=instructions_pos)
     # Adds them to the screen
-    screen.blit(title_display, title_pos)
-    screen.blit(instructions_display, instructions_pos)
+    screen.blit(title_display, title_rect)
+    screen.blit(instructions_display, instructions_rect)
 
     # Draws a bounding box around the title
     title_rect_thickness: int = 2 * screen_scale
     title_rect_border: int = 3 * screen_scale
-    title_rect = pygame.Rect(
-        title_pos.x - title_rect_border, 
-        title_pos.y - title_rect_border,
-        84 * screen_scale + 2 * title_rect_border, # 252 is the approximate width of the title(currently)
-        20 * screen_scale + 2 * title_rect_border # 60 is a magical number
-    )
+    #title_rect = pygame.Rect(
+    #    title_pos.x - title_rect_border, 
+    #    title_pos.y - title_rect_border,
+    #    84 * screen_scale + 2 * title_rect_border, # 252 is the approximate width of the title(currently)
+    #    20 * screen_scale + 2 * title_rect_border # 60 is a magical number
+    #)
+    title_rect.left -= title_rect_border
+    title_rect.top -= title_rect_border
+    title_rect.width += 2 * title_rect_border
+    title_rect.height += 1 * title_rect_border
     pygame.draw.rect(screen, "azure4", title_rect, title_rect_thickness)
 
 

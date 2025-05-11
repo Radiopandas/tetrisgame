@@ -113,19 +113,23 @@ class Button:
         # Draws the symbols inside the button
         if self.button_symbol:
             # Calculates the position to display the symbol
-            symbol_pos = (self.x_coords[0] + x_dif * 0.25, self.y_coords[0] + (y_dif - button_font_size))
+            symbol_pos = (self.x_coords[0] + x_dif * 0.5, self.y_coords[0] + y_dif * 0.5)
             # Renders the text
             symbol_surface = self.symbol_font.render(f"{self.button_symbol}", False, "white")
+            # Positions it
+            symbol_rect = symbol_surface.get_rect(center=symbol_pos)
             # Merges it onto the screen
-            screen.blit(symbol_surface, symbol_pos)
+            screen.blit(symbol_surface, symbol_rect)
 
         # Draws the text next to each button.
         # Calculates the position to display the text.
-        label_pos = (self.x_coords[1] + x_dif * 0.25, self.y_coords[0] + (y_dif - button_font_size))
+        label_pos = (self.x_coords[1] + x_dif * 0.25, self.y_coords[0] + y_dif * 0.5)
         # Renders the text
         label_surface = self.label_font.render(f"{self.button_label}", False, "white")
+        # Positions it
+        label_rect = label_surface.get_rect(midleft=label_pos )
         # Merges it onto the screen
-        screen.blit(label_surface, label_pos)
+        screen.blit(label_surface, label_rect)
 
 
     def check_is_pressed(self, mouse_pos: tuple[int, int]) -> bool:

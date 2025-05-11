@@ -19,11 +19,6 @@ settings_canvas.set_alpha(150)
 
 settings_menu_open: bool = False
 
-buttons: dict[str, Button] = {}
-
-
-control_button_width: int = 25
-setting_btn_width: int = 30
 # How much of a gap there is between the buttons as a multiple of their height.
 control_button_spacing: float = 1.5 
 
@@ -35,6 +30,10 @@ controls_title_font_size: int = 40 * screen_scale
 
 controls_instructions_font = None
 controls_instructions_font_size: int = 10 * screen_scale
+
+buttons: dict[str, Button] = {}
+control_button_width: int = 25
+setting_btn_width: int = 30
 
 # What order the buttons are in, where 0 is the bottom of the list.
 button_order: dict = {
@@ -292,7 +291,7 @@ def draw_settings_menu(screen: pygame.Surface):
         setting_btn_width * screen_scale * 0.85,
         setting_btn_width * screen_scale * 0.75 + 26 * screen_scale
     )
-    instructions_display = controls_instructions_font.render("Click the boxes to change controls", False, "white")
+    instructions_display = controls_instructions_font.render("Click the boxes to change", False, "white")
     screen.blit(instructions_display, instructions_pos)
 
     
