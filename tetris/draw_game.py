@@ -11,6 +11,7 @@ import json_parser
 import draw_start_menu
 import draw_main_game
 import draw_buttons
+import draw_settings_menu
 
 import movement
 
@@ -35,7 +36,8 @@ screen_h = screen_info.current_h
 # Subtracts 60 to leave room for the control bar at the top.
 screen_h -= 60
 
-screen = pygame.display.set_mode((1920, 1080))
+#screen = pygame.display.set_mode((1920, 1080))
+screen = pygame.display.set_mode((screen_w, screen_h + 60))
 pygame.display.set_caption("SIRTET")
 
 cell_width: int = 0
@@ -66,6 +68,7 @@ game_controls: dict = {}
 
 start_menu_initialised = False
 main_game_initialised = False
+settings_initialised = False
 
 ###################################################################################################
 #--------------------------------------- Utility Functions ---------------------------------------#
@@ -106,11 +109,17 @@ def print_grid(
 ###################################################################################################
 
 def buttons():
-    draw_buttons.draw_button(screen, 'settings_button')
-    draw_buttons.draw_button(screen, "move_left_btn")
-    if draw_buttons.settings_menu_open:
-        draw_buttons.draw_controls_buttons(screen, {})
-        
+    global settings_initialised
+    
+    if not settings_initialised:
+        settings_initialised = True
+        draw_settings_menu.initialise_settings_buttons()
+    
+    if draw_settings_menu.settings_menu_open:
+        draw_settings_menu.draw_settings_menu(screen)
+
+    draw_buttons.draw_buttons(screen)
+
 
 def main_game(
         grid: list[list[bool]],
@@ -175,7 +184,7 @@ def start_menu(board_offset: int) -> bool:
     buttons()
 
 
-def controls_menu():
+def settings_menu():
     pass
 
 

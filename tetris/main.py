@@ -10,6 +10,7 @@ import copy
 import attractor
 import input_handling
 import draw_buttons
+import draw_settings_menu
 from random import shuffle
 
 from time import sleep
@@ -210,21 +211,6 @@ if __name__ == "__main__":
         piece_sequence = attractor.setup_piece_sequence(piece_sequence)
         piece_sequence = attractor.setup_piece_sequence(piece_sequence)
         while display_start_menu:
-            # Draws the start menu and attractor onto the screen.
-            draw_game.screen.fill(draw_game.background_colour)
-            draw_game.main_game(
-                grid, cell_owners, 13, ghost_piece_tiles, 
-                score, lines_cleared, piece_sequence, all_tetrominos, 
-                utility_funcs.held_piece
-            )
-            display_start_menu = False if draw_game.start_menu(13) else True
-
-            frame += 1
-            update(frame, grid, all_tetrominos, continue_game, gravity_cooldown, cell_owners, focused_tetromino, piece_sequence)
-
-            # Flips the updated display onto the screen
-            pygame.display.flip()
-
             # Allows you to quit whilst the attractor runs
             # TODO FIX THIS IT IS BROKEN
             for event in pygame.event.get():
@@ -234,6 +220,26 @@ if __name__ == "__main__":
                     print("Hola")
                     sleep(5)
                     break   
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    mouse_coords = pygame.mouse.get_pos()
+                    draw_settings_menu.check_pressed_buttons(mouse_coords)
+            
+
+            # Draws the start menu and attractor onto the screen.
+            draw_game.screen.fill(draw_game.background_colour)
+            draw_game.main_game(
+                grid, cell_owners, 13, ghost_piece_tiles, 
+                score, lines_cleared, piece_sequence, all_tetrominos, 
+                utility_funcs.held_piece
+            )
+            display_start_menu = False if draw_game.start_menu(13) else True
+
+            if not draw_settings_menu.settings_menu_open:
+                frame += 1
+                update(frame, grid, all_tetrominos, continue_game, gravity_cooldown, cell_owners, focused_tetromino, piece_sequence)
+
+            # Flips the updated display onto the screen
+            pygame.display.flip()
             
             # Waits ~1/60 seconds to try and make the game run at 60 fps.
             dt = clock.tick(60) / 1000
@@ -258,20 +264,20 @@ if __name__ == "__main__":
         running: bool = True
         frame = 0
         while running:
-            frame += 1
+            
             # Uses pygame.event.get() to get pygame.QUIT events and
             # any controls that can't be held down, such as rotation.
             for event in pygame.event.get():
                 if event.type == pygame.QUIT and can_quit:
                     running = False
                     pygame.quit()
-                elif event.type == pygame.KEYDOWN:
+                elif event.type == pygame.KEYDOWN and not draw_settings_menu.settings_menu_open:
                     #if movement.pygame_event_handler(event, grid, focused_tetromino, cell_owners, piece_sequence, all_tetrominos):
                     if input_handling.handle_pygame_events(event, grid, cell_owners, focused_tetromino, piece_sequence, all_tetrominos):
                         movement.update_ghost_piece(grid, focused_tetromino, ghost_piece_tiles)
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     mouse_coords = pygame.mouse.get_pos()
-                    draw_buttons.check_pressed_buttons(mouse_coords)
+                    draw_settings_menu.check_pressed_buttons(mouse_coords)
             
             # Flushes the screen then draws the game.
             draw_game.screen.fill(draw_game.background_colour)
@@ -281,7 +287,9 @@ if __name__ == "__main__":
             pygame.display.flip()
 
             # Runs all the functions that operate the game.
-            update(frame, grid, all_tetrominos, continue_game, gravity_cooldown, cell_owners, focused_tetromino, piece_sequence)
+            if not draw_settings_menu.settings_menu_open:
+                update(frame, grid, all_tetrominos, continue_game, gravity_cooldown, cell_owners, focused_tetromino, piece_sequence)
+                frame += 1
 
             # Waits ~1/60 seconds to try and make the game run at 60 fps.
             dt = clock.tick(60) / 1000
@@ -341,5 +349,9 @@ Documentation
  - utility_funcs.py DONE
 
 Customisable controls 
+
+Seperate 'screen'(pygame.display.set_mode()) into a screen and a canvas
+Draw stuff onto the canvas then blit it onto the screen, thus allowing for multiple drawing layers
+
 
 """

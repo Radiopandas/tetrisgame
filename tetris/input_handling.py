@@ -31,6 +31,10 @@ action_map: dict = {
     "hold_piece": movement.hold_piece
 }
 
+valid_events: list = get_file_data('settings.json', 'pygame_events_details', 'valid_events')
+
+
+
 repeatable_inputs: list = ["move_left", "move_right", "soft_drop"]
 
 ###################################################################################################
@@ -43,6 +47,16 @@ def initialise_input_map(file_path: str, profile: str, data_path: str):
 ###################################################################################################
 #--------------------------------------- Utility functions ---------------------------------------#
 ###################################################################################################
+
+def event_is_valid_control(event: pygame.event.Event):
+    if event.unicode:
+        if event.unicode in valid_events:
+            return True
+    else:
+        if event.key in valid_events:
+            return True
+    return False
+
 
 def update_input_map(new_input, action: str):
     for key, value in input_map.items():
@@ -144,5 +158,5 @@ def attractor_input_processor(
     return True
 
 
-def handle_button_presses(button_name: str):
+def handle_button_presses(button):
     pass
