@@ -215,15 +215,26 @@ if __name__ == "__main__":
             # TODO FIX THIS IT IS BROKEN
             for event in pygame.event.get():
                 if event.type == pygame.QUIT and can_quit:
-                    pygame.quit()
+                    display_start_menu = False
                     run_game = False
-                    print("Hola")
-                    sleep(5)
-                    break   
+                    pygame.quit()
+                
+                elif event.type == pygame.KEYDOWN:
+                    # Key combo to quit the game
+                    if event.key == 45 and event.mod == 8513: # ctrl+alt+shift+capslock+'-'
+                        display_start_menu = False
+                        run_game = False
+                        pygame.quit()
+                    # Key to close the start menu
+                    elif event.key == pygame.K_RETURN:
+                        display_start_menu = False
+                
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     mouse_coords = pygame.mouse.get_pos()
-                    draw_settings_menu.check_pressed_buttons(mouse_coords)
+                    draw_settings_menu.check_pressed_buttons(mouse_coords, draw_game.screen)
             
+            if not display_start_menu:
+                break
 
             # Draws the start menu and attractor onto the screen.
             draw_game.screen.fill(draw_game.background_colour)
@@ -232,7 +243,8 @@ if __name__ == "__main__":
                 score, lines_cleared, piece_sequence, all_tetrominos, 
                 utility_funcs.held_piece
             )
-            display_start_menu = False if draw_game.start_menu(13) else True
+
+            draw_game.start_menu()
 
             if not draw_settings_menu.settings_menu_open:
                 frame += 1
@@ -243,13 +255,16 @@ if __name__ == "__main__":
             
             # Waits ~1/60 seconds to try and make the game run at 60 fps.
             dt = clock.tick(60) / 1000
-            
 
             # Reinserts the attractor's piece sequence into 'piece_sequence'
             # whenever the attractor is about to loop.
             if attractor.attractor_step == len(attractor.steps) - 1:
                 piece_sequence = attractor.setup_piece_sequence(piece_sequence)
         
+        # Checks if the game was quit during the start menu.
+        if not run_game:
+            break
+
         # Resets (almost) all variables to undo changes made by the attractor.
         start_game()
         
@@ -272,13 +287,21 @@ if __name__ == "__main__":
                     running = False
                     pygame.quit()
                 elif event.type == pygame.KEYDOWN and not draw_settings_menu.settings_menu_open:
-                    #if movement.pygame_event_handler(event, grid, focused_tetromino, cell_owners, piece_sequence, all_tetrominos):
-                    if input_handling.handle_pygame_events(event, grid, cell_owners, focused_tetromino, piece_sequence, all_tetrominos):
+                    # Key combo to quit the game.
+                    if event.key == 45 and event.mod == 8513: # ctrl+alt+shift+capslock+'-'
+                        running = False
+                        pygame.quit()
+                    
+                    elif input_handling.handle_pygame_events(event, grid, cell_owners, focused_tetromino, piece_sequence, all_tetrominos):
                         movement.update_ghost_piece(grid, focused_tetromino, ghost_piece_tiles)
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     mouse_coords = pygame.mouse.get_pos()
-                    draw_settings_menu.check_pressed_buttons(mouse_coords)
+                    draw_settings_menu.check_pressed_buttons(mouse_coords, draw_game.screen)
             
+            
+            if not running:
+                break
+
             # Flushes the screen then draws the game.
             draw_game.screen.fill(draw_game.background_colour)
             draw_game.main_game(grid, cell_owners, 13, ghost_piece_tiles, score, lines_cleared, piece_sequence, all_tetrominos, utility_funcs.held_piece)
@@ -342,5 +365,5 @@ Customisable controls
 Seperate 'screen'(pygame.display.set_mode()) into a screen and a canvas
 Draw stuff onto the canvas then blit it onto the screen, thus allowing for multiple drawing layers
 
-
+Make the controls menu more intuitive (Draw on screen smth like "Press new key")
 """

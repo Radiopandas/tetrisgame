@@ -33,8 +33,6 @@ action_map: dict = {
 
 valid_events: list = get_file_data('settings.json', 'pygame_events_details', 'valid_events')
 
-
-
 repeatable_inputs: list = ["move_left", "move_right", "soft_drop"]
 
 ###################################################################################################
@@ -49,6 +47,13 @@ def initialise_input_map(file_path: str, profile: str, data_path: str):
 ###################################################################################################
 
 def event_is_valid_control(event: pygame.event.Event):
+    """Returns whether an inputted key is valid and available
+    to be mapped to an input."""
+    # Checks if the given event is already bound to something.
+    for input in input_map.keys():
+        if input == event.key:
+                return False
+    
     if event.unicode:
         if event.unicode in valid_events:
             return True

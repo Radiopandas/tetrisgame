@@ -18,9 +18,11 @@ settings_menu_open: bool = False
 
 buttons: dict[str, Button] = {}
 
-# Testing only (for now)
+
 control_button_width: int = 25
 setting_btn_width: int = 30
+# How much of a gap there is between the buttons as a multiple of their height.
+control_button_spacing: float = 1.5 
 
 # Used to convert certain events(arrow keys) to symbols
 non_unicode_events: dict = get_file_data('settings.json', 'pygame_events_details', 'non_unicode_events')
@@ -28,17 +30,26 @@ non_unicode_events: dict = get_file_data('settings.json', 'pygame_events_details
 controls_title_font = None
 controls_title_font_size: int = 40 * screen_scale
 
+controls_instructions_font = None
+controls_instructions_font_size: int = 10 * screen_scale
+
+# What order the buttons are in, where 0 is the bottom of the list.
+button_order: dict = {
+    "move_left_btn": 6,
+    "move_right_btn": 5,
+    "soft_drop_btn": 2,
+    "hard_drop_btn": 1,
+    "rotate_right_btn": 3,
+    "rotate_left_btn": 4,
+    "hold_piece_btn": 0
+}
 
 ###################################################################################################
 #---------------------------------------- Setup functions ----------------------------------------#
 ###################################################################################################
 def initialise_settings_buttons():
-    """
-    Replace later with a less shitty way of doing this.
-    Could store the base values in settings.json then multiply them by screen_scale 
-    in the actual script. Would require default_colour and pressed_colour to be changed from
-    pygame.Color objects to tuples[int, int, int]
-    """
+    """Initialises all the buttons related to the settings menu and
+    adds them to the list of all_buttons in draw_buttons.py"""
     settings_btn = Button(
         [0, setting_btn_width * screen_scale],
         [screen_h * screen_scale - setting_btn_width * screen_scale, screen_h * screen_scale],
@@ -53,8 +64,8 @@ def initialise_settings_buttons():
     move_left_btn = Button(
         [setting_btn_width * screen_scale * 0.75, (setting_btn_width * 0.75 + control_button_width) * screen_scale],
         [
-            screen_h * screen_scale - 2 * control_button_width * screen_scale - control_button_width * screen_scale, 
-            screen_h * screen_scale - 2 * control_button_width * screen_scale
+            (screen_h - (3 + button_order["move_left_btn"] * control_button_spacing) * control_button_width) * screen_scale,
+            screen_h * screen_scale - (2 + button_order["move_left_btn"] * control_button_spacing) * control_button_width * screen_scale
         ],
         pygame.Color(100, 100, 0),
         pygame.Color(200, 0, 200),
@@ -68,8 +79,8 @@ def initialise_settings_buttons():
     move_right_btn = Button(
         [setting_btn_width * screen_scale * 0.75, (setting_btn_width * 0.75 + control_button_width) * screen_scale],
         [
-            screen_h * screen_scale - 3.5 * control_button_width * screen_scale - control_button_width * screen_scale, 
-            screen_h * screen_scale - 3.5 * control_button_width * screen_scale
+            (screen_h - (3 + button_order["move_right_btn"] * control_button_spacing) * control_button_width) * screen_scale,
+            screen_h * screen_scale - (2 + button_order["move_right_btn"] * control_button_spacing) * control_button_width * screen_scale
         ],
         pygame.Color(100, 100, 0),
         pygame.Color(200, 0, 200),
@@ -83,8 +94,8 @@ def initialise_settings_buttons():
     soft_drop_btn = Button(
         [setting_btn_width * screen_scale * 0.75, (setting_btn_width * 0.75 + control_button_width) * screen_scale],
         [
-            screen_h * screen_scale - 5 * control_button_width * screen_scale - control_button_width * screen_scale, 
-            screen_h * screen_scale - 5 * control_button_width * screen_scale
+            (screen_h - (3 + button_order["soft_drop_btn"] * control_button_spacing) * control_button_width) * screen_scale,
+            screen_h * screen_scale - (2 + button_order["soft_drop_btn"] * control_button_spacing) * control_button_width * screen_scale
         ],
         pygame.Color(100, 100, 0),
         pygame.Color(200, 0, 200),
@@ -98,8 +109,8 @@ def initialise_settings_buttons():
     hard_drop_btn = Button(
         [setting_btn_width * screen_scale * 0.75, (setting_btn_width * 0.75 + control_button_width) * screen_scale],
         [
-            screen_h * screen_scale - 6.5 * control_button_width * screen_scale - control_button_width * screen_scale, 
-            screen_h * screen_scale - 6.5 * control_button_width * screen_scale
+            (screen_h - (3 + button_order["hard_drop_btn"] * control_button_spacing) * control_button_width) * screen_scale,
+            screen_h * screen_scale - (2 + button_order["hard_drop_btn"] * control_button_spacing) * control_button_width * screen_scale
         ],
         pygame.Color(100, 100, 0),
         pygame.Color(200, 0, 200),
@@ -113,8 +124,8 @@ def initialise_settings_buttons():
     rotate_right_btn = Button(
         [setting_btn_width * screen_scale * 0.75, (setting_btn_width * 0.75 + control_button_width) * screen_scale],
         [
-            screen_h * screen_scale - 8 * control_button_width * screen_scale - control_button_width * screen_scale, 
-            screen_h * screen_scale - 8 * control_button_width * screen_scale
+            (screen_h - (3 + button_order["rotate_right_btn"] * control_button_spacing) * control_button_width) * screen_scale,
+            screen_h * screen_scale - (2 + button_order["rotate_right_btn"] * control_button_spacing) * control_button_width * screen_scale
         ],
         pygame.Color(100, 100, 0),
         pygame.Color(200, 0, 200),
@@ -128,8 +139,8 @@ def initialise_settings_buttons():
     rotate_left_btn = Button(
         [setting_btn_width * screen_scale * 0.75, (setting_btn_width * 0.75 + control_button_width) * screen_scale],
         [
-            screen_h * screen_scale - 9.5 * control_button_width * screen_scale - control_button_width * screen_scale, 
-            screen_h * screen_scale - 9.5 * control_button_width * screen_scale
+            (screen_h - (3 + button_order["rotate_left_btn"] * control_button_spacing) * control_button_width) * screen_scale,
+            screen_h * screen_scale - (2 + button_order["rotate_left_btn"] * control_button_spacing) * control_button_width * screen_scale
         ],
         pygame.Color(100, 100, 0),
         pygame.Color(200, 0, 200),
@@ -143,8 +154,8 @@ def initialise_settings_buttons():
     hold_piece_btn = Button(
         [setting_btn_width * screen_scale * 0.75, (setting_btn_width * 0.75 + control_button_width) * screen_scale],
         [
-            screen_h * screen_scale - 11 * control_button_width * screen_scale - control_button_width * screen_scale, 
-            screen_h * screen_scale - 11 * control_button_width * screen_scale
+            (screen_h - (3 + button_order["hold_piece_btn"] * control_button_spacing) * control_button_width) * screen_scale,
+            screen_h * screen_scale - (2 + button_order["hold_piece_btn"] * control_button_spacing) * control_button_width * screen_scale
         ],
         pygame.Color(100, 100, 0),
         pygame.Color(200, 0, 200),
@@ -190,7 +201,7 @@ def update_button_symbol(button: Button, event: pygame.event.Event):
     button.button_symbol = symbol.capitalize()
 
 
-def call_button(button: Button):
+def call_button(button: Button, screen: pygame.Surface):
     global settings_menu_open
     match button.button_group:
         case "settings_btns":
@@ -198,6 +209,9 @@ def call_button(button: Button):
             change_menu_is_opened()
         case "controls_btns":
             # Gets an input from the user.
+            button.set_is_pressed()
+            button.draw_self(screen)
+            pygame.display.update()
             key_pressed = None
             while not key_pressed:
                 key_pressed = get_input()
@@ -207,7 +221,9 @@ def call_button(button: Button):
             if event_is_valid_control(key_pressed):
                 update_input_map(key_pressed.key, button.button_name[0:-4])
             
-            update_button_symbol(button, key_pressed)
+                update_button_symbol(button, key_pressed)
+            
+            button.set_is_pressed()
             
 
 def change_menu_is_opened():
@@ -217,18 +233,20 @@ def change_menu_is_opened():
     for button in buttons.values():
         if button.button_group != "settings_btns":
             button.button_active = not button.button_active
+        elif button.button_group == "settings_btns":
+            button.set_is_pressed()
 
     update_all_buttons(buttons)
 
 
-def check_pressed_buttons(mouse_coords: tuple[int, int]):
+def check_pressed_buttons(mouse_coords: tuple[int, int], screen: pygame.Surface):
     global buttons
 
     for button in buttons.values():
         if button.button_active:
             if button.check_is_pressed(mouse_coords):
                 print("Button pressed I guess")
-                call_button(button)
+                call_button(button, screen)
 
 
 
@@ -237,7 +255,8 @@ def check_pressed_buttons(mouse_coords: tuple[int, int]):
 ###################################################################################################
 
 def draw_settings_menu(screen: pygame.Surface):
-    global controls_title_font, controls_title_font_size
+    global controls_title_font, controls_title_font_size, \
+        controls_instructions_font, controls_instructions_font_size
 
     # Creates the background
     screen.fill("black")
@@ -251,3 +270,13 @@ def draw_settings_menu(screen: pygame.Surface):
     )
     title_display = controls_title_font.render("Controls", False, "white")
     screen.blit(title_display, title_pos)
+
+    # Draws instructions for changing controls
+    if not controls_instructions_font:
+        controls_instructions_font = pygame.font.SysFont('Lexus', controls_instructions_font_size)
+    instructions_pos = (
+        setting_btn_width * screen_scale * 0.85,
+        setting_btn_width * screen_scale * 0.75 + 26 * screen_scale
+    )
+    instructions_display = controls_instructions_font.render("Click the boxes to change controls", False, "white")
+    screen.blit(instructions_display, instructions_pos)

@@ -50,13 +50,13 @@ def draw_start_menu(screen: pygame.Surface):
     )
 
     instructions_pos = pygame.math.Vector2(
-        screen_midpoint - 94 * screen_scale,
-        100 * screen_scale
+        screen_midpoint - 115 * screen_scale,
+        120 * screen_scale
     )
 
     # Draws the title and instructions
     title_display = title_font.render("SIRTET", False, "white")
-    instructions_display = instructions_font.render("Press \'0\' to begin", False, "white", "black")
+    instructions_display = instructions_font.render("Press \'Enter\' to begin", False, "white", "black")
 
     # Adds them to the screen
     screen.blit(title_display, title_pos)
@@ -74,6 +74,8 @@ def draw_start_menu(screen: pygame.Surface):
     pygame.draw.rect(screen, "azure4", title_rect, title_rect_thickness)
 
 
+#910 431
+#1827
 
 
 """

@@ -33,11 +33,9 @@ pygame.init()
 screen_info = pygame.display.Info()
 screen_w = screen_info.current_w
 screen_h = screen_info.current_h
-# Subtracts 60 to leave room for the control bar at the top.
-screen_h -= 60
 
 #screen = pygame.display.set_mode((1920, 1080))
-screen = pygame.display.set_mode((screen_w, screen_h + 60))
+screen = pygame.display.set_mode((screen_w, screen_h))
 pygame.display.set_caption("SIRTET")
 
 cell_width: int = 0
@@ -159,7 +157,7 @@ def main_game(
     
 
 
-def start_menu(board_offset: int) -> bool:
+def start_menu() -> bool:
     """Draws a start menu consisting of the title and basic instructions."""
     
     global start_menu_initialised
@@ -170,22 +168,22 @@ def start_menu(board_offset: int) -> bool:
 
     draw_start_menu.draw_start_menu(screen)
 
+    #draw_grid_lines(20)
+
     # Checks for the user pressing <key> to exit the start screen.
     # Returns True if <key> is pressed, else False. 
 
-    keys = pygame.key.get_pressed()
+    buttons()
+
+"""    keys = pygame.key.get_pressed()
     if keys[pygame.K_0]:
         return True
     for event in pygame.event.get():
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_0:
                 return True
-
-    buttons()
-
-
-def settings_menu():
-    pass
+"""
+    
 
 
 def draw_grid_lines(h_lines: int):

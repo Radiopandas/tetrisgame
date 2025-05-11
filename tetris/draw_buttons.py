@@ -29,6 +29,8 @@ class Button:
 
     button_active: bool = False
 
+    button_pressed: bool = False
+
     # Current groups options
     # "controls_btns"
     # "settings_btns"
@@ -97,7 +99,7 @@ class Button:
         if not self.symbol_font:
             self.symbol_font = pygame.font.SysFont('Lexus', self.symbol_size)
         
-        
+        draw_colour = self.default_colour if not self.button_pressed else self.pressed_colour
 
         button_rect = pygame.Rect(
             self.x_coords[0],
@@ -105,7 +107,8 @@ class Button:
             x_dif,
             y_dif
         )
-        pygame.draw.rect(screen, self.default_colour, button_rect)
+        pygame.draw.rect(screen, draw_colour, button_rect)
+
 
         # Draws the symbols inside the button
         if self.button_symbol:
@@ -133,6 +136,12 @@ class Button:
             if left <= x <= right and top <= y <= bottom:
                 return True
             return False
+    
+
+    def set_is_pressed(self):
+        self.button_pressed = not self.button_pressed
+
+
 
 ###################################################################################################
 #------------------------------------------ Global vars ------------------------------------------#
