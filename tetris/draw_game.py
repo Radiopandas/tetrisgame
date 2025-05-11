@@ -128,7 +128,8 @@ def main_game(
         lines_cleared: int, 
         piece_sequence: list[int],
         all_tets: list[Tetromino],
-        held_piece: int = None
+        held_piece: int = None,
+        draw_ghost_piece: bool = True
     ) -> None:
     """Calls several other functions to draw everything onto the screen."""
 
@@ -143,7 +144,7 @@ def main_game(
         draw_main_game.initialise_piece_display_font(16)
         draw_main_game.initialise_controls_title_font(24)
     
-    draw_main_game.draw_grid(screen, all_tets, movement.ghost_piece, 5)
+    draw_main_game.draw_grid(screen, all_tets, movement.ghost_piece, 5, draw_ghost_piece)
 
     draw_main_game.draw_stats(screen, score, lines_cleared, lines_cleared // 10)
 

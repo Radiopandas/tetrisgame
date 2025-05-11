@@ -113,7 +113,8 @@ def draw_grid(
         screen: pygame.Surface,
         tetrominos: list[Tetromino],
         ghost_piece: Tetromino,
-        outline_thickness: int
+        outline_thickness: int,
+        draw_ghost_piece: bool = True
     ):
     global cell_width, board_offset
     # Calculates how wide to make each cell
@@ -123,7 +124,7 @@ def draw_grid(
     board_offset = (screen_dimensions.current_w // 2) - cell_width * ((grid_width / 2) + 1)
 
     # Draws the ghost piece
-    if ghost_piece:
+    if ghost_piece and draw_ghost_piece:
         ghost_piece_colour = set_draw_colour(8)
         for cell in ghost_piece.cells:
             x, y = cell[0], cell[1]

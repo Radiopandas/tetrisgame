@@ -40,6 +40,8 @@ movement_cooldown: int = 0
 piece_spawn_cooldown: int = 0
 frame: int = 0
 
+instant_gravity_after_clearing: bool = True
+
 # Only to be used when displaying the game to people
 can_quit: bool = True
 
@@ -109,7 +111,7 @@ def update(
         ):
     
     # For some fucking reason if I don't do it like this everything breaks
-    global focused_tetromino, continue_game, piece_spawn_cooldown, movement_cooldown, score, lines_cleared, gravity_cooldown, display_start_menu, attractor_needs_to_wait
+    global focused_tetromino, continue_game, piece_spawn_cooldown, movement_cooldown, score, lines_cleared, gravity_cooldown, display_start_menu, attractor_needs_to_wait, instant_gravity_after_clearing
 
     if not keep_playing:
         return
@@ -129,6 +131,21 @@ def update(
         # updates the gravity rate.
         score += utility_funcs.update_scores(lines_just_cleared)
         lines_cleared += lines_just_cleared
+        # Moves all lines down by the number of lines cleared
+        if lines_just_cleared > 0 and instant_gravity_after_clearing:
+            for i in range(lines_just_cleared):
+                
+                draw_game.screen.fill(draw_game.background_colour)
+                draw_game.main_game(
+                grid, cell_owners, 13, ghost_piece_tiles, 
+                score, lines_cleared, piece_sequence, all_tetrominos, 
+                utility_funcs.held_piece, False
+                )
+
+                pygame.display.flip()
+                gravity.apply_gravity(grid, all_tets, cell_owners)
+                sleep(0.05)
+
         if gravity_rate > 10:
             gravity_cooldown -= utility_funcs.update_gravity_rate(lines_cleared, lines_just_cleared)
         movement.update_ghost_piece(grid, focused_tet, ghost_piece_tiles)
@@ -318,11 +335,11 @@ if __name__ == "__main__":
             dt = clock.tick(60) / 1000
 
             if not continue_game:
-                break
+                running = False
         
         # Funny message whenever the player loses.
         print("Player lost lollllll")
-        sleep(3)
+        sleep(6)
 
 
 """
