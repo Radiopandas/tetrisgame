@@ -62,13 +62,6 @@
         }
     },
 
-    "Buttons": {
-        "x_coords": {
-            "move_left": []
-        },
-        "y_coords": {}
-    },
-
     "pygame_events_details": {
         "valid_events": [
             "<", "q", "g", "0", "&", "$", "s", ";", "e", "u", "_", "\"", "(", "2", "7", 

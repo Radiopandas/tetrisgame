@@ -14,6 +14,9 @@ screen_w = 640
 screen_h = 360
 screen_scale = int(display_info.current_h / screen_h)
 
+settings_canvas = pygame.Surface((display_info.current_w, display_info.current_h))
+settings_canvas.set_alpha(150)
+
 settings_menu_open: bool = False
 
 buttons: dict[str, Button] = {}
@@ -259,7 +262,18 @@ def draw_settings_menu(screen: pygame.Surface):
         controls_instructions_font, controls_instructions_font_size
 
     # Creates the background
-    screen.fill("black")
+    #screen.fill("black")
+    #settings_canvas.fill("green")
+
+    settings_background_rect = pygame.Rect(
+        0, 0, screen_w * 0.25 * screen_scale, screen_h * screen_scale
+    )
+
+    pygame.draw.rect(settings_canvas, (20, 20, 20), settings_background_rect)
+
+    screen.blit(settings_canvas, (0, 0, 0, 0))
+
+    
 
     # Draws text to make it clear that the controls are being displayed
     if not controls_title_font:
@@ -280,3 +294,5 @@ def draw_settings_menu(screen: pygame.Surface):
     )
     instructions_display = controls_instructions_font.render("Click the boxes to change controls", False, "white")
     screen.blit(instructions_display, instructions_pos)
+
+    
