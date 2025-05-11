@@ -25,6 +25,9 @@ setting_btn_width: int = 30
 # Used to convert certain events(arrow keys) to symbols
 non_unicode_events: dict = get_file_data('settings.json', 'pygame_events_details', 'non_unicode_events')
 
+controls_title_font = None
+controls_title_font_size: int = 40 * screen_scale
+
 
 ###################################################################################################
 #---------------------------------------- Setup functions ----------------------------------------#
@@ -234,5 +237,17 @@ def check_pressed_buttons(mouse_coords: tuple[int, int]):
 ###################################################################################################
 
 def draw_settings_menu(screen: pygame.Surface):
+    global controls_title_font, controls_title_font_size
+
+    # Creates the background
     screen.fill("black")
-    pass
+
+    # Draws text to make it clear that the controls are being displayed
+    if not controls_title_font:
+        controls_title_font = pygame.font.SysFont('Lexus', controls_title_font_size)
+    title_pos = (
+        setting_btn_width * screen_scale * 0.75,
+        setting_btn_width * screen_scale * 0.75
+    )
+    title_display = controls_title_font.render("Controls", False, "white")
+    screen.blit(title_display, title_pos)

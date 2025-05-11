@@ -153,7 +153,7 @@ def main_game(
 
     draw_main_game.draw_held_piece(screen, held_piece)
 
-    draw_main_game.draw_controls(screen, game_controls)
+    #draw_main_game.draw_controls(screen, game_controls)
 
     buttons()
     

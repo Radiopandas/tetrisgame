@@ -337,17 +337,6 @@ Make the attractor change the next_pieces display.
 
 Whenever the attractor loops again, it needs to reinsert the pieces into piece_sequence
 
-Documentation
- - attractor.py DONE
- - draw_game.py DONE
- - gravity.py DONE
- - line_clearing.py DONE
- - main.py 
- - movement.py DONE
- - rotation.py DONE
- - tetromino.py DONE
- - utility_funcs.py DONE
-
 Customisable controls 
 
 Seperate 'screen'(pygame.display.set_mode()) into a screen and a canvas
