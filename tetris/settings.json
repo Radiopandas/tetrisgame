@@ -1,22 +1,24 @@
 {   
     "Profile1" : {
         "controls" : {
-            "move_left": ["a"],
-            "move_right": ["d"],
-            "soft_drop": ["s"],
-            "hard_drop": ["w"],
-            "rotate_left": ["q"],
-            "rotate_right": ["e"],
-            "hold_piece": ["h"],
-            "start_game": ["0"]
+            "move_left": 97,
+            "move_right": 100,
+            "soft_drop": 115,
+            "hard_drop": 119,
+            "rotate_left": 113,
+            "rotate_right": 101,
+            "hold_piece": 104
         },
 
         "displayed_controls": 
         {
-            "Movement": "A/D",
-            "Soft/hard drop": "S/W",
-            "Rotation": "Q/E",
-            "Hold piece": "H"
+            "move_left": "A",
+            "move_right": "D",
+            "soft_drop": "S",
+            "hard_drop": "W",
+            "rotate_left": "Q",
+            "rotate_right": "E",
+            "hold_piece": "H"
         }
     },
 

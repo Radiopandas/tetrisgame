@@ -1,7 +1,7 @@
 import pygame
 from draw_buttons import Button, update_all_buttons
 from json_parser import get_file_data
-from input_handling import update_input_map, event_is_valid_control
+from input_handling import update_input_map, event_is_valid_control, reset_controls, input_map, input_display
 
 # TESTING ONLY
 from time import sleep
@@ -49,6 +49,13 @@ button_order: dict = {
 ###################################################################################################
 #---------------------------------------- Setup functions ----------------------------------------#
 ###################################################################################################
+
+def get_button_keys(input_dict: dict, name_dict: dict, action: str):
+    """Returns the key that 'action' is mapped to in 'input_dict'"""
+    for key, value in input_dict.items():
+        if value == action:
+            return name_dict[value]
+
 def initialise_settings_buttons():
     """Initialises all the buttons related to the settings menu and
     adds them to the list of all_buttons in draw_buttons.py"""
@@ -75,7 +82,7 @@ def initialise_settings_buttons():
         "controls_btns",
         "move_left_btn",
         "Move piece left",
-        "A"
+        get_button_keys(input_map, input_display, "move_left")
     )
 
     move_right_btn = Button(
@@ -168,7 +175,24 @@ def initialise_settings_buttons():
         "H" 
     )
 
+    reset_controls_btn = Button(
+        [setting_btn_width * screen_scale * 0.75, (setting_btn_width * 0.75 + control_button_width) * screen_scale], 
+        [
+            (screen_h - 1.7 * control_button_width) * screen_scale,
+            screen_h * screen_scale - 1.3 * control_button_width * screen_scale
+        ],
+        pygame.Color(100, 100, 0),
+        pygame.Color(200, 0, 200),
+        False,
+        "settings_util_btns",
+        "reset_controls_btn",
+        "Reset to defaults", 
+    )
+
+    reset_controls_btn.set_label_font_size(new_ratio=1.0)
+
     buttons["settings_btn"] = settings_btn
+    buttons["reset_controls_btn"] = reset_controls_btn
 
     buttons["move_left_btn"] = move_left_btn
     buttons["move_right_btn"] = move_right_btn
@@ -183,6 +207,12 @@ def initialise_settings_buttons():
 ###################################################################################################
 #--------------------------------------- Utility Functions ---------------------------------------#
 ###################################################################################################
+
+def is_in_group(button: Button, group: str):
+    if button.button_group == group:
+        return True
+    return False
+
 
 def get_input():
     for event in pygame.event.get():
@@ -226,6 +256,11 @@ def call_button(button: Button, screen: pygame.Surface):
                 update_button_symbol(button, key_pressed)
             
             button.set_is_pressed()
+        case "settings_util_btns":
+            controls_buttons: list[Button] = list(filter(lambda sequence: is_in_group(sequence, "controls_btns"), buttons.values()))
+            reset_controls(controls_buttons)
+        case _:
+            print("Unknown button group detected")
             
 
 def change_menu_is_opened():
@@ -293,5 +328,3 @@ def draw_settings_menu(screen: pygame.Surface):
     )
     instructions_display = controls_instructions_font.render("Click the boxes to change", False, "white")
     screen.blit(instructions_display, instructions_pos)
-
-    

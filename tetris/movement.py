@@ -21,6 +21,7 @@ CONTROLS_PRESET = 'Profile1'
 controls = json_parser.get_file_data(SETTINGS_PATH, CONTROLS_PRESET, CONTROLS_PATH)
 
 for key in controls.keys():
+    continue
     # Iterates through every control, converting any controls that are
     # stored as unicode characters into decimal representations
     control = controls[key]

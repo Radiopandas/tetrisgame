@@ -28,7 +28,7 @@ ghost_piece_tiles: list[list[bool]] = utility_funcs.create_grid(width, height, F
 score: int = 0
 lines_cleared: int = 0
 
-gravity_cooldown: int = 15
+gravity_cooldown: int = 60
 piece_sequence: list[int] = [1, 2, 3, 4, 5, 6, 7]
 held_piece: int = 0
 
@@ -43,7 +43,7 @@ frame: int = 0
 instant_gravity_after_clearing: bool = True
 
 # Only to be used when displaying the game to people
-can_quit: bool = True
+can_quit: bool = False
 
 all_vars = [
     width, height, focused_tetromino, grid, cell_owners, all_tetrominos,
@@ -54,7 +54,7 @@ all_vars = [
 
 var_defaults = [
     10, 22, Tetromino([]), [], [], [],
-    utility_funcs.create_grid(width, height, False), 0, 0, 15,
+    utility_funcs.create_grid(width, height, False), 0, 0, 60,
     [1, 2, 3, 4, 5, 6, 7], 0, True, 0, 0, 0
 ]
 
@@ -141,10 +141,13 @@ def update(
                 score, lines_cleared, piece_sequence, all_tetrominos, 
                 utility_funcs.held_piece, False
                 )
+                if display_start_menu:
+                    draw_game.start_menu()
 
                 pygame.display.flip()
                 gravity.apply_gravity(grid, all_tets, cell_owners)
                 sleep(0.05)
+            
 
         if gravity_rate > 10:
             gravity_cooldown -= utility_funcs.update_gravity_rate(lines_cleared, lines_just_cleared)
@@ -238,7 +241,7 @@ if __name__ == "__main__":
                 
                 elif event.type == pygame.KEYDOWN:
                     # Key combo to quit the game
-                    if event.key == 45 and event.mod == 8513: # ctrl+alt+shift+capslock+'-'
+                    if event.key == 45 and (event.mod == 8513 or event.mod == 8769): # ctrl+alt+shift+capslock+'-'
                         display_start_menu = False
                         run_game = False
                         pygame.quit()
@@ -305,7 +308,7 @@ if __name__ == "__main__":
                     pygame.quit()
                 elif event.type == pygame.KEYDOWN and not draw_settings_menu.settings_menu_open:
                     # Key combo to quit the game.
-                    if event.key == 45 and event.mod == 8513: # ctrl+alt+shift+capslock+'-'
+                    if event.key == 45 and (event.mod == 8513 or event.mod == 8769): # ctrl+Lalt/Ralt+shift+capslock+'-'
                         running = False
                         pygame.quit()
                     
@@ -375,4 +378,6 @@ draw_gui - draw_grid
 Make the buttons change colour slightly when being hovered over
 
 Change how certain text is positioned to use Surface.get_rect(midleft=(x, y)) 
+
+Call clear_lines() after hard dropping pieces to reduce downtime
 """

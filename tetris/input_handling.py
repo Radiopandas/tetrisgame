@@ -1,6 +1,7 @@
 from tetromino import Tetromino
 import rotation
 from json_parser import get_file_data
+from draw_buttons import Button
 import pygame
 import movement
 
@@ -12,7 +13,7 @@ pygame.init()
 ###################################################################################################
 # Maps pygame inputs to strings
 input_map: dict = {
-    pygame.K_a: "move_left",
+    121: "move_left",
     pygame.K_d: "move_right",
     pygame.K_w: "hard_drop",
     pygame.K_s: "soft_drop",
@@ -20,6 +21,19 @@ input_map: dict = {
     pygame.K_q: "rotate_left",
     pygame.K_h: "hold_piece"
 }
+
+#input_map[list(get_file_data('settings.json', 'Profile1', 'controls').values())[0]] = "move_left"
+
+input_map = {}
+inputs = get_file_data('settings.json', 'Profile1', 'controls')
+for key, value in inputs.items():
+    input_map[value] = key
+
+## Maps 
+input_display: dict = get_file_data('settings.json', 'Profile1', 'displayed_controls')
+for key, value in input_map.items():
+    print(f"Key: {key}, action: {value}, symbol: {input_display[value]}")
+
 # Maps strings to functions to be called
 action_map: dict = {
     "move_left": movement.move_tet,
@@ -39,7 +53,7 @@ repeatable_inputs: list = ["move_left", "move_right", "soft_drop"]
 #---------------------------------------- Setup functions ----------------------------------------#
 ###################################################################################################
 
-def initialise_input_map(file_path: str, profile: str, data_path: str):
+def reset_input_map(file_path: str, profile: str, data_path: str):
     pass
 
 ###################################################################################################
@@ -163,5 +177,16 @@ def attractor_input_processor(
     return True
 
 
-def handle_button_presses(button):
-    pass
+def reset_controls(controls_buttons: list[Button]):
+    global input_map, input_display
+
+    # Resets the input map to the defaults
+    input_map = {}
+    inputs = get_file_data('settings.json', 'Profile1', 'controls')
+    for key, value in inputs.items():
+        input_map[value] = key
+
+    # Updates all the controls buttons to display the default symbols.
+    for button in controls_buttons:
+        name = button.button_name[0:-4]
+        button.button_symbol = input_display[name]

@@ -144,6 +144,16 @@ class Button:
 
     def set_is_pressed(self):
         self.button_pressed = not self.button_pressed
+    
+
+    def set_label_font_size(self, new_size: int = 0, new_ratio: float = 0):
+        if new_size:
+            self.label_size = new_size
+        
+        if new_ratio:
+            y_dif = self.y_coords[1] - self.y_coords[0]
+            self.label_size = int(y_dif * new_ratio)
+
 
 
 
