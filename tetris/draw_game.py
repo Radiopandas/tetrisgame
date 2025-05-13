@@ -111,7 +111,9 @@ def buttons():
     
     if not settings_initialised:
         settings_initialised = True
+        draw_settings_menu.get_settings_icon()
         draw_settings_menu.initialise_settings_buttons()
+        
     
     if draw_settings_menu.settings_menu_open:
         draw_settings_menu.draw_settings_menu(screen)

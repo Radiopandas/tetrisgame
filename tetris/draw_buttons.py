@@ -19,21 +19,20 @@ button_font_size: int = 20 * screen_scale
 button_font = pygame.font.SysFont('Lexus', button_font_size)
 
 class Button:
-    # x_coords: [left, right]
-    x_coords: list[int] = []
-    # y_coords: [top, bottom]
-    y_coords: list[int] = []
+    
+    x_coords: list[int] = [] # x_coords: [left, right]
+    y_coords: list[int] = [] # y_coords: [top, bottom]
 
     default_colour: pygame.Color = pygame.Color(0, 0, 0)
     pressed_colour: pygame.Color = pygame.Color(100, 100, 100)
 
     button_active: bool = False
-
     button_pressed: bool = False
 
     # Current groups options
     # "controls_btns"
     # "settings_btns"
+    # "settings_util_btns"
     button_group: str = ""
     button_name: str = ""
 
@@ -41,6 +40,7 @@ class Button:
     # 'button_symbol' is displayed inside the buttons
     button_label: str = ""
     button_symbol: str = ""
+    button_icon: pygame.Surface = None
 
 
     label_size: int = 0
@@ -101,25 +101,33 @@ class Button:
         
         draw_colour = self.default_colour if not self.button_pressed else self.pressed_colour
 
+        # Draws the button as a pygame.Rect object
         button_rect = pygame.Rect(
-            self.x_coords[0],
-            self.y_coords[0],
-            x_dif,
-            y_dif
-        )
-        pygame.draw.rect(screen, draw_colour, button_rect)
+                self.x_coords[0],
+                self.y_coords[0],
+                x_dif,
+                y_dif
+            )
+        if not self.button_icon:
+            pygame.draw.rect(screen, draw_colour, button_rect)
 
 
-        # Draws the symbols inside the button
-        if self.button_symbol:
-            # Calculates the position to display the symbol
-            symbol_pos = (self.x_coords[0] + x_dif * 0.5, self.y_coords[0] + y_dif * 0.5)
-            # Renders the text
-            symbol_surface = self.symbol_font.render(f"{self.button_symbol}", False, "white")
-            # Positions it
-            symbol_rect = symbol_surface.get_rect(center=symbol_pos)
-            # Merges it onto the screen
-            screen.blit(symbol_surface, symbol_rect)
+            # Draws the symbols inside the button
+            if self.button_symbol:
+                # Calculates the position to display the symbol
+                symbol_pos = (self.x_coords[0] + x_dif * 0.5, self.y_coords[0] + y_dif * 0.5)
+                # Renders the text
+                symbol_surface = self.symbol_font.render(f"{self.button_symbol}", False, "white")
+                # Positions it
+                symbol_rect = symbol_surface.get_rect(center=symbol_pos)
+                # Merges it onto the screen
+                screen.blit(symbol_surface, symbol_rect)
+        else:
+            icon_width: int = self.button_icon.get_size()[0]
+            new_icon_scale: float = x_dif / icon_width
+            self.button_icon = pygame.transform.scale_by(self.button_icon, new_icon_scale)
+            screen.blit(self.button_icon, button_rect)
+
 
         # Draws the text next to each button.
         # Calculates the position to display the text.

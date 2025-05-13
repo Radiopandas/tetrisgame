@@ -408,9 +408,7 @@ draw_gui - draw_grid
 
 Make the buttons change colour slightly when being hovered over
 
-Change how certain text is positioned to use Surface.get_rect(midleft=(x, y)) 
-
-Call clear_lines() after hard dropping pieces to reduce downtime
+Add a local scoreboard (or, if there is time, a scoreboard that syncs across the network.)
 
 Issue 1:
     When you hard drop a piece, line clearing gets automatically called.
@@ -429,6 +427,8 @@ Issue 2:
 
 Issue 3:
     When you hard drop a piece and lines get cleared, the ghost piece gets drawn when it really shouldn't.
+
 If performance is an issue, could make a gravity function that just moves every cell above
 a certain row down a certain amount to be used after line clearing.
+
 """

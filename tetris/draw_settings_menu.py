@@ -14,8 +14,10 @@ screen_w = 640
 screen_h = 360
 screen_scale = int(display_info.current_h / screen_h)
 
-settings_canvas = pygame.Surface((display_info.current_w, display_info.current_h))
-settings_canvas.set_alpha(150)
+settings_canvas_1 = pygame.Surface((display_info.current_w, display_info.current_h))
+settings_canvas_1.set_alpha(150)
+settings_canvas_2 = pygame.Surface((display_info.current_w, display_info.current_h))
+
 
 settings_menu_open: bool = False
 
@@ -46,15 +48,26 @@ button_order: dict = {
     "hold_piece_btn": 0
 }
 
+# Images
+settings_icon: pygame.Surface = None
+
 ###################################################################################################
 #---------------------------------------- Setup functions ----------------------------------------#
 ###################################################################################################
+
+def get_settings_icon(icon_path='images\settings_icon.png'):
+    global settings_icon
+    # Gets the settings icon
+    settings_icon = pygame.image.load(icon_path)
+
+    
 
 def get_button_keys(input_dict: dict, name_dict: dict, action: str):
     """Returns the key that 'action' is mapped to in 'input_dict'"""
     for key, value in input_dict.items():
         if value == action:
             return name_dict[value]
+
 
 def initialise_settings_buttons():
     """Initialises all the buttons related to the settings menu and
@@ -69,6 +82,7 @@ def initialise_settings_buttons():
         "settings_btn",
         "Settings"
     )
+    settings_btn.button_icon = settings_icon
 
     move_left_btn = Button(
         [setting_btn_width * screen_scale * 0.75, (setting_btn_width * 0.75 + control_button_width) * screen_scale],
@@ -303,9 +317,9 @@ def draw_settings_menu(screen: pygame.Surface):
         0, 0, screen_w * 0.25 * screen_scale, screen_h * screen_scale
     )
 
-    pygame.draw.rect(settings_canvas, (20, 20, 20), settings_background_rect)
+    pygame.draw.rect(settings_canvas_1, (20, 20, 20), settings_background_rect)
 
-    screen.blit(settings_canvas, (0, 0, 0, 0))
+    screen.blit(settings_canvas_1, (0, 0, 0, 0))
 
     
 

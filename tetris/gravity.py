@@ -96,5 +96,3 @@ def apply_gravity(grid, tetrominos: list[Tetromino], cell_owners: list[list[Tetr
     
     if focused_tetromino and input_handling.just_hard_dropped:
         focused_tetromino.can_move = False
-
-#B410
