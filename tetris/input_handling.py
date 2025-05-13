@@ -158,23 +158,27 @@ def attractor_input_processor(
         cell_owners: list[list[Tetromino | None]],
         focused_tet: Tetromino
     ):
+
+    global just_hard_dropped
+
     match event:
-        case "a":
+        case "a": # Move left
             movement.move_tet(grid, focused_tet, cell_owners, -1)
-        case "d":
+        case "d": # Move right
             movement.move_tet(grid, focused_tet, cell_owners, 1)
 
-        case "w":
+        case "w": # Hard drop
             movement.quick_drop(grid, focused_tet, cell_owners, True)
-        case "s":
+            just_hard_dropped = True
+        case "s": # Soft drop
             movement.quick_drop(grid, focused_tet, cell_owners, False)
 
-        case "e":
+        case "e": # Rotate right
             rotation.rotate_tet(grid, focused_tet, cell_owners, True)
-        case "q":
+        case "q": # Rotate left
             rotation.rotate_tet(grid, focused_tet, cell_owners, False)
 
-        case "h":
+        case "h": # Hold piece
             print("Sorry, holding not implemented yet.")
         case _:
             # Allows the attractor to have delays between steps.

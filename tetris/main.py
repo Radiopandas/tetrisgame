@@ -427,6 +427,8 @@ Issue 2:
         and if input_handling.just_hard_dropped is true, in which case it sets 
         'focused_tet'.can_move back to False after applying gravity to everything
 
+Issue 3:
+    When you hard drop a piece and lines get cleared, the ghost piece gets drawn when it really shouldn't.
 If performance is an issue, could make a gravity function that just moves every cell above
 a certain row down a certain amount to be used after line clearing.
 """
