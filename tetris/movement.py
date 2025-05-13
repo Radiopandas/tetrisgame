@@ -261,6 +261,3 @@ def update_ghost_piece(grid, focused_tet: Tetromino, ghost_tiles: list):
     for cell in new_cells:
         x, y = cell[0], cell[1]
         ghost_tiles[y][x] = True
-
-
-"""B6D0"""

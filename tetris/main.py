@@ -148,7 +148,7 @@ def update(
                 sleep(0.05)
             pygame.display.flip()
         input_handling.just_hard_dropped = False
-        movement.update_ghost_piece(grid, focused_tet, ghost_piece_tiles)
+        #movement.update_ghost_piece(grid, focused_tet, ghost_piece_tiles)
 
     # Calls the gravity functions, as well as several related functions
     # periodically instead of every single frame.
@@ -157,7 +157,7 @@ def update(
         # To account for the new changes.
         draw_game.print_grid(grid, ghost_piece_tiles)
         gravity.apply_gravity(grid, all_tets, cell_owners)
-        movement.update_ghost_piece(grid, focused_tet, ghost_piece_tiles)
+        #movement.update_ghost_piece(grid, focused_tet, ghost_piece_tiles)
         
         # Checks for and clears filled rows.
         lines_just_cleared = line_clearing.check_rows(grid, cell_owners, all_tets)
@@ -186,7 +186,7 @@ def update(
                 sleep(0.05)
             pygame.display.flip()
         
-        movement.update_ghost_piece(grid, focused_tet, ghost_piece_tiles)
+        #movement.update_ghost_piece(grid, focused_tet, ghost_piece_tiles)
     # 
     if not display_start_menu:
         if movement_cooldown == 0:
@@ -194,7 +194,7 @@ def update(
             # occurred / tried to occur.
             #if movement.get_movement(grid, focused_tetromino, cell_owners):
             if input_handling.get_repeatable_inputs(grid, cell_owners, focused_tetromino):
-                movement.update_ghost_piece(grid, focused_tet, ghost_piece_tiles)
+                #movement.update_ghost_piece(grid, focused_tet, ghost_piece_tiles)
                 draw_game.print_grid(grid, ghost_piece_tiles)   
                 # Prevents pieces being moved too quickly, especially when 
                 # the input is being held.
@@ -216,7 +216,7 @@ def update(
                     all_tets, cell_owners
                 )
                 focused_tetromino = spawn_results[1]
-                movement.update_ghost_piece(grid, focused_tet, ghost_piece_tiles)
+                #movement.update_ghost_piece(grid, focused_tet, ghost_piece_tiles)
             else:
                 if input_handling.attractor_input_processor(
                     next_input, grid, cell_owners, focused_tetromino
@@ -236,7 +236,7 @@ def update(
         continue_game = spawn_results[0]
         focused_tetromino = spawn_results[1]
         # As always, updates the ghost piece after messing with the pieces.
-        movement.update_ghost_piece(grid, focused_tet, ghost_piece_tiles)
+        #movement.update_gh#ost_piece(grid, focused_tet, ghost_piece_tiles)
 
         # Allows piece holding to be used again.
         utility_funcs.piece_has_been_held = False
@@ -355,7 +355,8 @@ if __name__ == "__main__":
 
             # Flushes the screen then draws the game.
             draw_game.screen.fill(draw_game.background_colour)
-            draw_game.main_game(grid, cell_owners, 13, ghost_piece_tiles, score, lines_cleared, piece_sequence, all_tetrominos, utility_funcs.held_piece)
+            draw_ghost_piece = False if input_handling.just_hard_dropped else True
+            draw_game.main_game(grid, cell_owners, 13, ghost_piece_tiles, score, lines_cleared, piece_sequence, all_tetrominos, utility_funcs.held_piece, draw_ghost_piece)
 
             # Flips the updated display onto the screen.
             pygame.display.flip()
