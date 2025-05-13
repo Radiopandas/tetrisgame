@@ -1,4 +1,5 @@
 from tetromino import Tetromino
+import input_handling
 
 width: int = 0
 height: int = 0
@@ -80,15 +81,20 @@ def try_move_down(
         tetromino.has_moved = True
 
 
-def apply_gravity(grid, tetrominos: list[Tetromino], cell_owners: list[list[Tetromino | None]]):
+def apply_gravity(grid, tetrominos: list[Tetromino], cell_owners: list[list[Tetromino | None]], focused_tetromino: Tetromino = None):
     """Attempts to call a recursive gravity function on every tetromino on the board."""
     # Resets the movement booleans for every tetromino.
     for tetromino in tetrominos:
-        tetromino.can_move = True
-        tetromino.has_moved = False
-    
+        if tetromino.cells != []: # Hopefully fixes issue no. 1
+            tetromino.can_move = True
+            tetromino.has_moved = False
     # Tries to call 'try_move_down'.
     for tetromino in tetrominos:
         if tetromino.has_moved:
             continue
         try_move_down(grid, tetromino, cell_owners)
+    
+    if focused_tetromino and input_handling.just_hard_dropped:
+        focused_tetromino.can_move = False
+
+#B410

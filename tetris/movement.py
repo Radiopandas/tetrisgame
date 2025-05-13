@@ -67,6 +67,8 @@ def move_tet(
     ) -> None:
     """Attempts to move a tetromino left or right, based on 'direction'."""
     
+    if not tetromino.can_move:
+        return
     cur_cells = tetromino.cells
     can_move: bool = True
     # Checks if the cells in 'direction' are clear.
@@ -113,7 +115,7 @@ def quick_drop(
     """Drops the focused piece downwards, either by one cell or fully."""
     cur_cells = focused_tet.cells
 
-    focused_tet.can_move = True
+    #focused_tet.can_move = True
     focused_tet.has_moved = False
 
     can_drop: bool = True
@@ -261,3 +263,4 @@ def update_ghost_piece(grid, focused_tet: Tetromino, ghost_tiles: list):
         ghost_tiles[y][x] = True
 
 
+"""B6D0"""

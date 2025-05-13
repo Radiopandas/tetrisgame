@@ -49,6 +49,8 @@ valid_events: list = get_file_data('settings.json', 'pygame_events_details', 'va
 
 repeatable_inputs: list = ["move_left", "move_right", "soft_drop"]
 
+just_hard_dropped: bool = False
+
 ###################################################################################################
 #---------------------------------------- Setup functions ----------------------------------------#
 ###################################################################################################
@@ -125,6 +127,9 @@ def handle_pygame_events(
         piece_sequence: list[int], 
         all_tets: list[Tetromino]
     ) -> bool:
+
+    global just_hard_dropped
+
     # Maps strings to function arguments to be used with 'action_map'.
     action_args: dict = {
         "hard_drop": [grid, focused_tet, cell_owners, True],
@@ -140,6 +145,8 @@ def handle_pygame_events(
             action = action_map[action_name]
             args: list = action_args[action_name]
             action(*args)
+            if action_name == "hard_drop":
+                just_hard_dropped = True
             return True
     
     return False

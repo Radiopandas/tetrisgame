@@ -111,10 +111,44 @@ def update(
         ):
     
     # For some fucking reason if I don't do it like this everything breaks
-    global focused_tetromino, continue_game, piece_spawn_cooldown, movement_cooldown, score, lines_cleared, gravity_cooldown, display_start_menu, attractor_needs_to_wait, instant_gravity_after_clearing
+    global focused_tetromino, continue_game, piece_spawn_cooldown, \
+        movement_cooldown, score, lines_cleared, gravity_cooldown, \
+        display_start_menu, attractor_needs_to_wait, \
+        instant_gravity_after_clearing
 
     if not keep_playing:
         return
+    
+    if input_handling.just_hard_dropped:
+        
+        # Checks for and clears filled rows.
+        lines_just_cleared = line_clearing.check_rows(grid, cell_owners, all_tets)
+        # Increments the number of lines cleared, updates the score and potentially
+        # updates the gravity rate.
+        score += utility_funcs.update_scores(lines_just_cleared)
+        lines_cleared += lines_just_cleared
+        if gravity_rate > 10:
+            gravity_cooldown -= utility_funcs.update_gravity_rate(lines_cleared, lines_just_cleared)
+
+        # Moves all lines down by the number of lines cleared
+        if lines_just_cleared > 0 and instant_gravity_after_clearing:
+            for i in range(lines_just_cleared):
+                
+                draw_game.screen.fill(draw_game.background_colour)
+                draw_game.main_game(
+                grid, cell_owners, 13, ghost_piece_tiles, 
+                score, lines_cleared, piece_sequence, all_tetrominos, 
+                utility_funcs.held_piece, False
+                )
+                if display_start_menu:
+                    draw_game.start_menu()
+
+                pygame.display.flip()
+                gravity.apply_gravity(grid, all_tets, cell_owners, focused_tetromino=focused_tet)
+                sleep(0.05)
+            pygame.display.flip()
+        input_handling.just_hard_dropped = False
+        movement.update_ghost_piece(grid, focused_tet, ghost_piece_tiles)
 
     # Calls the gravity functions, as well as several related functions
     # periodically instead of every single frame.
@@ -131,6 +165,9 @@ def update(
         # updates the gravity rate.
         score += utility_funcs.update_scores(lines_just_cleared)
         lines_cleared += lines_just_cleared
+        if gravity_rate > 10:
+            gravity_cooldown -= utility_funcs.update_gravity_rate(lines_cleared, lines_just_cleared)
+
         # Moves all lines down by the number of lines cleared
         if lines_just_cleared > 0 and instant_gravity_after_clearing:
             for i in range(lines_just_cleared):
@@ -147,33 +184,9 @@ def update(
                 pygame.display.flip()
                 gravity.apply_gravity(grid, all_tets, cell_owners)
                 sleep(0.05)
-            
-
-        if gravity_rate > 10:
-            gravity_cooldown -= utility_funcs.update_gravity_rate(lines_cleared, lines_just_cleared)
+            pygame.display.flip()
+        
         movement.update_ghost_piece(grid, focused_tet, ghost_piece_tiles)
-    
-    # If the current focused piece can't move, it must be on the ground
-    # Thus it needs to spawn a new piece for the player to control.
-    # Overridden by display_start_menu, since it uses its own functions
-    # to do things such as spawning pieces.
-    if not focused_tet.can_move and piece_spawn_cooldown == 0 and not display_start_menu:
-        # Attempts to spawn a new piece, then assigns it to focused_tetromino.
-        spawn_results = utility_funcs.spawn_tetromino(grid, focused_tet, piece_sequence, all_tets, cell_owners)
-        continue_game = spawn_results[0]
-        focused_tetromino = spawn_results[1]
-        # As always, updates the ghost piece after messing with the pieces.
-        movement.update_ghost_piece(grid, focused_tet, ghost_piece_tiles)
-        # Adds a cooldown to prevent pieces being spammed.
-        piece_spawn_cooldown = 20
-
-        # Allows piece holding to be used again.
-        utility_funcs.piece_has_been_held = False
-
-    # Increments the piece spawning cooldown every frame.
-    if piece_spawn_cooldown > 0:  
-        piece_spawn_cooldown -= 1
-    
     # 
     if not display_start_menu:
         if movement_cooldown == 0:
@@ -209,9 +222,27 @@ def update(
                     next_input, grid, cell_owners, focused_tetromino
                     ):
                     movement.update_ghost_piece(grid, focused_tet, ghost_piece_tiles)
-            movement_cooldown += 7 # TESTING ONLY, replace with 7 once done creating the attractor steps
+            movement_cooldown += 7
         elif movement_cooldown > 0:
             movement_cooldown -= 1
+    
+    # If the current focused piece can't move, it must be on the ground
+    # Thus it needs to spawn a new piece for the player to control.
+    # Overridden by display_start_menu, since it uses its own functions
+    # to do things such as spawning pieces.
+    if not focused_tet.can_move and not display_start_menu:
+        # Attempts to spawn a new piece, then assigns it to focused_tetromino.
+        spawn_results = utility_funcs.spawn_tetromino(grid, focused_tet, piece_sequence, all_tets, cell_owners)
+        continue_game = spawn_results[0]
+        focused_tetromino = spawn_results[1]
+        # As always, updates the ghost piece after messing with the pieces.
+        movement.update_ghost_piece(grid, focused_tet, ghost_piece_tiles)
+
+        # Allows piece holding to be used again.
+        utility_funcs.piece_has_been_held = False
+    
+    
+    movement.update_ghost_piece(grid, focused_tet, ghost_piece_tiles)
 
 
 
@@ -339,10 +370,10 @@ if __name__ == "__main__":
 
             if not continue_game:
                 running = False
-        
+
         # Funny message whenever the player loses.
         print("Player lost lollllll")
-        sleep(6)
+        sleep(3)
 
 
 """
@@ -380,4 +411,22 @@ Make the buttons change colour slightly when being hovered over
 Change how certain text is positioned to use Surface.get_rect(midleft=(x, y)) 
 
 Call clear_lines() after hard dropping pieces to reduce downtime
+
+Issue 1:
+    When you hard drop a piece, line clearing gets automatically called.
+    apply_gravity() then gets called, during which time all cells are marked as able to move.
+    Problem occurs when line clearing clears all the cells of the piece.
+    When this happens, the gravity function basically skips it and thus it is never marked as
+    unable to move, causing a new piece to never be spawned.
+    FIXED - Gravity now checks that tetrominos actually have pieces before modifying them.
+
+Issue 2:
+    When you hard drop a piece into a line clear, you are able to move it for a few frames
+    When the game is trying to run gravity extra times to move pieces down after clearing a line
+    FIXED - Gravity now takes an optional 'focused_tet' argument. It checks if this isn't None
+        and if input_handling.just_hard_dropped is true, in which case it sets 
+        'focused_tet'.can_move back to False after applying gravity to everything
+
+If performance is an issue, could make a gravity function that just moves every cell above
+a certain row down a certain amount to be used after line clearing.
 """
