@@ -238,13 +238,14 @@ def get_input():
 
 def update_button_symbol(button: Button, event: pygame.event.Event):
     symbol: str = ''
-    if event.unicode:
+    if event.unicode and event.unicode not in [" ", "\t"]:
         symbol = event.unicode
     else:
         if non_unicode_events[str(event.key)]:
             symbol = non_unicode_events[str(event.key)]
     
-    button.button_symbol = symbol.capitalize()
+    if symbol:
+        button.button_symbol = symbol.capitalize()
 
 
 def call_button(button: Button, screen: pygame.Surface):

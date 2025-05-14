@@ -5,13 +5,13 @@ import draw_game
 from tetromino import Tetromino
 import utility_funcs
 import movement
-import pygame
-import copy
+import pygame #
+import copy #
 import attractor
 import input_handling
 import draw_buttons
 import draw_settings_menu
-from random import shuffle
+from random import shuffle #
 
 from time import sleep
 
@@ -132,6 +132,7 @@ def update(
 
         # Moves all lines down by the number of lines cleared
         if lines_just_cleared > 0 and instant_gravity_after_clearing:
+            movement.ghost_piece.cells = []
             for i in range(lines_just_cleared):
                 
                 draw_game.screen.fill(draw_game.background_colour)
@@ -247,7 +248,12 @@ def update(
 
 
 if __name__ == "__main__":
-    clock = pygame.time.Clock() 
+    clock = pygame.time.Clock()
+
+    pygame.key.set_repeat(500, 30)
+
+    print(pygame.key.get_repeat())
+    sleep(2)
 
     # Runs basically forever
     run_game: bool = True
@@ -428,8 +434,8 @@ Issue 2:
 
 Issue 3:
     When you hard drop a piece and lines get cleared, the ghost piece gets drawn when it really shouldn't.
+    FIXED(I think) - Before calling gravity repeatedly after clearing lines, sets the ghost piece's cells to be empty.
 
 If performance is an issue, could make a gravity function that just moves every cell above
 a certain row down a certain amount to be used after line clearing.
-
 """
