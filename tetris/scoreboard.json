@@ -1,0 +1,39 @@
+{
+   "Scores": [
+      {
+         "Name": "Test1",
+         "Score": 1,
+         "Lines cleared": 1
+      },
+      {
+         "Name": "AAAAA",
+         "Score": 40,
+         "Lines cleared": 1
+      },
+      {
+         "Name": "A1",
+         "Score": 40,
+         "Lines cleared": 1
+      },
+      {
+         "Name": "A2",
+         "Score": 40,
+         "Lines cleared": 1
+      },
+      {
+         "Name": "A3",
+         "Score": 40,
+         "Lines cleared": 1
+      },
+      {
+         "Name": "A1",
+         "Score": 40,
+         "Lines cleared": 1
+      },
+      {
+         "Name": "NOTME",
+         "Score": 15480,
+         "Lines cleared": 97
+      }
+   ]
+}

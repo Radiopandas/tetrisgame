@@ -12,6 +12,7 @@ import draw_start_menu
 import draw_main_game
 import draw_buttons
 import draw_settings_menu
+import draw_leaderboard
 
 import movement
 
@@ -157,8 +158,8 @@ def main_game(
     #draw_main_game.draw_controls(screen, game_controls)
 
     buttons()
+    leaderboard()
     
-
 
 def start_menu() -> bool:
     """Draws a start menu consisting of the title and basic instructions."""
@@ -177,16 +178,14 @@ def start_menu() -> bool:
     # Returns True if <key> is pressed, else False. 
 
     buttons()
+    leaderboard()
 
-"""    keys = pygame.key.get_pressed()
-    if keys[pygame.K_0]:
-        return True
-    for event in pygame.event.get():
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_0:
-                return True
-"""
-    
+
+def leaderboard() -> None:
+    if draw_leaderboard.draw_name_input:
+        draw_leaderboard.draw_input_box(screen)
+    else:
+        draw_leaderboard.name_input_box.visible = False
 
 
 def draw_grid_lines(h_lines: int):

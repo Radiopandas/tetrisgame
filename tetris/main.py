@@ -9,7 +9,7 @@ import pygame #
 import copy #
 import attractor
 import input_handling
-import draw_buttons
+import draw_leaderboard
 import draw_settings_menu
 from random import shuffle #
 
@@ -252,9 +252,6 @@ if __name__ == "__main__":
 
     pygame.key.set_repeat(500, 30)
 
-    print(pygame.key.get_repeat())
-    sleep(2)
-
     # Runs basically forever
     run_game: bool = True
     while run_game:
@@ -262,14 +259,13 @@ if __name__ == "__main__":
         start_game()
 
         # Displays the start menu and the attractor until the user
-        # presses <key> to start the game
+        # presses <Enter> to start the game
         display_start_menu = True
         background_iter = 0
         piece_sequence = attractor.setup_piece_sequence(piece_sequence)
         piece_sequence = attractor.setup_piece_sequence(piece_sequence)
         while display_start_menu:
             # Allows you to quit whilst the attractor runs
-            # TODO FIX THIS IT IS BROKEN
             for event in pygame.event.get():
                 if event.type == pygame.QUIT and can_quit:
                     display_start_menu = False
@@ -343,7 +339,8 @@ if __name__ == "__main__":
                 if event.type == pygame.QUIT and can_quit:
                     running = False
                     pygame.quit()
-                elif event.type == pygame.KEYDOWN and not draw_settings_menu.settings_menu_open:
+                
+                if event.type == pygame.KEYDOWN and not draw_settings_menu.settings_menu_open:
                     # Key combo to quit the game.
                     if event.key == 45 and (event.mod == 8513 or event.mod == 8769): # ctrl+Lalt/Ralt+shift+capslock+'-'
                         running = False
@@ -378,9 +375,43 @@ if __name__ == "__main__":
             if not continue_game:
                 running = False
 
-        # Funny message whenever the player loses.
-        print("Player lost lollllll")
-        sleep(3)
+        # Waits for the user to enter a name so their score can be stored.
+        name_entered: bool = False
+        draw_leaderboard.draw_name_input = True
+        draw_leaderboard.name_input_box.visible = True
+        while not name_entered:
+            # Continues drawing the game
+            draw_game.screen.fill(draw_game.background_colour)
+            draw_game.main_game(grid, cell_owners, 13, ghost_piece_tiles, score, lines_cleared, piece_sequence, all_tetrominos, utility_funcs.held_piece, draw_ghost_piece)
+
+            pygame.display.update()
+            # Checks for quit events, then checks for the user typing
+            # into the input box.
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    run_game = False
+                    break
+                
+                else:
+                    entered_name = draw_leaderboard.name_input_box.handle_event(event)
+                    if entered_name:
+                        name_entered = True
+
+                        leaderboard_info = {
+                            "Score": score,
+                            "Lines cleared": lines_cleared
+                        }
+                
+                        draw_leaderboard.handle_entered_score(entered_name, leaderboard_info)
+
+                        draw_leaderboard.draw_name_input = False
+            
+            dt = clock.tick(60) / 1000
+            
+
+    
+    pygame.quit()
+
 
 
 """
