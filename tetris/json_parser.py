@@ -1,6 +1,9 @@
 import json
+from time import sleep
 
 read_files: dict = {}
+
+SCOREBOARD_MAX_LENGTH: int = 10
 
 def read_json_file(file_path: str) -> dict:
     try:
@@ -44,9 +47,17 @@ def write_to_scoreboard(name: str, info: dict, filename='scoreboard.json', path=
             else:
                 scoreboard_data[path].append(new_entry)
 
+            # Sorts the scoreboard by score in descending order.c
+            scoreboard_data[path].sort(key=lambda x: x["Score"], reverse=True)
+            
+            # Trims the scoreboard if necessary
+            if len(scoreboard_data[path]) > SCOREBOARD_MAX_LENGTH and SCOREBOARD_MAX_LENGTH > 0:
+                scoreboard_data[path].pop(-1)
+
             # Adds it back to the scoreboard file.
             scoreboard.seek(0)
             json.dump(scoreboard_data, scoreboard, indent=3)
+
     except FileNotFoundError:
         print("ERROR: File path doesn't exist")
         return

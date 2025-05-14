@@ -37,30 +37,12 @@ displayed_scores: list = []
 #--------------------------------------- Utility functions ---------------------------------------#
 ###################################################################################################
 
-def get_top_scores(scores_to_get: int = 2):
+def get_top_scores(scores_to_get: int = 3):
     """Finds and returns the top scores from scoreboard.json"""
     scoreboard_data = get_file_data('scoreboard.json', data_path="Scores")
 
     top_runs: list = []
-    top_scores: list = []
-    min_score: int = 0
-    
-    # Iterates through every score in the scoreboard
-    for entry in scoreboard_data:
-        score = entry["Score"]
-        if score > min_score:
-            if not top_scores:
-                top_scores.insert(0, score)
-                top_runs.insert(0, entry)
-            else:
-                for index, top_score in enumerate(top_scores):
-                    if score > top_score:
-                        top_scores.insert(index, score)
-                        top_runs.insert(index, entry)
-                        if len(top_scores) > scores_to_get:
-                            top_scores.pop(-1)
-                            top_runs.pop(-1)
-                        break
+    top_runs = scoreboard_data[0:scores_to_get]
     
     return top_runs
             
@@ -74,7 +56,9 @@ print(*get_top_scores(3), sep="\n")
 
 def initialise_scoreboard():
     """Reads the top scores from scoreboard.json and stores them for later use."""
-    
+    global displayed_scores
+
+    displayed_scores = get_top_scores(3)
     pass
 
 

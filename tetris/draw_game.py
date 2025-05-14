@@ -68,6 +68,7 @@ game_controls: dict = {}
 start_menu_initialised = False
 main_game_initialised = False
 settings_initialised = False
+leaderboard_initialised = False
 
 ###################################################################################################
 #--------------------------------------- Utility Functions ---------------------------------------#
@@ -182,6 +183,12 @@ def start_menu() -> bool:
 
 
 def leaderboard() -> None:
+    global leaderboard_initialised
+
+    if not leaderboard_initialised:
+        leaderboard_initialised = True
+        draw_leaderboard.initialise_scoreboard()
+    
     if draw_leaderboard.draw_name_input:
         draw_leaderboard.draw_input_box(screen)
     else:
