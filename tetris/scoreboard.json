@@ -11,6 +11,16 @@
          "Lines cleared": 97
       },
       {
+         "Name": "CORNE",
+         "Score": 2140,
+         "Lines cleared": 46
+      },
+      {
+         "Name": "SAMMM",
+         "Score": 220,
+         "Lines cleared": 5
+      },
+      {
          "Name": "AAAAA",
          "Score": 40,
          "Lines cleared": 1
@@ -37,16 +47,6 @@
       },
       {
          "Name": "A17",
-         "Score": 40,
-         "Lines cleared": 1
-      },
-      {
-         "Name": "A18",
-         "Score": 40,
-         "Lines cleared": 1
-      },
-      {
-         "Name": "A21",
          "Score": 40,
          "Lines cleared": 1
       }

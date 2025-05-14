@@ -403,6 +403,7 @@ if __name__ == "__main__":
                         }
                 
                         draw_leaderboard.handle_entered_score(entered_name, leaderboard_info)
+                        draw_leaderboard.update_top_scores()
 
                         draw_leaderboard.draw_name_input = False
             

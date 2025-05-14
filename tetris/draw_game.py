@@ -123,6 +123,21 @@ def buttons():
     draw_buttons.draw_buttons(screen)
 
 
+def leaderboard() -> None:
+    global leaderboard_initialised
+
+    if not leaderboard_initialised:
+        leaderboard_initialised = True
+        draw_leaderboard.initialise_scoreboard()
+    
+    if draw_leaderboard.draw_name_input:
+        draw_leaderboard.draw_input_box(screen)
+    else:
+        draw_leaderboard.name_input_box.visible = False
+    
+    draw_leaderboard.draw_scoreboard(screen)
+
+
 def main_game(
         grid: list[list[bool]],
         cell_owners: list[list[Tetromino | None]], 
@@ -158,11 +173,11 @@ def main_game(
 
     #draw_main_game.draw_controls(screen, game_controls)
 
-    buttons()
     leaderboard()
+    buttons()
     
 
-def start_menu() -> bool:
+def start_menu() -> None:
     """Draws a start menu consisting of the title and basic instructions."""
     
     global start_menu_initialised
@@ -178,21 +193,9 @@ def start_menu() -> bool:
     # Checks for the user pressing <key> to exit the start screen.
     # Returns True if <key> is pressed, else False. 
 
-    buttons()
     leaderboard()
+    buttons()
 
-
-def leaderboard() -> None:
-    global leaderboard_initialised
-
-    if not leaderboard_initialised:
-        leaderboard_initialised = True
-        draw_leaderboard.initialise_scoreboard()
-    
-    if draw_leaderboard.draw_name_input:
-        draw_leaderboard.draw_input_box(screen)
-    else:
-        draw_leaderboard.name_input_box.visible = False
 
 
 def draw_grid_lines(h_lines: int):

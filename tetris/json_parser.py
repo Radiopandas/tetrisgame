@@ -3,7 +3,7 @@ from time import sleep
 
 read_files: dict = {}
 
-SCOREBOARD_MAX_LENGTH: int = 10
+SCOREBOARD_MAX_LENGTH: int = 20
 
 def read_json_file(file_path: str) -> dict:
     try:
