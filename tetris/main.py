@@ -11,6 +11,7 @@ import attractor
 import input_handling
 import draw_leaderboard
 import draw_settings_menu
+import server_client
 from random import shuffle #
 
 from time import sleep
@@ -82,7 +83,7 @@ def reset_game():
         piece_spawn_cooldown, frame = defaults
 
 
-def start_game():
+def restart_game():
     """Resets everything then calls several setup functions."""
 
     global grid, cell_owners, width, height, piece_sequence
@@ -252,11 +253,16 @@ if __name__ == "__main__":
 
     pygame.key.set_repeat(500, 30)
 
+    # Creates a connection to the leaderboard server.
+    server_client.initialise_server_connection()
+    server_client.send({"Name": "User2", "Score": 200, "Lines cleared": 4})
+
+
     # Runs basically forever
     run_game: bool = True
     while run_game:
         # Resets (almost) all variables before running the game
-        start_game()
+        restart_game()
 
         # Displays the start menu and the attractor until the user
         # presses <Enter> to start the game
@@ -319,7 +325,7 @@ if __name__ == "__main__":
             break
 
         # Resets (almost) all variables to undo changes made by the attractor.
-        start_game()
+        restart_game()
         
         # Spawns the starting piece
         focused_tetromino = utility_funcs.spawn_tetromino(grid, focused_tetromino, piece_sequence, all_tetrominos, cell_owners)[1]
@@ -338,13 +344,13 @@ if __name__ == "__main__":
             for event in pygame.event.get():
                 if event.type == pygame.QUIT and can_quit:
                     running = False
-                    pygame.quit()
+                    #pygame.quit()
                 
                 if event.type == pygame.KEYDOWN and not draw_settings_menu.settings_menu_open:
                     # Key combo to quit the game.
                     if event.key == 45 and (event.mod == 8513 or event.mod == 8769): # ctrl+Lalt/Ralt+shift+capslock+'-'
                         running = False
-                        pygame.quit()
+                        #pygame.quit()
                     
                     elif input_handling.handle_pygame_events(event, grid, cell_owners, focused_tetromino, piece_sequence, all_tetrominos):
                         movement.update_ghost_piece(grid, focused_tetromino, ghost_piece_tiles)
@@ -354,6 +360,7 @@ if __name__ == "__main__":
             
             
             if not running:
+                run_game = False
                 break
 
             # Flushes the screen then draws the game.
@@ -398,19 +405,22 @@ if __name__ == "__main__":
                         name_entered = True
 
                         leaderboard_info = {
+                            "Name": entered_name,
                             "Score": score,
                             "Lines cleared": lines_cleared
                         }
+
                 
-                        draw_leaderboard.handle_entered_score(entered_name, leaderboard_info)
-                        draw_leaderboard.update_top_scores()
+                        #draw_leaderboard.handle_entered_score(entered_name, leaderboard_info)
+                        server_client.send(leaderboard_info)
+                        #draw_leaderboard.update_top_scores()
 
                         draw_leaderboard.draw_name_input = False
             
             dt = clock.tick(60) / 1000
             
 
-    
+    server_client.end_server_connection()
     pygame.quit()
 
 

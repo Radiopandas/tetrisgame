@@ -128,7 +128,7 @@ def leaderboard() -> None:
 
     if not leaderboard_initialised:
         leaderboard_initialised = True
-        draw_leaderboard.initialise_scoreboard()
+        #draw_leaderboard.initialise_scoreboard()
     
     if draw_leaderboard.draw_name_input:
         draw_leaderboard.draw_input_box(screen)

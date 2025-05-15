@@ -1,6 +1,7 @@
 import pygame
 from input_box import InputBox, ACTIVE_COLOUR
 from json_parser import write_to_scoreboard, get_file_data
+from time import sleep
 
 pygame.init()
 
@@ -58,37 +59,16 @@ leaderboard_top: int = 100 * screen_scale
 #--------------------------------------- Utility functions ---------------------------------------#
 ###################################################################################################
 
-def get_top_scores(scores_to_get: int = 3):
-    """Finds and returns the top scores from scoreboard.json"""
-    global scores_to_display
-    if scores_to_display != scores_to_get:
-        scores_to_display = scores_to_get
-
-    scoreboard_data = get_file_data('scoreboard.json', data_path="Scores")
-
-    top_runs: list = []
-    top_runs = scoreboard_data[0:scores_to_get]
-    
-    return top_runs
-
-
-def update_top_scores():
-    global scores_to_display, displayed_scores
-    displayed_scores = get_top_scores(scores_to_display)
-
-print(*get_top_scores(3), sep="\n")
-
 
 ###################################################################################################
 #---------------------------------------- Setup functions ----------------------------------------#
 ###################################################################################################
 
-def initialise_scoreboard():
-    """Reads the top scores from scoreboard.json and stores them for later use."""
+def receive_new_top_scores(new_top_scores: list[dict]):
     global displayed_scores
-
-    displayed_scores = get_top_scores(3)
-    pass
+    print(new_top_scores)
+    displayed_scores = new_top_scores
+    
 
 ###################################################################################################
 #---------------------------------------- Main functions -----------------------------------------#
@@ -103,7 +83,6 @@ def handle_entered_score(name: str, info: dict):
 def draw_input_box(screen: pygame.Surface):
     global name_input_box
     name_input_box.draw(screen)
-
 
 
 def draw_names(screen: pygame.Surface, names: list[str]):
