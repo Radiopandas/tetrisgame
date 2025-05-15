@@ -18,6 +18,7 @@ screen_h = 360
 
 screen_scale: int = screen_dimensions.current_h // screen_h
 
+
 grid_width: int = 0
 grid_height: int = 0
 cell_width: int = 0

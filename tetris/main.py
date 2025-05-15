@@ -470,4 +470,11 @@ Issue 3:
 
 If performance is an issue, could make a gravity function that just moves every cell above
 a certain row down a certain amount to be used after line clearing.
+
+
+Change draw_settings_menu and draw_leaderboard to draw everything onto mini canvases that can then be blitted onto the screen
+This way, we can save on processing by only redrawing their canvases when they are updated.
+Also makes layering easier and would allow the settings menu to have a solid background.
+ - draw_settings_menu DONE
+ - draw_leaderboard
 """

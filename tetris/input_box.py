@@ -40,7 +40,7 @@ class InputBox:
         self.colour = INACTIVE_COLOUR
         self.prompt = prompt
         self.font = pygame.font.SysFont(font, font_size)
-        self.text_surface = self.font.render(self.prompt + self.text, True, self.colour)
+        self.text_surface = self.font.render(self.prompt + self.text, True, "white", "black")
         self.extra_width = width
         self.rect = self.text_surface.get_rect()
         
@@ -93,7 +93,7 @@ class InputBox:
                         self.text += event.unicode.upper()
             
             # Updates the display
-            self.text_surface = self.font.render(self.prompt + self.text, True, self.colour)
+            self.text_surface = self.font.render(self.prompt + self.text, True, "white", "black")
         
         # If necessary, returns the text from the box.
         if return_pressed:
@@ -103,6 +103,9 @@ class InputBox:
 
     
     def draw(self, screen: pygame.Surface):
+        # Draws the text background onto the screen.
+        text_rect = self.text_surface.get_rect()
+        pygame.draw.rect(screen, "black", self.rect)
         # Blits the text onto the screen.
         screen.blit(self.text_surface, (self.rect.x + 5, self.rect.y + 5))
         # Blits the outline rectangle onto the screen.

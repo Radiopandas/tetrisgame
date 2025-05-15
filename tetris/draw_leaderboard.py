@@ -1,5 +1,5 @@
 import pygame
-from input_box import InputBox
+from input_box import InputBox, ACTIVE_COLOUR
 from json_parser import write_to_scoreboard, get_file_data
 
 pygame.init()
@@ -26,14 +26,15 @@ leaderboard_names_characterset: list[str] = [
 name_input_box = InputBox(
     screen_w * screen_scale // 2, 
     screen_h * screen_scale // 2, 
-    100 * screen_scale, 
+    50 * 3 * screen_scale, # Should be roughly 3x the font size
     prompt="Enter a name: ", 
-    font_size=30 * screen_scale,
+    font_size=50 * screen_scale,
     can_defocus=False,
     max_input_length=5
 )
 
 name_input_box.character_set = leaderboard_names_characterset
+name_input_box.colour = ACTIVE_COLOUR
 
 displayed_scores: list = []
 scores_to_display: int = 0
@@ -102,7 +103,7 @@ def handle_entered_score(name: str, info: dict):
 def draw_input_box(screen: pygame.Surface):
     global name_input_box
     name_input_box.draw(screen)
-    
+
 
 
 def draw_names(screen: pygame.Surface, names: list[str]):

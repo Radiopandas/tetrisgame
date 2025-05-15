@@ -120,7 +120,7 @@ def buttons():
     if draw_settings_menu.settings_menu_open:
         draw_settings_menu.draw_settings_menu(screen)
 
-    draw_buttons.draw_buttons(screen)
+    draw_settings_menu.draw_buttons(screen)
 
 
 def leaderboard() -> None:
