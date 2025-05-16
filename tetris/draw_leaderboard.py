@@ -51,9 +51,39 @@ title_font_size = 30 * screen_scale
 # -----------------------------------------
 # Leaderboard display positioning stuff
 # -----------------------------------------
-leaderboard_left: int = 100 * screen_scale
+leaderboard_left: int = 30 * screen_scale
 leaderboard_top: int = 100 * screen_scale
 # -----------------------------------------
+
+displayed_scores = [
+    {
+            "Name": "TEST2",
+            "Score": 16620,
+            "Lines cleared": 83
+    },
+    {
+        "Name": "NOTME",
+        "Score": 15480,
+        "Lines cleared": 97
+    },
+    {
+        "Name": "CORNE",
+        "Score": 2140,
+        "Lines cleared": 46
+    },
+    {
+        "Name": "A",
+        "Score": 1380,
+        "Lines cleared": 8
+    },
+    {
+        "Name": "SAMMM",
+        "Score": 220,
+        "Lines cleared": 5
+    },
+]
+
+
 
 ###################################################################################################
 #--------------------------------------- Utility functions ---------------------------------------#
@@ -99,7 +129,16 @@ def draw_names(screen: pygame.Surface, names: list[str]):
 
 
 def draw_scores(screen: pygame.Surface, scores: list[int]):
-    pass
+        global leaderboard_canvas, names_font, names_font_size
+        if not names_font:
+            names_font = pygame.font.SysFont('Lexus', names_font_size)
+        
+        for index, score in enumerate(scores):
+            score_surface = names_font.render(f"{str(score):05}", True, "white")
+            score_rect = score_surface.get_rect()
+            score_rect.left = leaderboard_left + 60 * screen_scale
+            score_rect.top = leaderboard_top + int(score_rect.height * (index * 1.5))
+            screen.blit(score_surface, score_rect)
 
 
 def draw_scoreboard(screen: pygame.Surface):

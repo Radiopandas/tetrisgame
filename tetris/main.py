@@ -254,8 +254,11 @@ if __name__ == "__main__":
     pygame.key.set_repeat(500, 30)
 
     # Creates a connection to the leaderboard server.
-    server_client.initialise_server_connection()
-    server_client.send({"Name": "User2", "Score": 200, "Lines cleared": 4})
+    host = input("Host: ")
+    port = int(input("Port: "))
+
+    server_client.initialise_server_connection(host, port)
+    #server_client.send({"Name": "User2", "Score": 200, "Lines cleared": 4})
 
 
     # Runs basically forever
@@ -410,17 +413,17 @@ if __name__ == "__main__":
                             "Lines cleared": lines_cleared
                         }
 
-                
-                        #draw_leaderboard.handle_entered_score(entered_name, leaderboard_info)
                         server_client.send(leaderboard_info)
-                        #draw_leaderboard.update_top_scores()
 
                         draw_leaderboard.draw_name_input = False
             
             dt = clock.tick(60) / 1000
             
 
-    server_client.end_server_connection()
+    try:
+        server_client.end_server_connection()
+    except ConnectionResetError:
+        print(f"ERROR: Couldn't end the connection (most likely the server had closed).")
     pygame.quit()
 
 
