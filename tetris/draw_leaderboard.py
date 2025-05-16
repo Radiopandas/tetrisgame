@@ -1,7 +1,6 @@
 import pygame
 from input_box import InputBox, ACTIVE_COLOUR
 from json_parser import write_to_scoreboard, get_file_data
-from time import sleep
 
 pygame.init()
 
@@ -54,6 +53,36 @@ title_font_size = 30 * screen_scale
 leaderboard_left: int = 100 * screen_scale
 leaderboard_top: int = 100 * screen_scale
 # -----------------------------------------
+
+# For the sake of testing the scoreboard without booting up the server.
+
+displayed_scores = [
+    {
+        "Name": "TEST2",
+        "Score": 16620,
+        "Lines cleared": 83
+    },
+    {
+        "Name": "NOTME",
+        "Score": 15480,
+        "Lines cleared": 97
+    },
+    {
+        "Name": "CORNE",
+        "Score": 2140,
+        "Lines cleared": 46
+    },
+    {
+        "Name": "A",
+        "Score": 1380,
+        "Lines cleared": 8
+    },
+    {
+        "Name": "SAMMM",
+        "Score": 220,
+        "Lines cleared": 5
+    }
+]
 
 ###################################################################################################
 #--------------------------------------- Utility functions ---------------------------------------#

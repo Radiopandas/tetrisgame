@@ -1,5 +1,5 @@
 import json
-from time import sleep
+
 
 read_files: dict = {}
 

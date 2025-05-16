@@ -40,14 +40,12 @@ def receive(socket, signal: bool):
             signal = False
             break
 
-def initialise_server_connection():
+def initialise_server_connection(host, port):
     global sock
-    HOST = "127.0.0.1"
-    PORT = 12345
 
     try:
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        sock.connect((HOST, PORT))
+        sock.connect((host, port))
         print("Connected to server")
     except:
         print("Could not make a connection to the server")

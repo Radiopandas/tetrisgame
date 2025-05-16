@@ -253,9 +253,12 @@ if __name__ == "__main__":
 
     pygame.key.set_repeat(500, 30)
 
+    HOST = input("Host: ")
+    PORT = int(input("Port: "))
+
     # Creates a connection to the leaderboard server.
-    server_client.initialise_server_connection()
-    server_client.send({"Name": "User2", "Score": 200, "Lines cleared": 4})
+    server_client.initialise_server_connection(HOST, PORT)
+    #server_client.send({"Name": "User2", "Score": 200, "Lines cleared": 4})
 
 
     # Runs basically forever
