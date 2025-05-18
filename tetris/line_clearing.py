@@ -1,4 +1,6 @@
 from tetromino import Tetromino
+from gravity import line_clearing_gravity
+from time import sleep
 
 
 
@@ -23,6 +25,7 @@ def split_tetrominos(
 
         # Turns the split off cell into its own Tetromino.
         new_tet = Tetromino([split_cell])
+        new_tet.can_move = False
         new_tet.tet_type = tetromino.tet_type
         all_tets.append(new_tet)
         cell_owners[split_cell[1]][split_cell[0]] = new_tet
@@ -58,7 +61,7 @@ def check_rows(
         grid: list[list[bool]], 
         cell_owners: list[list[Tetromino | None]], 
         all_tets: list[Tetromino]
-    ) -> int:
+    ) -> list[int]:
     """Clears and returns the number of filled rows in the grid."""
     rows_to_delete: list[int] = []
 
@@ -83,4 +86,10 @@ def check_rows(
     
     delete_rows(grid, rows_to_delete, cell_owners, all_tets)
 
-    return len(rows_to_delete)
+    if len(rows_to_delete) > 0:
+        #sleep(0.1)
+        
+        #line_clearing_gravity(rows_to_delete, grid, cell_owners, all_tets)
+        pass
+
+    return rows_to_delete

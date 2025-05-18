@@ -120,75 +120,70 @@ def update(
     if not keep_playing:
         return
     
+    #if input_handling.just_hard_dropped:
+    #    
+    #    # Checks for and clears filled rows.
+    #    lines_just_cleared = line_clearing.check_rows(grid, cell_owners, all_tets)
+    #    # Increments the number of lines cleared, updates the score and potentially
+    #    # updates the gravity rate.
+    #    score += utility_funcs.update_scores(lines_just_cleared)
+    #    lines_cleared += lines_just_cleared
+    #    if gravity_rate > 10:
+    #        gravity_cooldown -= utility_funcs.update_gravity_rate(lines_cleared, lines_just_cleared)
+    #
+    #    # Moves all lines down by the number of lines cleared
+    #    if lines_just_cleared > 0 and instant_gravity_after_clearing:
+    #        movement.ghost_piece.cells = []
+    #        for i in range(lines_just_cleared):
+    #            
+    #            draw_game.screen.fill(draw_game.background_colour)
+    #            draw_game.main_game(
+    #            grid, cell_owners, 13, ghost_piece_tiles, 
+    #            score, lines_cleared, piece_sequence, all_tetrominos, 
+    #            utility_funcs.held_piece, False
+    #            )
+    #            if display_start_menu:
+    #                draw_game.start_menu()
+    #
+    #            pygame.display.flip()
+    #            gravity.apply_gravity(grid, all_tets, cell_owners, focused_tetromino=focused_tet)
+    #            sleep(0.05)
+    #        pygame.display.flip()
+    #    input_handling.just_hard_dropped = False
+    #    #movement.update_ghost_piece(grid, focused_tet, ghost_piece_tiles)
     if input_handling.just_hard_dropped:
-        
-        # Checks for and clears filled rows.
         lines_just_cleared = line_clearing.check_rows(grid, cell_owners, all_tets)
-        # Increments the number of lines cleared, updates the score and potentially
-        # updates the gravity rate.
-        score += utility_funcs.update_scores(lines_just_cleared)
-        lines_cleared += lines_just_cleared
+        score += utility_funcs.update_scores(len(lines_just_cleared))
+        lines_cleared += len(lines_just_cleared)
+
+        if len(lines_just_cleared) > 0:
+            gravity.line_clearing_gravity(lines_just_cleared, grid, cell_owners, all_tets)
+
+        
         if gravity_rate > 10:
-            gravity_cooldown -= utility_funcs.update_gravity_rate(lines_cleared, lines_just_cleared)
-
-        # Moves all lines down by the number of lines cleared
-        if lines_just_cleared > 0 and instant_gravity_after_clearing:
-            movement.ghost_piece.cells = []
-            for i in range(lines_just_cleared):
-                
-                draw_game.screen.fill(draw_game.background_colour)
-                draw_game.main_game(
-                grid, cell_owners, 13, ghost_piece_tiles, 
-                score, lines_cleared, piece_sequence, all_tetrominos, 
-                utility_funcs.held_piece, False
-                )
-                if display_start_menu:
-                    draw_game.start_menu()
-
-                pygame.display.flip()
-                gravity.apply_gravity(grid, all_tets, cell_owners, focused_tetromino=focused_tet)
-                sleep(0.05)
-            pygame.display.flip()
+            gravity_cooldown -= utility_funcs.update_gravity_rate(lines_cleared, len(lines_just_cleared))
+        
         input_handling.just_hard_dropped = False
-        #movement.update_ghost_piece(grid, focused_tet, ghost_piece_tiles)
 
     # Calls the gravity functions, as well as several related functions
     # periodically instead of every single frame.
     if frame % gravity_rate == 0:
         # Applies gravity to every piece, then updates the ghost piece
         # To account for the new changes.
+        gravity.focused_gravity(grid, cell_owners, focused_tet)
         draw_game.print_grid(grid, ghost_piece_tiles)
-        gravity.apply_gravity(grid, all_tets, cell_owners)
-        #movement.update_ghost_piece(grid, focused_tet, ghost_piece_tiles)
         
         # Checks for and clears filled rows.
         lines_just_cleared = line_clearing.check_rows(grid, cell_owners, all_tets)
         # Increments the number of lines cleared, updates the score and potentially
         # updates the gravity rate.
-        score += utility_funcs.update_scores(lines_just_cleared)
-        lines_cleared += lines_just_cleared
+        score += utility_funcs.update_scores(len(lines_just_cleared))
+        lines_cleared += len(lines_just_cleared)
         if gravity_rate > 10:
-            gravity_cooldown -= utility_funcs.update_gravity_rate(lines_cleared, lines_just_cleared)
-
-        # Moves all lines down by the number of lines cleared
-        if lines_just_cleared > 0 and instant_gravity_after_clearing:
-            for i in range(lines_just_cleared):
-                
-                draw_game.screen.fill(draw_game.background_colour)
-                draw_game.main_game(
-                grid, cell_owners, 13, ghost_piece_tiles, 
-                score, lines_cleared, piece_sequence, all_tetrominos, 
-                utility_funcs.held_piece, False
-                )
-                if display_start_menu:
-                    draw_game.start_menu()
-
-                pygame.display.flip()
-                gravity.apply_gravity(grid, all_tets, cell_owners)
-                sleep(0.05)
-            pygame.display.flip()
+            gravity_cooldown -= utility_funcs.update_gravity_rate(lines_cleared, len(lines_just_cleared))
         
-        #movement.update_ghost_piece(grid, focused_tet, ghost_piece_tiles)
+        if len(lines_just_cleared) > 0:
+            gravity.line_clearing_gravity(lines_just_cleared, grid, cell_owners, all_tets)
     # 
     if not display_start_menu:
         if movement_cooldown == 0:
@@ -423,7 +418,9 @@ if __name__ == "__main__":
     try:
         server_client.end_server_connection()
     except ConnectionResetError:
-        print(f"ERROR: Couldn't end the connection (most likely the server had closed).")
+        print("ERROR: Couldn't end the connection (most likely the server had closed).")
+    except NameError:
+        print("ERROR: Couldn't end the connection (Most likely the connection never existed).")
     pygame.quit()
 
 
@@ -485,9 +482,6 @@ If performance is an issue, could make a gravity function that just moves every 
 a certain row down a certain amount to be used after line clearing.
 
 
-Change draw_settings_menu and draw_leaderboard to draw everything onto mini canvases that can then be blitted onto the screen
-This way, we can save on processing by only redrawing their canvases when they are updated.
-Also makes layering easier and would allow the settings menu to have a solid background.
- - draw_settings_menu DONE
- - draw_leaderboard
+Change controls so that everything uses pygame.event.get()
+Will just require me to set pygame.key.repeat()
 """

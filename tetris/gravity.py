@@ -96,3 +96,51 @@ def apply_gravity(grid, tetrominos: list[Tetromino], cell_owners: list[list[Tetr
     
     if focused_tetromino and input_handling.just_hard_dropped:
         focused_tetromino.can_move = False
+
+
+def focused_gravity(
+        grid: list[list[bool]],
+        cell_owners: list[list[Tetromino | None]],
+        focused_tet: Tetromino
+    ):
+    """Attemps to move the focused tetromino downwards in the grid."""
+    cur_cells = focused_tet.cells
+
+    can_move_down: bool = True
+    for cell in cur_cells:
+        x, y = cell
+        # Checks if the cell is at the bottom of the grid.
+        if y == height - 1:
+            can_move_down = False
+            focused_tet.can_move = False
+            break
+        
+        # Next, checks if it is blocked by other cells in focused_tet.
+        if [x, y+1] in cur_cells:
+            continue
+        
+        # Finally, checks if the cell is blocked by another piece.
+        if grid[y+1][x]:
+            can_move_down = False
+            focused_tet.can_move = False
+            break
+    
+    # If nothing is blocking the focused_tetromino, moves it down.
+    if can_move_down:
+        focused_tet.move_down(1, grid, cell_owners)
+
+def line_clearing_gravity(
+        rows_cleared: list[int],
+        grid: list[list[bool]],
+        cell_owners: list[list[Tetromino | None]],
+        all_tetrominos: list[Tetromino]
+    ) -> None:
+    # Finds the highest row that was cleared.
+    highest_row = min(rows_cleared)
+    number_of_rows = len(rows_cleared)
+
+    # For every tetromino, checks if it is above the cleared rows,
+    # in which case it moves it down by the number of cleared rows.
+    for tet in all_tetrominos:
+        if tet.should_move(highest_row):
+            tet.move_down(number_of_rows, grid, cell_owners)

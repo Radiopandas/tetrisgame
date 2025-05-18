@@ -20,23 +20,6 @@ CONTROLS_PRESET = 'Profile1'
 
 controls = json_parser.get_file_data(SETTINGS_PATH, CONTROLS_PRESET, CONTROLS_PATH)
 
-for key in controls.keys():
-    continue
-    # Iterates through every control, converting any controls that are
-    # stored as unicode characters into decimal representations
-    control = controls[key]
-    if isinstance(control, list):
-        new_control = []
-        for sub_control in control:
-            if not isinstance(sub_control, int):
-                new_control.append(ord(sub_control))
-            else:
-                new_control.append(sub_control)
-        controls[key] = new_control
-    else:
-        if not isinstance(control, int):
-            controls[key] = ord(control)
-
 
 def reset():
     """Resets all necessary local variables."""

@@ -23,6 +23,10 @@ class Tetromino:
     # Determines the layout of the piece for rotation
     times_rotated: int = 0
 
+    # Allows gravity to work based on a clock specific to the focused tetromino
+    # instead of a global clock.
+    gravity_frame: int = 0
+
     
     def __init__(self, _cells):
         self.cells = _cells
@@ -55,3 +59,43 @@ class Tetromino:
             if not is_connected:
                 return cell
         return []
+
+    def should_move(self, row: int) -> bool:
+        """Given a row, checks if the current tetromino contains cells
+        above that row. Called after line clearing to move all cells above
+        the cleared line(s) downwards."""
+        for cell in self.cells:
+            if cell[1] < row:
+                return True
+        
+        return False
+    
+    def move_down(
+            self,
+            num_of_rows: int,
+            grid: list[list[bool]],
+            cell_owners: list[list]
+        ) -> None:
+        """
+        Moves all cells in the Tetromino down 1 cell.
+        It should be noted that this function does not check if movement
+        is blocked or not, so should only be called when you are certain
+        there is nothing blocking the current Tetromino.
+        """
+        cur_cells = self.cells
+        new_cells = []
+        for cell in cur_cells:
+            x, y = cell
+            # Removes the current cell from the grids.
+            grid[y][x] = False
+            cell_owners[y][x] = None
+
+            new_cells.append([x, y + num_of_rows])
+        
+        # Adds the new cells back to the grids.
+        self.cells = new_cells
+        for cell in new_cells:
+            x, y = cell
+            grid[y][x] = True
+            cell_owners[y][x] = self
+        
