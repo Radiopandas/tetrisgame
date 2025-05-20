@@ -190,18 +190,20 @@ def update(
             pygame.display.flip()
         
         #movement.update_ghost_piece(grid, focused_tet, ghost_piece_tiles)
-    # 
+    
+    input_handling.reset_singular_inputs()
     if not display_start_menu:
         if movement_cooldown == 0:
             # Gets player inputs, then calls other functions if movement
             # occurred / tried to occur.
             #if movement.get_movement(grid, focused_tetromino, cell_owners):
-            if input_handling.get_repeatable_inputs(grid, cell_owners, focused_tetromino):
+            """if input_handling.get_repeatable_inputs(grid, cell_owners, focused_tetromino):
+                
                 #movement.update_ghost_piece(grid, focused_tet, ghost_piece_tiles)
                 draw_game.print_grid(grid, ghost_piece_tiles)   
                 # Prevents pieces being moved too quickly, especially when 
                 # the input is being held.
-                movement_cooldown += 7
+                movement_cooldown += 7"""
         
         elif movement_cooldown > 0:
             movement_cooldown -= 1
@@ -248,11 +250,10 @@ def update(
     movement.update_ghost_piece(grid, focused_tet, ghost_piece_tiles)
 
 
-
 if __name__ == "__main__":
     clock = pygame.time.Clock()
 
-    pygame.key.set_repeat(500, 30)
+    pygame.key.set_repeat(150, 60)
 
     if use_server:
         HOST = input("Host: ")
@@ -284,11 +285,12 @@ if __name__ == "__main__":
                     pygame.quit()
                 
                 elif event.type == pygame.KEYDOWN:
-                    # Key combo to quit the game
+                    # Key combo to quit the game.
                     if event.key == 45 and (event.mod == 8513 or event.mod == 8769): # ctrl+alt+shift+capslock+'-'
                         display_start_menu = False
                         run_game = False
                         pygame.quit()
+                    
                     # Key to close the start menu
                     elif event.key == pygame.K_RETURN:
                         display_start_menu = False
@@ -387,6 +389,10 @@ if __name__ == "__main__":
 
             if not continue_game:
                 running = False
+        
+
+        if not run_game:
+            break
 
         # Waits for the user to enter a name so their score can be stored.
         name_entered: bool = False
@@ -424,7 +430,7 @@ if __name__ == "__main__":
                         draw_leaderboard.draw_name_input = False
             
             dt = clock.tick(60) / 1000
-            
+        
     if use_server:
         server_client.end_server_connection()
     pygame.quit()

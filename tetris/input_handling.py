@@ -50,6 +50,12 @@ action_map: dict = {
 valid_events: list = get_file_data('settings.json', 'pygame_events_details', 'valid_events')
 
 repeatable_inputs: list = ["move_left", "move_right", "soft_drop"]
+singular_inputs_states: dict = {
+    "rotate_left": False, 
+    "rotate_right": False, 
+    "hold_piece": False, 
+    "hard_drop": False,
+    }
 
 soft_dropping: bool = False
 
@@ -96,6 +102,20 @@ def update_input_map(new_input, action: str):
 #---------------------------------------- Main functions -----------------------------------------#
 ###################################################################################################
 
+def reset_singular_inputs():
+    """"""
+
+    pressed_keys = pygame.key.get_pressed()
+
+    # Iterates through every action in the input map.
+    for key, action in input_map.items():
+        if action not in singular_inputs_states.keys():
+            continue
+
+        if singular_inputs_states[action]:
+            if not pressed_keys[key]:
+                singular_inputs_states[action] = False
+
 def get_repeatable_inputs(
         grid: list[list[bool]],
         cell_owners: list[list[Tetromino | None]],
@@ -139,19 +159,41 @@ def handle_pygame_events(
         "hard_drop": [grid, focused_tet, cell_owners, True],
         "rotate_right": [grid, focused_tet, cell_owners, True],
         "rotate_left": [grid, focused_tet, cell_owners, False],
-        "hold_piece": [grid, cell_owners, all_tets, focused_tet, piece_sequence]
+        "hold_piece": [grid, cell_owners, all_tets, focused_tet, piece_sequence],
+        "move_left": [grid, focused_tet, cell_owners, -1],
+        "move_right": [grid, focused_tet, cell_owners, 1],
+        "soft_drop": [grid, focused_tet, cell_owners, False],
     }
 
     # Iterates through the entire input map, checking if each input has been pressed.
     if event.key in input_map.keys():
-        if input_map[event.key] not in repeatable_inputs:
+        """if input_map[event.key]:# not in repeatable_inputs:
             action_name = input_map[event.key]
             action = action_map[action_name]
             args: list = action_args[action_name]
             action(*args)
             if action_name == "hard_drop":
                 just_hard_dropped = True
+            return True"""
+
+        if input_map[event.key] in repeatable_inputs:
+            action_name = input_map[event.key]
+            action = action_map[action_name]
+            args = action_args[action_name]
+            action(*args)
             return True
+
+        else:
+            
+            action_name = input_map[event.key]
+            if not singular_inputs_states[action_name]:
+                action = action_map[action_name]
+                args: list = action_args[action_name]
+                action(*args)
+                if action_name == "hard_drop":
+                    just_hard_dropped = True
+                
+                singular_inputs_states[action_name] = True
     
     return False
 

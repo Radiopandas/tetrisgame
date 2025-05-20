@@ -50,17 +50,15 @@ title_font_size = 30 * screen_scale
 # -----------------------------------------
 # Leaderboard display positioning stuff
 # -----------------------------------------
-leaderboard_left: int = 100 * screen_scale
+leaderboard_left: int = 30 * screen_scale
 leaderboard_top: int = 100 * screen_scale
 # -----------------------------------------
 
-# For the sake of testing the scoreboard without booting up the server.
-
 displayed_scores = [
     {
-        "Name": "TEST2",
-        "Score": 16620,
-        "Lines cleared": 83
+            "Name": "TEST2",
+            "Score": 16620,
+            "Lines cleared": 83
     },
     {
         "Name": "NOTME",
@@ -81,8 +79,10 @@ displayed_scores = [
         "Name": "SAMMM",
         "Score": 220,
         "Lines cleared": 5
-    }
+    },
 ]
+
+
 
 ###################################################################################################
 #--------------------------------------- Utility functions ---------------------------------------#
@@ -128,9 +128,27 @@ def draw_names(screen: pygame.Surface, names: list[str]):
 
 
 def draw_scores(screen: pygame.Surface, scores: list[int]):
-    pass
+        global leaderboard_canvas, names_font, names_font_size
+        if not names_font:
+            names_font = pygame.font.SysFont('Lexus', names_font_size)
+        
+        for index, score in enumerate(scores):
+            score_surface = names_font.render(f"{score:05}", True, "white")
+            score_rect = score_surface.get_rect()
+            score_rect.left = leaderboard_left + 60 * screen_scale
+            score_rect.top = leaderboard_top + int(score_rect.height * (index * 1.5))
+            screen.blit(score_surface, score_rect)
 
 
+def draw_results(screen: pygame.Surface, names, scores):
+    global names_font, names_font_size
+    
+    # Initialises the font. 
+    if not names_font:
+        names_font = pygame.font.SysFont('Lexus', names_font_size)
+    
+    # Combines the names and scores
+    entries = [f"{names[i]} : {scores[i]}" for i in range(len(names))]
 def draw_scoreboard(screen: pygame.Surface):
     #screen.fill("azure4")
     """Draws the scoreboard onto the screen."""
@@ -147,6 +165,7 @@ def draw_scoreboard(screen: pygame.Surface):
     draw_scores(screen, scores)
     
     # Calculates the size of the bounding rect.
+
 
     # Draws the bounding rect.
     
