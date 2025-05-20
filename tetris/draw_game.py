@@ -12,7 +12,7 @@ import draw_start_menu
 import draw_main_game
 import draw_buttons
 import draw_settings_menu
-import draw_leaderboard
+import leaderboard
 
 import movement
 
@@ -123,19 +123,19 @@ def buttons():
     draw_settings_menu.draw_buttons(screen)
 
 
-def leaderboard() -> None:
+def draw_leaderboard() -> None:
     global leaderboard_initialised
 
     if not leaderboard_initialised:
         leaderboard_initialised = True
         #draw_leaderboard.initialise_scoreboard()
     
-    if draw_leaderboard.draw_name_input:
-        draw_leaderboard.draw_input_box(screen)
+    if leaderboard.draw_name_input:
+        leaderboard.draw_input_box(screen)
     else:
-        draw_leaderboard.name_input_box.visible = False
+        leaderboard.name_input_box.visible = False
     
-    draw_leaderboard.draw_scoreboard(screen)
+    leaderboard.draw_scoreboard(screen)
 
 
 def main_game(
@@ -173,7 +173,7 @@ def main_game(
 
     #draw_main_game.draw_controls(screen, game_controls)
 
-    leaderboard()
+    draw_leaderboard()
     buttons()
     
 
@@ -193,7 +193,7 @@ def start_menu() -> None:
     # Checks for the user pressing <key> to exit the start screen.
     # Returns True if <key> is pressed, else False. 
 
-    leaderboard()
+    draw_leaderboard()
     buttons()
 
 

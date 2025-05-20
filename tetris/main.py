@@ -9,7 +9,7 @@ import pygame #
 import copy #
 import attractor
 import input_handling
-import draw_leaderboard
+import leaderboard
 import draw_settings_menu
 import server_client
 from random import shuffle #
@@ -188,24 +188,9 @@ def update(
                 gravity.apply_gravity(grid, all_tets, cell_owners)
                 sleep(0.05) 
             pygame.display.flip()
-        
-        #movement.update_ghost_piece(grid, focused_tet, ghost_piece_tiles)
-    # 
-    if not display_start_menu:
-        if movement_cooldown == 0:
-            # Gets player inputs, then calls other functions if movement
-            # occurred / tried to occur.
-            #if movement.get_movement(grid, focused_tetromino, cell_owners):
-            if input_handling.get_repeatable_inputs(grid, cell_owners, focused_tetromino):
-                #movement.update_ghost_piece(grid, focused_tet, ghost_piece_tiles)
-                draw_game.print_grid(grid, ghost_piece_tiles)   
-                # Prevents pieces being moved too quickly, especially when 
-                # the input is being held.
-                movement_cooldown += 7
-        
-        elif movement_cooldown > 0:
-            movement_cooldown -= 1
-    else:
+    
+    #input_handling.reset_singular_inputs()
+    if display_start_menu:
         # Implements the attractor whenever the start menu is open.
         # Cooldown is to prevent the attractor running in ~4 seconds.
         # The cooldown is also required to allow gravity 
@@ -238,8 +223,6 @@ def update(
         spawn_results = utility_funcs.spawn_tetromino(grid, focused_tet, piece_sequence, all_tets, cell_owners)
         continue_game = spawn_results[0]
         focused_tetromino = spawn_results[1]
-        # As always, updates the ghost piece after messing with the pieces.
-        #movement.update_gh#ost_piece(grid, focused_tet, ghost_piece_tiles)
 
         # Allows piece holding to be used again.
         utility_funcs.piece_has_been_held = False
@@ -248,11 +231,8 @@ def update(
     movement.update_ghost_piece(grid, focused_tet, ghost_piece_tiles)
 
 
-
 if __name__ == "__main__":
     clock = pygame.time.Clock()
-
-    pygame.key.set_repeat(500, 30)
 
     if use_server:
         HOST = input("Host: ")
@@ -260,7 +240,6 @@ if __name__ == "__main__":
 
         # Creates a connection to the leaderboard server.
         server_client.initialise_server_connection(HOST, PORT)
-        #server_client.send({"Name": "User2", "Score": 200, "Lines cleared": 4})
 
 
     # Runs basically forever
@@ -284,11 +263,12 @@ if __name__ == "__main__":
                     pygame.quit()
                 
                 elif event.type == pygame.KEYDOWN:
-                    # Key combo to quit the game
+                    # Key combo to quit the game.
                     if event.key == 45 and (event.mod == 8513 or event.mod == 8769): # ctrl+alt+shift+capslock+'-'
                         display_start_menu = False
                         run_game = False
                         pygame.quit()
+                    
                     # Key to close the start menu
                     elif event.key == pygame.K_RETURN:
                         display_start_menu = False
@@ -356,10 +336,7 @@ if __name__ == "__main__":
                     # Key combo to quit the game.
                     if event.key == 45 and (event.mod == 8513 or event.mod == 8769): # ctrl+Lalt/Ralt+shift+capslock+'-'
                         running = False
-                        #pygame.quit()
                     
-                    elif input_handling.handle_pygame_events(event, grid, cell_owners, focused_tetromino, piece_sequence, all_tetrominos):
-                        movement.update_ghost_piece(grid, focused_tetromino, ghost_piece_tiles)
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     mouse_coords = pygame.mouse.get_pos()
                     draw_settings_menu.check_pressed_buttons(mouse_coords, draw_game.screen)
@@ -368,6 +345,16 @@ if __name__ == "__main__":
             if not running:
                 run_game = False
                 break
+            
+            # Handles repeating inputs (movement/soft drop) and
+            # non-repeating inputs(rotation, hold, hard drop).
+            input_handling.get_inputs(
+                grid,
+                cell_owners, 
+                focused_tetromino,
+                piece_sequence,
+                all_tetrominos
+            )
 
             # Flushes the screen then draws the game.
             draw_game.screen.fill(draw_game.background_colour)
@@ -385,13 +372,20 @@ if __name__ == "__main__":
             # Waits ~1/60 seconds to try and make the game run at 60 fps.
             dt = clock.tick(60) / 1000
 
+            # Reduces the cooldowns of all repeatable inputs by the deltaTime
+            input_handling.update_cooldowns(dt)
+
             if not continue_game:
                 running = False
+        
+
+        if not run_game:
+            break
 
         # Waits for the user to enter a name so their score can be stored.
         name_entered: bool = False
-        draw_leaderboard.draw_name_input = True
-        draw_leaderboard.name_input_box.visible = True
+        leaderboard.draw_name_input = True
+        leaderboard.name_input_box.visible = True
         while not name_entered:
             # Continues drawing the game
             draw_game.screen.fill(draw_game.background_colour)
@@ -406,7 +400,7 @@ if __name__ == "__main__":
                     break
                 
                 else:
-                    entered_name = draw_leaderboard.name_input_box.handle_event(event)
+                    entered_name = leaderboard.name_input_box.handle_event(event)
                     if entered_name:
                         name_entered = True
 
@@ -421,10 +415,10 @@ if __name__ == "__main__":
                             server_client.send(leaderboard_info)
 
 
-                        draw_leaderboard.draw_name_input = False
+                        leaderboard.draw_name_input = False
             
             dt = clock.tick(60) / 1000
-            
+        
     if use_server:
         server_client.end_server_connection()
     pygame.quit()
@@ -493,5 +487,10 @@ This way, we can save on processing by only redrawing their canvases when they a
 Also makes layering easier and would allow the settings menu to have a solid background.
  - draw_settings_menu DONE
  - draw_leaderboard
+
+Change the name entering to:
+ - Display what score you got.
+ - Only allow 3 characters
+ - have the box that they enter the name into be underneath the question.
 
 """

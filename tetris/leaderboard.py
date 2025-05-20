@@ -26,12 +26,14 @@ leaderboard_names_characterset: list[str] = [
 name_input_box = InputBox(
     screen_w * screen_scale // 2, 
     screen_h * screen_scale // 2, 
-    50 * 3 * screen_scale, # Should be roughly 3x the font size
-    prompt="Enter a name: ", 
+    50 * 2 * screen_scale, # Should be roughly 2x the font size
+    prompt="", 
     font_size=50 * screen_scale,
     can_defocus=False,
-    max_input_length=5
+    max_input_length=3
 )
+
+name_input_box.centred_text = True
 
 name_input_box.character_set = leaderboard_names_characterset
 name_input_box.colour = ACTIVE_COLOUR
@@ -50,17 +52,15 @@ title_font_size = 30 * screen_scale
 # -----------------------------------------
 # Leaderboard display positioning stuff
 # -----------------------------------------
-leaderboard_left: int = 100 * screen_scale
+leaderboard_left: int = 30 * screen_scale
 leaderboard_top: int = 100 * screen_scale
 # -----------------------------------------
 
-# For the sake of testing the scoreboard without booting up the server.
-
 displayed_scores = [
     {
-        "Name": "TEST2",
-        "Score": 16620,
-        "Lines cleared": 83
+            "Name": "TEST2",
+            "Score": 16620,
+            "Lines cleared": 83
     },
     {
         "Name": "NOTME",
@@ -81,8 +81,10 @@ displayed_scores = [
         "Name": "SAMMM",
         "Score": 220,
         "Lines cleared": 5
-    }
+    },
 ]
+
+
 
 ###################################################################################################
 #--------------------------------------- Utility functions ---------------------------------------#
@@ -103,8 +105,10 @@ def receive_new_top_scores(new_top_scores: list[dict]):
 #---------------------------------------- Main functions -----------------------------------------#
 ###################################################################################################
 def handle_entered_score(name: str, info: dict):
+
     print(f"{name} achieved: {info}")
     # Checks that 'info' contains the correct information
+    # before sending the score to the server.
     if info["Score"] and info["Lines cleared"]:
         write_to_scoreboard(name, info)
 
@@ -128,11 +132,20 @@ def draw_names(screen: pygame.Surface, names: list[str]):
 
 
 def draw_scores(screen: pygame.Surface, scores: list[int]):
-    pass
+        global leaderboard_canvas, names_font, names_font_size
+        if not names_font:
+            names_font = pygame.font.SysFont('Lexus', names_font_size)
+        
+        for index, score in enumerate(scores):
+            score_surface = names_font.render(f"{score:05}", True, "white")
+            score_rect = score_surface.get_rect()
+            score_rect.left = leaderboard_left + 60 * screen_scale
+            score_rect.top = leaderboard_top + int(score_rect.height * (index * 1.5))
+            screen.blit(score_surface, score_rect)
 
 
 def draw_scoreboard(screen: pygame.Surface):
-    #screen.fill("azure4")
+
     """Draws the scoreboard onto the screen."""
     global displayed_scores
     # Seperates out the relevant scoreboard data.
@@ -147,6 +160,7 @@ def draw_scoreboard(screen: pygame.Surface):
     draw_scores(screen, scores)
     
     # Calculates the size of the bounding rect.
+
 
     # Draws the bounding rect.
     
