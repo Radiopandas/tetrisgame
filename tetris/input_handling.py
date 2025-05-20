@@ -47,19 +47,36 @@ action_map: dict = {
     "hold_piece": movement.hold_piece
 }
 
+
+
 valid_events: list = get_file_data('settings.json', 'pygame_events_details', 'valid_events')
 
-repeatable_inputs: list = ["move_left", "move_right", "soft_drop"]
+
 singular_inputs_states: dict = {
     "rotate_left": False, 
     "rotate_right": False, 
     "hold_piece": False, 
     "hard_drop": False,
-    }
+}
 
 soft_dropping: bool = False
 
 just_hard_dropped: bool = False
+
+singular_inputs: list = ["rotate_left", "rotate_right", "hold_piece", "hard_drop"]
+singular_key_cooldowns: dict[str, bool] = {
+    "rotate_left": False, 
+    "rotate_right": False, 
+    "hold_piece": False, 
+    "hard_drop": False,
+}
+
+repeatable_inputs: list = ["move_left", "move_right", "soft_drop"]
+repeatable_key_cooldowns: dict[str, float] = {
+    "move_left": 0.0,
+    "move_right": 0.0,
+    "soft_drop": 0.0,
+}
 
 ###################################################################################################
 #---------------------------------------- Setup functions ----------------------------------------#
@@ -102,59 +119,24 @@ def update_input_map(new_input, action: str):
 #---------------------------------------- Main functions -----------------------------------------#
 ###################################################################################################
 
-def reset_singular_inputs():
-    """"""
-
-    pressed_keys = pygame.key.get_pressed()
-
-    # Iterates through every action in the input map.
-    for key, action in input_map.items():
-        if action not in singular_inputs_states.keys():
-            continue
-
-        if singular_inputs_states[action]:
-            if not pressed_keys[key]:
-                singular_inputs_states[action] = False
-
-def get_repeatable_inputs(
-        grid: list[list[bool]],
-        cell_owners: list[list[Tetromino | None]],
-        focused_tet: Tetromino
-    ) -> bool:
-
-    # Maps strings to function arguments to be used with 'action_map'.
-    action_args: dict[str, list] = {
-        "move_left": [grid, focused_tet, cell_owners, -1],
-        "move_right": [grid, focused_tet, cell_owners, 1],
-        "soft_drop": [grid, focused_tet, cell_owners, False]
-    }
-
-    movement_occured = False
-    pressed_keys = pygame.key.get_pressed()
-    for key in input_map.keys():
-        if pressed_keys[key]:
-            if input_map[key] in repeatable_inputs:
-                action_name = input_map[key]
-                action = action_map[action_name]
-                args: list = action_args[action_name]
-                action(*args)
-                movement_occured = True
-    
-    return movement_occured
+def update_cooldowns(delta_time: float):
+    for key, cooldown in repeatable_key_cooldowns.items():
+        if cooldown > 0:
+            repeatable_key_cooldowns[key] -= delta_time
+            if repeatable_key_cooldowns[key] < 0:
+                repeatable_key_cooldowns[key] = 0
 
 
-def handle_pygame_events(
-        event, 
+def get_inputs(
         grid: list[list[bool]], 
         cell_owners: list[list[Tetromino | None]],
         focused_tet: Tetromino, 
         piece_sequence: list[int], 
         all_tets: list[Tetromino]
-    ) -> bool:
+    ):
 
     global just_hard_dropped
 
-    # Maps strings to function arguments to be used with 'action_map'.
     action_args: dict = {
         "hard_drop": [grid, focused_tet, cell_owners, True],
         "rotate_right": [grid, focused_tet, cell_owners, True],
@@ -164,38 +146,40 @@ def handle_pygame_events(
         "move_right": [grid, focused_tet, cell_owners, 1],
         "soft_drop": [grid, focused_tet, cell_owners, False],
     }
+    pressed_keys = pygame.key.get_pressed()
 
-    # Iterates through the entire input map, checking if each input has been pressed.
-    if event.key in input_map.keys():
-        """if input_map[event.key]:# not in repeatable_inputs:
-            action_name = input_map[event.key]
-            action = action_map[action_name]
-            args: list = action_args[action_name]
-            action(*args)
-            if action_name == "hard_drop":
-                just_hard_dropped = True
-            return True"""
+    # If any key in the input map is pressed, gets set to True
+    # so that the ghost piece gets updated.
+    action_happened: bool = False
 
-        if input_map[event.key] in repeatable_inputs:
-            action_name = input_map[event.key]
-            action = action_map[action_name]
-            args = action_args[action_name]
-            action(*args)
-            return True
 
-        else:
-            
-            action_name = input_map[event.key]
-            if not singular_inputs_states[action_name]:
+    for key, action_name in input_map.items():
+        # Repeatable and non-repeatable events work differently
+        # and are therefore handled seperately.
+        if action_name in repeatable_inputs:
+            if pressed_keys[key] and repeatable_key_cooldowns[action_name] == 0:
                 action = action_map[action_name]
-                args: list = action_args[action_name]
+                args = action_args[action_name]
                 action(*args)
-                if action_name == "hard_drop":
-                    just_hard_dropped = True
-                
-                singular_inputs_states[action_name] = True
-    
-    return False
+                action_happened = True
+                repeatable_key_cooldowns[action_name] = 0.1
+            
+        else:
+            if pressed_keys[key]:
+                if not singular_key_cooldowns[action_name]:
+                    action = action_map[action_name]
+                    args: list = action_args[action_name]
+                    action(*args)
+                    if action_name == "hard_drop":
+                        just_hard_dropped = True
+                    
+                    singular_key_cooldowns[action_name] = True
+            
+            # If the key isn't pressed, resets its 'cooldown'.
+            else:
+                singular_key_cooldowns[action_name] = False
+
+    return action_happened
 
 
 def attractor_input_processor(

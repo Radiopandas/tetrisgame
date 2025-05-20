@@ -3,7 +3,7 @@ import socket
 import threading
 import json
 from time import sleep
-import draw_leaderboard
+import leaderboard
 
 sock: socket.socket
 
@@ -31,7 +31,7 @@ def receive(socket, signal: bool):
                     try:
                         json_data = json.loads(line.strip())
                         print(f"Received .json file: {json_data}")
-                        draw_leaderboard.receive_new_top_scores(json_data)
+                        leaderboard.receive_new_top_scores(json_data)
                     
                     except json.JSONDecodeError:
                         print(f"Error decoding .json file: {line.strip()}")

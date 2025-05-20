@@ -25,6 +25,8 @@ class InputBox:
     # other functions receiving inputs.
     can_defocus: bool = True
 
+    centred_text: bool = False
+
     character_set: list[str] = []
 
     def __init__(self, 
@@ -104,9 +106,13 @@ class InputBox:
     
     def draw(self, screen: pygame.Surface):
         # Draws the text background onto the screen.
-        text_rect = self.text_surface.get_rect()
         pygame.draw.rect(screen, "black", self.rect)
+        # Positions the text if necessary:
+        text_rect = self.text_surface.get_rect()
+        if self.centred_text:
+            text_rect.center = self.rect.center
+
         # Blits the text onto the screen.
-        screen.blit(self.text_surface, (self.rect.x + 5, self.rect.y + 5))
+        screen.blit(self.text_surface, text_rect)
         # Blits the outline rectangle onto the screen.
         pygame.draw.rect(screen, self.colour, self.rect, 2)
