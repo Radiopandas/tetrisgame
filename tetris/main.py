@@ -384,6 +384,7 @@ if __name__ == "__main__":
 
         # Waits for the user to enter a name so their score can be stored.
         name_entered: bool = False
+        leaderboard.set_score(score)
         leaderboard.draw_name_input = True
         leaderboard.name_input_box.visible = True
         while not name_entered:

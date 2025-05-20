@@ -1,6 +1,7 @@
 import pygame
 from input_box import InputBox, ACTIVE_COLOUR
 from json_parser import write_to_scoreboard, get_file_data
+import pygame.docs
 
 pygame.init()
 
@@ -17,6 +18,16 @@ leaderboard_canvas = pygame.Surface((display_info.current_w, display_info.curren
 
 draw_name_input: bool = False
 
+# Fonts and stuff
+input_box_font_size: int = 40 * screen_scale
+names_font = None
+names_font_size = 20 * screen_scale
+scores_font = None
+scores_font_size = 20 * screen_scale
+score_title_font = None
+score_title_font_size = 12 * screen_scale
+
+
 leaderboard_names_characterset: list[str] = [
     'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', 'a', 's', 'd', 'f', 'g', 'h', 
     'j', 'k', 'l', 'z', 'x', 'c', 'v', 'b', 'n', 'm', '1', '2', '3', '4', '5', '6', 
@@ -26,9 +37,9 @@ leaderboard_names_characterset: list[str] = [
 name_input_box = InputBox(
     screen_w * screen_scale // 2, 
     screen_h * screen_scale // 2, 
-    50 * 2 * screen_scale, # Should be roughly 2x the font size
+    input_box_font_size * 2, # Should be roughly 2x the font size
     prompt="", 
-    font_size=50 * screen_scale,
+    font_size=input_box_font_size,
     can_defocus=False,
     max_input_length=3
 )
@@ -41,13 +52,9 @@ name_input_box.colour = ACTIVE_COLOUR
 displayed_scores: list = []
 scores_to_display: int = 0
 
-# Fonts and stuff
-names_font = None
-names_font_size = 20 * screen_scale
-scores_font = None
-scores_font_size = 20 * screen_scale
-title_font = None
-title_font_size = 30 * screen_scale
+
+
+
 
 # -----------------------------------------
 # Leaderboard display positioning stuff
@@ -84,12 +91,15 @@ displayed_scores = [
     },
 ]
 
-
+current_score: int = 0
 
 ###################################################################################################
 #--------------------------------------- Utility functions ---------------------------------------#
 ###################################################################################################
 
+def set_score(score: int) -> None:
+    global current_score
+    current_score = score
 
 ###################################################################################################
 #---------------------------------------- Setup functions ----------------------------------------#
@@ -114,8 +124,39 @@ def handle_entered_score(name: str, info: dict):
 
 
 def draw_input_box(screen: pygame.Surface):
-    global name_input_box
+    global name_input_box, score_title_font, score_title_font_size
+
+    # Renders the score.
+    if not score_title_font:
+        score_title_font = pygame.font.SysFont('Lexus', score_title_font_size)
+
+    score_surface = score_title_font.render(f"Your score: {current_score:05}", True, "white")
+    score_rect = score_surface.get_rect()
+    score_rect.center = (
+        screen_w * screen_scale // 2,
+        (screen_h * screen_scale // 2) + (input_box_font_size // 2)
+    )
+    # Creates the background rect for the score
+    score_background_rect = score_surface.get_rect()
+    score_background_rect.center = (
+        screen_w * screen_scale // 2 - 3 * screen_scale,
+        (screen_h * screen_scale // 2) + (input_box_font_size // 2) - 3 * screen_scale
+    )
+    score_background_rect.width += 6 * screen_scale
+    score_background_rect.height += 6 * screen_scale
+
+    # Actually draws the score and background.
+    pygame.draw.rect(screen, "black", score_background_rect)
+    screen.blit(score_surface, score_rect)
+
+    
+
+    # Draws the prompt.
+
+
+    # Draws the actual box that the user enters their name into.
     name_input_box.draw(screen)
+
 
 
 def draw_names(screen: pygame.Surface, names: list[str]):
@@ -145,7 +186,6 @@ def draw_scores(screen: pygame.Surface, scores: list[int]):
 
 
 def draw_scoreboard(screen: pygame.Surface):
-
     """Draws the scoreboard onto the screen."""
     global displayed_scores
     # Seperates out the relevant scoreboard data.
