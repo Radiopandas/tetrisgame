@@ -6,6 +6,8 @@ import pygame
 import movement
 
 
+
+
 pygame.init()
 
 ###################################################################################################
@@ -38,8 +40,8 @@ for key, value in input_map.items():
 action_map: dict = {
     "move_left": movement.move_tet,
     "move_right": movement.move_tet,
-    "hard_drop": movement.quick_drop,
-    "soft_drop": movement.quick_drop,
+    "hard_drop": movement.hard_drop,
+    "soft_drop": movement.hard_drop,
     "rotate_right": rotation.rotate_tet,
     "rotate_left": rotation.rotate_tet,
     "hold_piece": movement.hold_piece
@@ -48,6 +50,8 @@ action_map: dict = {
 valid_events: list = get_file_data('settings.json', 'pygame_events_details', 'valid_events')
 
 repeatable_inputs: list = ["move_left", "move_right", "soft_drop"]
+
+soft_dropping: bool = False
 
 just_hard_dropped: bool = False
 
@@ -168,10 +172,10 @@ def attractor_input_processor(
             movement.move_tet(grid, focused_tet, cell_owners, 1)
 
         case "w": # Hard drop
-            movement.quick_drop(grid, focused_tet, cell_owners, True)
+            movement.hard_drop(grid, focused_tet, cell_owners, True)
             just_hard_dropped = True
         case "s": # Soft drop
-            movement.quick_drop(grid, focused_tet, cell_owners, False)
+            soft_dropping = True
 
         case "e": # Rotate right
             rotation.rotate_tet(grid, focused_tet, cell_owners, True)

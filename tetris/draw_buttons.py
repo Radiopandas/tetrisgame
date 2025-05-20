@@ -169,19 +169,7 @@ class Button:
 #------------------------------------------ Global vars ------------------------------------------#
 ###################################################################################################
 
-
-button_x_coords: dict = {
-    "settings_button": [40 * screen_scale, 40 * screen_scale + 40 * screen_scale],
-    "move_left_btn": [60 * screen_scale, 120 * screen_scale]
-}
-
-button_y_coords: dict = {
-    "settings_button": [screen_h * screen_scale - (80 * screen_scale), screen_h * screen_scale - (40 * screen_scale)],
-    "move_left_btn": [screen_h * screen_scale - (140 * screen_scale), screen_h * screen_scale - (80 * screen_scale)]
-}
-
 all_buttons: dict[str, Button] = {}
-
 
 ###################################################################################################
 #--------------------------------------- Utility Functions ---------------------------------------#

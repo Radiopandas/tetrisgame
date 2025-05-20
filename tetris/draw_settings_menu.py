@@ -14,9 +14,9 @@ screen_w = 640
 screen_h = 360
 screen_scale = int(display_info.current_h / screen_h)
 
-settings_canvas_1 = pygame.Surface((display_info.current_w, display_info.current_h))
+settings_canvas_1 = pygame.Surface((screen_w * 0.75 * screen_scale, screen_h * screen_scale))
 settings_canvas_1.set_alpha(150)
-settings_canvas_2 = pygame.Surface((display_info.current_w, display_info.current_h))
+settings_canvas_2 = pygame.Surface((screen_w * 0.25 * screen_scale, screen_h * screen_scale))
 
 
 settings_menu_open: bool = False
@@ -306,23 +306,31 @@ def check_pressed_buttons(mouse_coords: tuple[int, int], screen: pygame.Surface)
 #---------------------------------------- Main functions -----------------------------------------#
 ###################################################################################################
 
+def draw_buttons(screen: pygame.Surface):
+    global settings_canvas_2, buttons
+
+    for button in buttons.values():
+        if button.button_group == "settings_btns":
+            button.draw_self(screen)
+        else:
+            button.draw_self(settings_canvas_2)
+
 def draw_settings_menu(screen: pygame.Surface):
     global controls_title_font, controls_title_font_size, \
         controls_instructions_font, controls_instructions_font_size
-
-    # Creates the background
-    #screen.fill("black")
-    #settings_canvas.fill("green")
-
-    settings_background_rect = pygame.Rect(
-        0, 0, screen_w * 0.25 * screen_scale, screen_h * screen_scale
-    )
-
-    pygame.draw.rect(settings_canvas_1, (20, 20, 20), settings_background_rect)
-
-    screen.blit(settings_canvas_1, (0, 0, 0, 0))
-
     
+
+    # Creates the main background.
+    settings_canvas_2.fill((20, 20, 20))
+
+    # Renders the buttons onto the main canvas.
+    draw_buttons(screen)
+    
+    screen.blit(settings_canvas_2, (0, 0, 0, 0))
+
+    # Darkens the rest of the screen slightly.
+    screen.blit(settings_canvas_1, (screen_w * 0.25 * screen_scale, 0, 0, 0))
+
 
     # Draws text to make it clear that the controls are being displayed
     if not controls_title_font:
@@ -333,6 +341,7 @@ def draw_settings_menu(screen: pygame.Surface):
     )
     title_display = controls_title_font.render("Controls", False, "white")
     screen.blit(title_display, title_pos)
+
 
     # Draws instructions for changing controls
     if not controls_instructions_font:

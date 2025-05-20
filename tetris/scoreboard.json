@@ -1,0 +1,59 @@
+{
+   "Scores": [
+      {
+         "Name": "TEST2",
+         "Score": 16620,
+         "Lines cleared": 83
+      },
+      {
+         "Name": "NOTME",
+         "Score": 15480,
+         "Lines cleared": 97
+      },
+      {
+         "Name": "CORNE",
+         "Score": 2140,
+         "Lines cleared": 46
+      },
+      {
+         "Name": "A",
+         "Score": 1380,
+         "Lines cleared": 8
+      },
+      {
+         "Name": "SAMMM",
+         "Score": 220,
+         "Lines cleared": 5
+      },
+      {
+         "Name": "AAAAA",
+         "Score": 40,
+         "Lines cleared": 1
+      },
+      {
+         "Name": "A1",
+         "Score": 40,
+         "Lines cleared": 1
+      },
+      {
+         "Name": "A2",
+         "Score": 40,
+         "Lines cleared": 1
+      },
+      {
+         "Name": "A3",
+         "Score": 40,
+         "Lines cleared": 1
+      },
+      {
+         "Name": "A1",
+         "Score": 40,
+         "Lines cleared": 1
+      },
+      {
+         "Name": "A17",
+         "Score": 40,
+         "Lines cleared": 1
+      }
+   ]
+}

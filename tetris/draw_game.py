@@ -12,6 +12,7 @@ import draw_start_menu
 import draw_main_game
 import draw_buttons
 import draw_settings_menu
+import draw_leaderboard
 
 import movement
 
@@ -67,6 +68,7 @@ game_controls: dict = {}
 start_menu_initialised = False
 main_game_initialised = False
 settings_initialised = False
+leaderboard_initialised = False
 
 ###################################################################################################
 #--------------------------------------- Utility Functions ---------------------------------------#
@@ -118,7 +120,22 @@ def buttons():
     if draw_settings_menu.settings_menu_open:
         draw_settings_menu.draw_settings_menu(screen)
 
-    draw_buttons.draw_buttons(screen)
+    draw_settings_menu.draw_buttons(screen)
+
+
+def leaderboard() -> None:
+    global leaderboard_initialised
+
+    if not leaderboard_initialised:
+        leaderboard_initialised = True
+        #draw_leaderboard.initialise_scoreboard()
+    
+    if draw_leaderboard.draw_name_input:
+        draw_leaderboard.draw_input_box(screen)
+    else:
+        draw_leaderboard.name_input_box.visible = False
+    
+    draw_leaderboard.draw_scoreboard(screen)
 
 
 def main_game(
@@ -156,11 +173,11 @@ def main_game(
 
     #draw_main_game.draw_controls(screen, game_controls)
 
+    leaderboard()
     buttons()
     
 
-
-def start_menu() -> bool:
+def start_menu() -> None:
     """Draws a start menu consisting of the title and basic instructions."""
     
     global start_menu_initialised
@@ -176,17 +193,9 @@ def start_menu() -> bool:
     # Checks for the user pressing <key> to exit the start screen.
     # Returns True if <key> is pressed, else False. 
 
+    leaderboard()
     buttons()
 
-"""    keys = pygame.key.get_pressed()
-    if keys[pygame.K_0]:
-        return True
-    for event in pygame.event.get():
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_0:
-                return True
-"""
-    
 
 
 def draw_grid_lines(h_lines: int):

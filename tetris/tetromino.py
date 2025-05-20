@@ -23,6 +23,10 @@ class Tetromino:
     # Determines the layout of the piece for rotation
     times_rotated: int = 0
 
+    # Allows gravity to be tied to each piece instead of a global clock,
+    # thus reducing inconsistencies when pieces spawn.
+    gravity_frame: int = 0
+
     
     def __init__(self, _cells):
         self.cells = _cells

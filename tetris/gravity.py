@@ -20,6 +20,7 @@ def set_grid_size(_width: int, _height: int):
 
     print(f"Height: {height}")
 
+
 def try_move_down(
         grid: list[list[bool]], 
         tetromino: Tetromino, 
@@ -96,3 +97,43 @@ def apply_gravity(grid, tetrominos: list[Tetromino], cell_owners: list[list[Tetr
     
     if focused_tetromino and input_handling.just_hard_dropped:
         focused_tetromino.can_move = False
+
+
+def focused_gravity(
+        grid: list[list[bool]], 
+        cell_owners: list[list[Tetromino | None]], 
+        focused_tet: Tetromino
+    ):
+    cur_cells = focused_tet.cells
+    can_move: bool = True
+    for cell in cur_cells:
+        x, y = cell
+        # Checks if the cell is grounded
+        if y == height - 1:
+            can_move = False
+            focused_tet.can_move = False
+            break
+
+        # Checks if the cell is blocked by another part of the same tetromino.
+        if [x, y + 1] in cur_cells:
+            continue
+
+        # Checks if it is blocked by another tetromino
+        if grid[y + 1][x]:
+            can_move = False
+            focused_tet.can_move = False
+            break
+    
+    if can_move:
+        for cell in cur_cells:
+            x, y = cell
+            grid[y][x] = False
+            cell_owners[y][x] = None
+            cell[1] += 1
+        
+        for cell in cur_cells:
+            x, y = cell
+            grid[y][x] = True
+            cell_owners[y][x] = focused_tet
+        
+        focused_tet.cells = True
