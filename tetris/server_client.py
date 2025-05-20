@@ -49,7 +49,7 @@ def initialise_server_connection(host, port):
         print("Connected to server")
     except:
         print("Could not make a connection to the server")
-        sleep(5)
+        sleep(2)
     
     receive_thread = threading.Thread(target=receive, args=(sock, True))
     receive_thread.start()

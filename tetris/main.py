@@ -45,6 +45,7 @@ instant_gravity_after_clearing: bool = True
 
 # Only to be used when displaying the game to people
 can_quit: bool = False
+use_server: bool = False
 
 all_vars = [
     width, height, focused_tetromino, grid, cell_owners, all_tetrominos,
@@ -185,7 +186,7 @@ def update(
 
                 pygame.display.flip()
                 gravity.apply_gravity(grid, all_tets, cell_owners)
-                sleep(0.05)
+                sleep(0.05) 
             pygame.display.flip()
         
         #movement.update_ghost_piece(grid, focused_tet, ghost_piece_tiles)
@@ -253,12 +254,13 @@ if __name__ == "__main__":
 
     pygame.key.set_repeat(500, 30)
 
-    HOST = input("Host: ")
-    PORT = int(input("Port: "))
+    if use_server:
+        HOST = input("Host: ")
+        PORT = int(input("Port: "))
 
-    # Creates a connection to the leaderboard server.
-    server_client.initialise_server_connection(HOST, PORT)
-    #server_client.send({"Name": "User2", "Score": 200, "Lines cleared": 4})
+        # Creates a connection to the leaderboard server.
+        server_client.initialise_server_connection(HOST, PORT)
+        #server_client.send({"Name": "User2", "Score": 200, "Lines cleared": 4})
 
 
     # Runs basically forever
@@ -309,6 +311,7 @@ if __name__ == "__main__":
             draw_game.start_menu()
 
             if not draw_settings_menu.settings_menu_open:
+                focused_tetromino.gravity_frame += (1 if not input_handling.soft_dropping else 30)
                 frame += 1
                 update(frame, grid, all_tetrominos, continue_game, gravity_cooldown, cell_owners, focused_tetromino, piece_sequence)
 
@@ -414,16 +417,16 @@ if __name__ == "__main__":
                         }
 
                 
-                        #draw_leaderboard.handle_entered_score(entered_name, leaderboard_info)
-                        server_client.send(leaderboard_info)
-                        #draw_leaderboard.update_top_scores()
+                        if use_server:
+                            server_client.send(leaderboard_info)
+
 
                         draw_leaderboard.draw_name_input = False
             
             dt = clock.tick(60) / 1000
             
-
-    server_client.end_server_connection()
+    if use_server:
+        server_client.end_server_connection()
     pygame.quit()
 
 
@@ -490,4 +493,5 @@ This way, we can save on processing by only redrawing their canvases when they a
 Also makes layering easier and would allow the settings menu to have a solid background.
  - draw_settings_menu DONE
  - draw_leaderboard
+
 """
