@@ -23,13 +23,19 @@ input_map: dict = {
     pygame.K_q: "rotate_left",
     pygame.K_h: "hold_piece"
 }
-
-#input_map[list(get_file_data('settings.json', 'Profile1', 'controls').values())[0]] = "move_left"
+# Used to prevent move_left and move_right both being pressed.
+left_key: int
+right_key: int
 
 input_map = {}
 inputs = get_file_data('settings.json', 'Profile1', 'controls')
-for key, value in inputs.items():
-    input_map[value] = key
+for action, key in inputs.items():
+    if action == "move_left":
+        left_key = key
+    elif action == "move_right":
+        right_key = key
+    
+    input_map[key] = action
 
 ## Maps 
 input_display: dict = get_file_data('settings.json', 'Profile1', 'displayed_controls')
@@ -46,7 +52,6 @@ action_map: dict = {
     "rotate_left": rotation.rotate_tet,
     "hold_piece": movement.hold_piece
 }
-
 
 
 valid_events: list = get_file_data('settings.json', 'pygame_events_details', 'valid_events')
@@ -107,10 +112,15 @@ def event_is_valid_control(event: pygame.event.Event):
 
 
 def update_input_map(new_input, action: str):
+    global left_key, right_key
     for key, value in input_map.items():
         if value == action:
             input_map.pop(key)
             input_map[new_input] = action
+            if action == "move_left":
+                left_key = new_input
+            elif action == "move_right":
+                right_key = new_input
             return True
     
     return False
@@ -152,17 +162,22 @@ def get_inputs(
     # so that the ghost piece gets updated.
     action_happened: bool = False
 
-
     for key, action_name in input_map.items():
         # Repeatable and non-repeatable events work differently
         # and are therefore handled seperately.
         if action_name in repeatable_inputs:
             if pressed_keys[key] and repeatable_key_cooldowns[action_name] == 0:
+                # Prevents left and right being pressed.
+                if action_name == "move_left" and pressed_keys[right_key]:
+                    continue
+                elif action_name == "move_right" and pressed_keys[left_key]:
+                    continue
+                
                 action = action_map[action_name]
                 args = action_args[action_name]
                 action(*args)
                 action_happened = True
-                repeatable_key_cooldowns[action_name] = 0.1
+                repeatable_key_cooldowns[action_name] = 0.12
             
         else:
             if pressed_keys[key]:

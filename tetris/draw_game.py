@@ -157,7 +157,7 @@ def main_game(
     #draw_grid(grid, cell_owners, board_offset, ghost_tiles, 5)
     if not main_game_initialised:
         main_game_initialised = True
-        draw_main_game.set_grid_size(10, 22)
+        draw_main_game.set_grid_size(width, height)
         draw_main_game.initialise_base_font(16)
         draw_main_game.initialise_controls_font(16)
         draw_main_game.initialise_piece_display_font(16)

@@ -131,6 +131,8 @@ def update(
         lines_cleared += lines_just_cleared
         if gravity_rate > 10:
             gravity_cooldown -= utility_funcs.update_gravity_rate(lines_cleared, lines_just_cleared)
+            if gravity_cooldown < 10:
+                gravity_cooldown = 10
 
         # Moves all lines down by the number of lines cleared
         if lines_just_cleared > 0 and instant_gravity_after_clearing:
@@ -168,8 +170,10 @@ def update(
         # updates the gravity rate.
         score += utility_funcs.update_scores(lines_just_cleared)
         lines_cleared += lines_just_cleared
-        if gravity_rate > 10:
+        if gravity_rate > 1:
             gravity_cooldown -= utility_funcs.update_gravity_rate(lines_cleared, lines_just_cleared)
+            if gravity_cooldown < 1:
+                gravity_cooldown = 1
 
         # Moves all lines down by the number of lines cleared
         if lines_just_cleared > 0 and instant_gravity_after_clearing:
@@ -294,6 +298,7 @@ if __name__ == "__main__":
                 focused_tetromino.gravity_frame += (1 if not input_handling.soft_dropping else 30)
                 frame += 1
                 update(frame, grid, all_tetrominos, continue_game, gravity_cooldown, cell_owners, focused_tetromino, piece_sequence)
+                gravity_cooldown = 60
 
             # Flips the updated display onto the screen
             pygame.display.flip()
@@ -313,14 +318,14 @@ if __name__ == "__main__":
         # Resets (almost) all variables to undo changes made by the attractor.
         restart_game()
         
-        # Spawns the starting piece
+        # Spawns the starting piece.
         focused_tetromino = utility_funcs.spawn_tetromino(grid, focused_tetromino, piece_sequence, all_tetrominos, cell_owners)[1]
         all_tetrominos.append(focused_tetromino)
         utility_funcs.add_tetromino(focused_tetromino, grid, cell_owners)
         
 
 
-        # Main game loop
+        # Main game loop.
         running: bool = True
         frame = 0
         while running:
@@ -348,13 +353,14 @@ if __name__ == "__main__":
             
             # Handles repeating inputs (movement/soft drop) and
             # non-repeating inputs(rotation, hold, hard drop).
-            input_handling.get_inputs(
-                grid,
-                cell_owners, 
-                focused_tetromino,
-                piece_sequence,
-                all_tetrominos
-            )
+            if not draw_settings_menu.settings_menu_open:
+                input_handling.get_inputs(
+                    grid,
+                    cell_owners, 
+                    focused_tetromino,
+                    piece_sequence,
+                    all_tetrominos
+                )
 
             # Flushes the screen then draws the game.
             draw_game.screen.fill(draw_game.background_colour)
@@ -493,5 +499,8 @@ Change the name entering to:
  - Display what score you got.
  - Only allow 3 characters
  - have the box that they enter the name into be underneath the question.
+
+Todo maybe:
+    move the ghost piece to its own layer with a reduced alpha, thus allowing the ghost piece to be a transparent version of the current piece's colour.
 
 """

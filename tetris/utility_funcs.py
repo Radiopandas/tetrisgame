@@ -8,6 +8,11 @@ held_piece: int = 0
 
 var_defaults = [[], False, 0]
 
+GRAVITY_INTERVAL: int = 1 # How many lines have to be cleared to increment the gravity rate.
+# How much gravity is reduced by per line cleared. If gravity_interval is 
+# greater than 1, gravity will be reduced every <interval> lines cleared by <interval * change>.
+GRAVITY_CHANGE: int = 5
+
 def reset():
     """Resets all necessary local global variables."""
     global piece_sequence, piece_has_been_held, held_piece, var_defaults
@@ -61,7 +66,7 @@ def generate_tetromino(
     """Generates and returns an array of cells that make up a Tetromino."""
     width: int = len(grid[0])
 
-    # Checks if the spawn location is obstructed
+    # Checks if the spawn location is obstructed.
     can_spawn: bool = True
     for y in range(2):
         for x in range(4):
@@ -69,7 +74,7 @@ def generate_tetromino(
                 can_spawn = False
                 break
     
-    # Uses 'random bag' to add pieces to the queue if they are needed
+    # Uses 'random bag' to add pieces to the queue if they are needed.
     if len(piece_sequence) < 7:
         to_add = [1, 2, 3, 4, 5, 6, 7]
         shuffle(to_add)
@@ -158,8 +163,8 @@ def update_scores(lines_just_cleared: int) -> int:
 def update_gravity_rate(total_lines_cleared: int, lines_just_cleared: int) -> int:
     """Returns how much to decrease the graivty cooldown by, based on how 
     many lines have been cleared(total) and were just cleared."""
-    if total_lines_cleared // 10 != (total_lines_cleared - lines_just_cleared) // 10:
-        return 10 # Default is 2, but 10 will make for much faster games on open night.
+    if total_lines_cleared // GRAVITY_INTERVAL != (total_lines_cleared - lines_just_cleared) // GRAVITY_INTERVAL:
+        return GRAVITY_CHANGE * GRAVITY_INTERVAL # Default is 2, but 10 will make for much faster games on open night.
     return 0    
 
 
