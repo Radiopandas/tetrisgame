@@ -59,3 +59,16 @@ class Tetromino:
             if not is_connected:
                 return cell
         return []
+    
+    def get_top_left(self) -> tuple[int, int]:
+        top = self.cells[0][0]
+        left = self.cells[0][0]
+
+        for cell in self.cells:
+            x, y = cell
+            if y < top:
+                top = y
+            if x < left:
+                left = x
+        
+        return (left, top)

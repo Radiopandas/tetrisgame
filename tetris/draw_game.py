@@ -158,20 +158,19 @@ def main_game(
     if not main_game_initialised:
         main_game_initialised = True
         draw_main_game.set_grid_size(width, height)
+        draw_main_game.initialise_ghost_layer(width, height)
         draw_main_game.initialise_base_font(16)
         draw_main_game.initialise_controls_font(16)
         draw_main_game.initialise_piece_display_font(16)
         draw_main_game.initialise_controls_title_font(24)
     
-    draw_main_game.draw_grid(screen, all_tets, movement.ghost_piece, 5, draw_ghost_piece)
+    draw_main_game.draw_grid(screen, all_tets, movement.ghost_piece, 5, background_colour, draw_ghost_piece)
 
     draw_main_game.draw_stats(screen, score, lines_cleared, lines_cleared // 10)
 
     draw_main_game.draw_next_pieces(screen, piece_sequence[0:3])
 
     draw_main_game.draw_held_piece(screen, held_piece)
-
-    #draw_main_game.draw_controls(screen, game_controls)
 
     draw_leaderboard()
     buttons()

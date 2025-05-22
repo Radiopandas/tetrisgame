@@ -194,6 +194,7 @@ def update_ghost_piece(grid, focused_tet: Tetromino, ghost_tiles: list):
     # Creates a deepcopy so that modifying the ghost piece has no effect on
     # the actual tetromino.
     ghost_piece.cells = deepcopy(focused_tet.cells)
+    ghost_piece.tet_type = focused_tet.tet_type
 
     # Gets the columns that the ghost piece is in.
     ghost_columns: list = []

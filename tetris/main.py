@@ -45,7 +45,7 @@ instant_gravity_after_clearing: bool = True
 
 # Only to be used when displaying the game to people
 can_quit: bool = False
-use_server: bool = False
+use_server: bool = True
 
 all_vars = [
     width, height, focused_tetromino, grid, cell_owners, all_tetrominos,
@@ -149,7 +149,7 @@ def update(
                     draw_game.start_menu()
 
                 pygame.display.flip()
-                gravity.apply_gravity(grid, all_tets, cell_owners, focused_tetromino=focused_tet)
+                gravity.apply_gravity(grid, all_tets, cell_owners,   focused_tetromino=focused_tet)
                 sleep(0.05)
             pygame.display.flip()
         input_handling.just_hard_dropped = False

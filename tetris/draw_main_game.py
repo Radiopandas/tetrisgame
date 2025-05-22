@@ -3,6 +3,7 @@ import pygame
 from tetromino import Tetromino
 from json_parser import get_file_data
 from utility_funcs import tet_to_pattern
+from random import choice, randint
 
 pygame.init()
 
@@ -16,8 +17,11 @@ cur_h = screen_dimensions.current_h
 screen_w = 640
 screen_h = 360
 
+
 screen_scale: int = screen_dimensions.current_h // screen_h
 
+ghost_layer: pygame.Surface #= pygame.Surface((screen_w * screen_scale, screen_h * screen_scale))
+#ghost_layer.set_alpha(50)
 
 grid_width: int = 0
 grid_height: int = 0
@@ -39,6 +43,152 @@ controls_title_font_size: int = 0 # 24
 
 board_offset: int = 0
 
+fun_mode: bool = True
+
+fun_mode_colours = [
+    pygame.Color("AliceBlue"),
+    pygame.Color("AntiqueWhite"),
+    pygame.Color("Aqua"),
+    pygame.Color("Aquamarine"),
+    pygame.Color("Azure"),
+    pygame.Color("Beige"),
+    pygame.Color("Bisque"),
+    pygame.Color("Black"),
+    pygame.Color("BlanchedAlmond"),
+    pygame.Color("Blue"),
+    pygame.Color("BlueViolet"),
+    pygame.Color("Brown"),
+    pygame.Color("BurlyWood"),
+    pygame.Color("CadetBlue"),
+    pygame.Color("Chartreuse"),
+    pygame.Color("Chocolate"),
+    pygame.Color("Coral"),
+    pygame.Color("CornflowerBlue"),
+    pygame.Color("Cornsilk"),
+    pygame.Color("Crimson"),
+    pygame.Color("Cyan"),
+    pygame.Color("DarkBlue"),
+    pygame.Color("DarkCyan"),
+    pygame.Color("DarkGoldenRod"),
+    pygame.Color("DarkGray"),
+    pygame.Color("DarkGreen"),
+    pygame.Color("DarkKhaki"),
+    pygame.Color("DarkMagenta"),
+    pygame.Color("DarkOliveGreen"),
+    pygame.Color("DarkOrange"),
+    pygame.Color("DarkOrchid"),
+    pygame.Color("DarkRed"),
+    pygame.Color("DarkSalmon"),
+    pygame.Color("DarkSeaGreen"),
+    pygame.Color("DarkSlateBlue"),
+    pygame.Color("DarkSlateGray"),
+    pygame.Color("DarkTurquoise"),
+    pygame.Color("DarkViolet"),
+    pygame.Color("DeepPink"),
+    pygame.Color("DeepSkyBlue"),
+    pygame.Color("DimGray"),
+    pygame.Color("DodgerBlue"),
+    pygame.Color("FireBrick"),
+    pygame.Color("FloralWhite"),
+    pygame.Color("ForestGreen"),
+    pygame.Color("Fuchsia"),
+    pygame.Color("Gainsboro"),
+    pygame.Color("GhostWhite"),
+    pygame.Color("Gold"),
+    pygame.Color("Goldenrod"),
+    pygame.Color("Gray"),
+    pygame.Color("Green"),
+    pygame.Color("GreenYellow"),
+    pygame.Color("Honeydew"),
+    pygame.Color("HotPink"),
+    pygame.Color("IndianRed"),
+    pygame.Color("Indigo"),
+    pygame.Color("Ivory"),
+    pygame.Color("Khaki"),
+    pygame.Color("Lavender"),
+    pygame.Color("LavenderBlush"),
+    pygame.Color("LawnGreen"),
+    pygame.Color("LemonChiffon"),
+    pygame.Color("LightBlue"),
+    pygame.Color("LightCoral"),
+    pygame.Color("LightCyan"),
+    pygame.Color("LightGoldenrodYellow"),
+    pygame.Color("LightGray"),
+    pygame.Color("LightGreen"),
+    pygame.Color("LightPink"),
+    pygame.Color("LightSalmon"),
+    pygame.Color("LightSeaGreen"),
+    pygame.Color("LightSkyBlue"),
+    pygame.Color("LightSlateGray"),
+    pygame.Color("LightSteelBlue"),
+    pygame.Color("LightYellow"),
+    pygame.Color("Lime"),
+    pygame.Color("LimeGreen"),
+    pygame.Color("Linen"),
+    pygame.Color("Magenta"),
+    pygame.Color("Maroon"),
+    pygame.Color("MediumAquamarine"),
+    pygame.Color("MediumBlue"),
+    pygame.Color("MediumOrchid"),
+    pygame.Color("MediumPurple"),
+    pygame.Color("MediumSeaGreen"),
+    pygame.Color("MediumSlateBlue"),
+    pygame.Color("MediumSpringGreen"),
+    pygame.Color("MediumTurquoise"),
+    pygame.Color("MediumVioletRed"),
+    pygame.Color("MidnightBlue"),
+    pygame.Color("MintCream"),
+    pygame.Color("MistyRose"),
+    pygame.Color("Moccasin"),
+    pygame.Color("NavajoWhite"),
+    pygame.Color("Navy"),
+    pygame.Color("OldLace"),
+    pygame.Color("Olive"),
+    pygame.Color("OliveDrab"),
+    pygame.Color("Orange"),
+    pygame.Color("OrangeRed"),
+    pygame.Color("Orchid"),
+    pygame.Color("PaleGoldenrod"),
+    pygame.Color("PaleGreen"),
+    pygame.Color("PaleTurquoise"),
+    pygame.Color("PaleVioletRed"),
+    pygame.Color("PapayaWhip"),
+    pygame.Color("PeachPuff"),
+    pygame.Color("Peru"),
+    pygame.Color("Pink"),
+    pygame.Color("Plum"),
+    pygame.Color("PowderBlue"),
+    pygame.Color("Purple"),
+    pygame.Color("Red"),
+    pygame.Color("RosyBrown"),
+    pygame.Color("RoyalBlue"),
+    pygame.Color("SaddleBrown"),
+    pygame.Color("Salmon"),
+    pygame.Color("SandyBrown"),
+    pygame.Color("SeaGreen"),
+    pygame.Color("SeaShell"),
+    pygame.Color("Sienna"),
+    pygame.Color("Silver"),
+    pygame.Color("SkyBlue"),
+    pygame.Color("SlateBlue"),
+    pygame.Color("SlateGray"),
+    pygame.Color("Snow"),
+    pygame.Color("SpringGreen"),
+    pygame.Color("SteelBlue"),
+    pygame.Color("Tan"),
+    pygame.Color("Teal"),
+    pygame.Color("Thistle"),
+    pygame.Color("Tomato"),
+    pygame.Color("Turquoise"),
+    pygame.Color("Violet"),
+    pygame.Color("Wheat"),
+    pygame.Color("White"),
+    pygame.Color("WhiteSmoke"),
+    pygame.Color("Yellow"),
+    pygame.Color("YellowGreen")
+]
+
+
 ###################################################################################################
 #---------------------------------------- Setup functions ----------------------------------------#
 ###################################################################################################
@@ -47,6 +197,14 @@ def set_grid_size(width: int, height: int):
     global grid_width, grid_height
     grid_width = width
     grid_height = height
+
+
+def initialise_ghost_layer(width, height):
+    global ghost_layer
+    cell_width = (screen_h // (grid_height + 2)) * screen_scale
+    
+    ghost_layer = pygame.Surface(((width + 1) * cell_width, (height + 1) * cell_width))
+    #ghost_layer.set_alpha(80)
 
 
 def initialise_base_font(size: int):
@@ -105,7 +263,7 @@ def set_draw_colour(piece_type: int) -> pygame.Color:
             return pygame.Color(198, 198, 198)
         case _:
             return pygame.Color(255, 255, 255)
-        
+
 ###################################################################################################
 #---------------------------------------- Main functions -----------------------------------------#
 ###################################################################################################
@@ -115,6 +273,7 @@ def draw_grid(
         tetrominos: list[Tetromino],
         ghost_piece: Tetromino,
         outline_thickness: int,
+        background_colour: pygame.Color,
         draw_ghost_piece: bool = True
     ):
     global cell_width, board_offset
@@ -124,24 +283,40 @@ def draw_grid(
     # Calculates the board offset to have the grid centred
     board_offset = (screen_dimensions.current_w // 2) - cell_width * ((grid_width / 2) + 1)
 
+
+    fun_mode_colour = choice(fun_mode_colours)
     # Draws the ghost piece
     if ghost_piece and draw_ghost_piece:
-        ghost_piece_colour = set_draw_colour(8)
+        ghost_piece_colour = set_draw_colour(ghost_piece.tet_type)
+        if fun_mode:
+            ghost_piece_colour = choice(fun_mode_colours)
+
+        ghost_layer.fill(background_colour)
         for cell in ghost_piece.cells:
             x, y = cell[0], cell[1]
             cell_rect = pygame.Rect(
-                cell_width * (x + 1) + board_offset, 
+                cell_width * (x + 1), 
                 cell_width * (y + 1), 
                 cell_width, 
                 cell_width
             )
-            pygame.draw.rect(screen, ghost_piece_colour, cell_rect)
+            
+            pygame.draw.rect(ghost_layer, ghost_piece_colour, cell_rect)
+        # Positions the ghost_piece_layers
+        ghost_layer_pos = (
+            board_offset, 
+            0, 
+        )
 
+        screen.blit(ghost_layer, ghost_layer_pos)
     # Draws the Tetrominos
     for tetromino in tetrominos:
         cells = tetromino.cells
         tetromino_colour = set_draw_colour(tetromino.tet_type)
+
         for cell in cells:
+            if fun_mode:
+                tetromino_colour = pygame.Color(randint(0, 255), randint(0, 255), randint(0, 255))
             x, y = cell[0], cell[1]
             cell_rect = pygame.Rect(
                 cell_width * (x + 1) + board_offset, 
@@ -149,6 +324,7 @@ def draw_grid(
                 cell_width, 
                 cell_width
             )
+            
             pygame.draw.rect(screen, tetromino_colour, cell_rect)
     
     
