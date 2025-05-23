@@ -45,7 +45,7 @@ instant_gravity_after_clearing: bool = True
 
 # Only to be used when displaying the game to people
 can_quit: bool = False
-use_server: bool = True
+use_server: bool = False
 
 all_vars = [
     width, height, focused_tetromino, grid, cell_owners, all_tetrominos,
@@ -500,7 +500,11 @@ Change the name entering to:
  - Only allow 3 characters
  - have the box that they enter the name into be underneath the question.
 
-Todo maybe:
-    move the ghost piece to its own layer with a reduced alpha, thus allowing the ghost piece to be a transparent version of the current piece's colour.
+TODO Maybe:
+ - Change the customising controls to allow for null binds. Either
+   - Allow for a key to be bound to multiple things (Flip the input map so that the action names are the 'keys' and the pygame keys are the 'values')
+   - Make it so that when you bind a control that is already bound, it unbinds the previous action. (eg; LeftArrow is bound to move_left. The user tries to map LeftArrow to rotate_left. This succeeds and move_left is now mapped to nothing.)
 
+ - Add a locking delay to pieces after they land.
+ - Base gravity off of each piece instead of a global clock.
 """

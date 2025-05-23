@@ -37,6 +37,16 @@ for action, key in inputs.items():
     
     input_map[key] = action
 
+input_map = {
+    "move_left": pygame.K_a,
+    "move_right": pygame.K_d,
+    "hard_drop": pygame.K_w,
+    "soft_drop": pygame.K_s,
+    "rotate_right": pygame.K_e,
+    "rotate_left": pygame.K_q,
+    "hold_piece": pygame.K_h
+}
+
 ## Maps 
 input_display: dict = get_file_data('settings.json', 'Profile1', 'displayed_controls')
 for key, value in input_map.items():
