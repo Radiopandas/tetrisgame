@@ -204,7 +204,7 @@ def draw_scoreboard(screen: pygame.Surface):
         leaderboard_left - 6 * screen_scale,
         leaderboard_top - 6 * screen_scale,
         113 * screen_scale,
-        200 * screen_scale
+        210 * screen_scale
     )
 
     pygame.draw.rect(screen, "white", outline_rect, width=2 * screen_scale)
