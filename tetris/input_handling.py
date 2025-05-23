@@ -35,22 +35,22 @@ for action, key in inputs.items():
     elif action == "move_right":
         right_key = key
     
-    input_map[key] = action
+    input_map[action] = key
 
-input_map = {
-    "move_left": pygame.K_a,
-    "move_right": pygame.K_d,
-    "hard_drop": pygame.K_w,
-    "soft_drop": pygame.K_s,
-    "rotate_right": pygame.K_e,
-    "rotate_left": pygame.K_q,
-    "hold_piece": pygame.K_h
-}
-
+#input_map = {
+#    "move_left": pygame.K_a,
+#    "move_right": pygame.K_d,
+#    "hard_drop": pygame.K_w,
+#    "soft_drop": pygame.K_s,
+#    "rotate_right": pygame.K_e,
+#    "rotate_left": pygame.K_q,
+#    "hold_piece": pygame.K_h
+#}
+#
 ## Maps 
 input_display: dict = get_file_data('settings.json', 'Profile1', 'displayed_controls')
 for key, value in input_map.items():
-    print(f"Key: {key}, action: {value}, symbol: {input_display[value]}")
+    print(f"Key: {key}, action: {value}, symbol: {input_display[key]}")
 
 # Maps strings to functions to be called
 action_map: dict = {
@@ -124,9 +124,9 @@ def event_is_valid_control(event: pygame.event.Event):
 def update_input_map(new_input, action: str):
     global left_key, right_key
     for key, value in input_map.items():
-        if value == action:
+        if key == action:
             input_map.pop(key)
-            input_map[new_input] = action
+            input_map[action] = new_input
             if action == "move_left":
                 left_key = new_input
             elif action == "move_right":
@@ -172,7 +172,7 @@ def get_inputs(
     # so that the ghost piece gets updated.
     action_happened: bool = False
 
-    for key, action_name in input_map.items():
+    for action_name, key in input_map.items():
         # Repeatable and non-repeatable events work differently
         # and are therefore handled seperately.
         if action_name in repeatable_inputs:
@@ -249,8 +249,8 @@ def reset_controls(controls_buttons: list[Button]):
     # Resets the input map to the defaults
     input_map = {}
     inputs = get_file_data('settings.json', 'Profile1', 'controls')
-    for key, value in inputs.items():
-        input_map[value] = key
+    for action, key in inputs.items():
+        input_map[action] = key
 
     # Updates all the controls buttons to display the default symbols.
     for button in controls_buttons:

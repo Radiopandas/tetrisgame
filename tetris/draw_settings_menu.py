@@ -62,11 +62,11 @@ def get_settings_icon(icon_path='images\settings_icon.png'):
 
     
 
-def get_button_keys(input_dict: dict, name_dict: dict, action: str):
+def get_button_keys(input_dict: dict, name_dict: dict, button_action: str):
     """Returns the key that 'action' is mapped to in 'input_dict'"""
-    for key, value in input_dict.items():
-        if value == action:
-            return name_dict[value]
+    for action, key in input_dict.items():
+        if action == button_action:
+            return name_dict[action]
 
 
 def initialise_settings_buttons():
