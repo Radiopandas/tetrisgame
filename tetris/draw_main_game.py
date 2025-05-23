@@ -45,6 +45,7 @@ board_offset: int = 0
 
 fun_mode: bool = True
 
+# Honestly this can just be deleted.
 fun_mode_colours = [
     pygame.Color("AliceBlue"),
     pygame.Color("AntiqueWhite"),
@@ -204,7 +205,7 @@ def initialise_ghost_layer(width, height):
     cell_width = (screen_h // (grid_height + 2)) * screen_scale
     
     ghost_layer = pygame.Surface(((width + 1) * cell_width, (height + 1) * cell_width))
-    #ghost_layer.set_alpha(80)
+    ghost_layer.set_alpha(80)
 
 
 def initialise_base_font(size: int):
@@ -274,6 +275,7 @@ def draw_grid(
         ghost_piece: Tetromino,
         outline_thickness: int,
         background_colour: pygame.Color,
+        focused_tet: Tetromino,
         draw_ghost_piece: bool = True
     ):
     global cell_width, board_offset
@@ -283,13 +285,9 @@ def draw_grid(
     # Calculates the board offset to have the grid centred
     board_offset = (screen_dimensions.current_w // 2) - cell_width * ((grid_width / 2) + 1)
 
-
-    fun_mode_colour = choice(fun_mode_colours)
     # Draws the ghost piece
     if ghost_piece and draw_ghost_piece:
         ghost_piece_colour = set_draw_colour(ghost_piece.tet_type)
-        if fun_mode:
-            ghost_piece_colour = choice(fun_mode_colours)
 
         ghost_layer.fill(background_colour)
         for cell in ghost_piece.cells:
@@ -315,8 +313,6 @@ def draw_grid(
         tetromino_colour = set_draw_colour(tetromino.tet_type)
 
         for cell in cells:
-            if fun_mode:
-                tetromino_colour = pygame.Color(randint(0, 255), randint(0, 255), randint(0, 255))
             x, y = cell[0], cell[1]
             cell_rect = pygame.Rect(
                 cell_width * (x + 1) + board_offset, 

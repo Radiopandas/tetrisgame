@@ -59,8 +59,8 @@ controls_title_font_size: int = 70
 
 
 
-background_colour = pygame.Color(0, 0, 0)
-
+background_colour = pygame.Color("black")
+#background_colour = pygame.Color("dodgerblue")
 var_defaults = [0, 0, 0, 0, None]
 
 game_controls: dict = {}
@@ -147,6 +147,7 @@ def main_game(
         lines_cleared: int, 
         piece_sequence: list[int],
         all_tets: list[Tetromino],
+        focused_tet: Tetromino,
         held_piece: int = None,
         draw_ghost_piece: bool = True
     ) -> None:
@@ -164,7 +165,7 @@ def main_game(
         draw_main_game.initialise_piece_display_font(16)
         draw_main_game.initialise_controls_title_font(24)
     
-    draw_main_game.draw_grid(screen, all_tets, movement.ghost_piece, 5, background_colour, draw_ghost_piece)
+    draw_main_game.draw_grid(screen, all_tets, movement.ghost_piece, 5, background_colour, focused_tet, draw_ghost_piece)
 
     draw_main_game.draw_stats(screen, score, lines_cleared, lines_cleared // 10)
 

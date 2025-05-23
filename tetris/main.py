@@ -51,7 +51,7 @@ all_vars = [
     width, height, focused_tetromino, grid, cell_owners, all_tetrominos,
     ghost_piece_tiles, score, lines_cleared, gravity_cooldown,
     piece_sequence, held_piece, continue_game, movement_cooldown,
-    piece_spawn_cooldown, frame
+    piece_spawn_cooldown, frame\
     ]
 
 var_defaults = [
@@ -143,7 +143,7 @@ def update(
                 draw_game.main_game(
                 grid, cell_owners, 13, ghost_piece_tiles, 
                 score, lines_cleared, piece_sequence, all_tetrominos, 
-                utility_funcs.held_piece, False
+                focused_tetromino, utility_funcs.held_piece, False
                 )
                 if display_start_menu:
                     draw_game.start_menu()
@@ -182,7 +182,7 @@ def update(
                 draw_game.screen.fill(draw_game.background_colour)
                 draw_game.main_game(
                 grid, cell_owners, 13, ghost_piece_tiles, 
-                score, lines_cleared, piece_sequence, all_tetrominos, 
+                score, lines_cleared, piece_sequence, all_tetrominos, focused_tetromino,
                 utility_funcs.held_piece, False
                 )
                 if display_start_menu:
@@ -288,7 +288,7 @@ if __name__ == "__main__":
             draw_game.screen.fill(draw_game.background_colour)
             draw_game.main_game(
                 grid, cell_owners, 13, ghost_piece_tiles, 
-                score, lines_cleared, piece_sequence, all_tetrominos, 
+                score, lines_cleared, piece_sequence, all_tetrominos, focused_tetromino,
                 utility_funcs.held_piece
             )
 
@@ -365,7 +365,7 @@ if __name__ == "__main__":
             # Flushes the screen then draws the game.
             draw_game.screen.fill(draw_game.background_colour)
             draw_ghost_piece = False if input_handling.just_hard_dropped else True
-            draw_game.main_game(grid, cell_owners, 13, ghost_piece_tiles, score, lines_cleared, piece_sequence, all_tetrominos, utility_funcs.held_piece, draw_ghost_piece)
+            draw_game.main_game(grid, cell_owners, 13, ghost_piece_tiles, score, lines_cleared, piece_sequence, all_tetrominos, focused_tetromino, utility_funcs.held_piece, draw_ghost_piece)
 
             # Flips the updated display onto the screen.
             pygame.display.flip()
@@ -396,7 +396,7 @@ if __name__ == "__main__":
         while not name_entered:
             # Continues drawing the game
             draw_game.screen.fill(draw_game.background_colour)
-            draw_game.main_game(grid, cell_owners, 13, ghost_piece_tiles, score, lines_cleared, piece_sequence, all_tetrominos, utility_funcs.held_piece, draw_ghost_piece)
+            draw_game.main_game(grid, cell_owners, 13, ghost_piece_tiles, score, lines_cleared, piece_sequence, all_tetrominos, focused_tetromino, utility_funcs.held_piece, draw_ghost_piece)
 
             pygame.display.update()
             # Checks for quit events, then checks for the user typing
