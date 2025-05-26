@@ -63,6 +63,8 @@ def try_move_down(
         # Resets all the cells currently part of the tetromino
         # Also adds cells to new_cells.
         tetromino.has_moved = True
+        tetromino.gravity_frame = 0
+        tetromino.is_on_ground = False
         new_cells: list[list[int]] = []
         for cell in cur_cells:
             x, y = cell[0], cell[1]
@@ -82,7 +84,7 @@ def try_move_down(
         tetromino.has_moved = True
 
 
-def apply_gravity(grid, tetrominos: list[Tetromino], cell_owners: list[list[Tetromino | None]], focused_tetromino: Tetromino = None):
+def apply_gravity(grid, tetrominos: list[Tetromino], cell_owners: list[list[Tetromino | None]], focused_tetromino: Tetromino):
     """Attempts to call a recursive gravity function on every tetromino on the board."""
     # Resets the movement booleans for every tetromino.
     for tetromino in tetrominos:
@@ -94,6 +96,27 @@ def apply_gravity(grid, tetrominos: list[Tetromino], cell_owners: list[list[Tetr
         if tetromino.has_moved:
             continue
         try_move_down(grid, tetromino, cell_owners)
+
+    # Checks if the focused tetromino is now sitting on top of something:
+    for cell in focused_tetromino.cells:
+        x, y = cell
+        if y == height - 1:
+            focused_tetromino.is_on_ground = True
+            break
+        
+        if [x, y+1] in focused_tetromino.cells:
+            continue
+        
+        if grid[y+1][x]:
+            focused_tetromino.is_on_ground = True
+            break
+    
+    # Makes it so that the focused tetromino is only locked down after its locking_delay.
+    if not focused_tetromino.can_move and \
+    focused_tetromino.locking_frame < focused_tetromino.MAX_LOCKING_FRAME and \
+    not focused_tetromino.is_locked:
+        focused_tetromino.can_move = True
+        focused_tetromino.is_on_ground = True
     
     if focused_tetromino and input_handling.just_hard_dropped:
         focused_tetromino.can_move = False
@@ -137,3 +160,12 @@ def focused_gravity(
             cell_owners[y][x] = focused_tet
         
         focused_tet.cells = True
+
+"""
+Attempt to move everything downwards.
+If a piece is able to move downwards, reset its locking delay.
+
+After applying gravity, check if the focused tetromino is marked as unable to move.
+    Check if its locking delay is less than 20(arbitrary number).
+        If it is, make it able to move again.
+"""

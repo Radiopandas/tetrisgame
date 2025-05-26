@@ -144,6 +144,7 @@ def hard_drop(
     # Makes it so that after hard dropping, the piece can't continue moving.
     if hard_drop:
         focused_tet.can_move = False
+        focused_tet.is_locked = True
 
 
 def hold_piece(

@@ -120,9 +120,9 @@ def update(
 
     if not keep_playing:
         return
-    
+
+
     if input_handling.just_hard_dropped:
-        
         # Checks for and clears filled rows.
         lines_just_cleared = line_clearing.check_rows(grid, cell_owners, all_tets)
         # Increments the number of lines cleared, updates the score and potentially
@@ -149,7 +149,7 @@ def update(
                     draw_game.start_menu()
 
                 pygame.display.flip()
-                gravity.apply_gravity(grid, all_tets, cell_owners,   focused_tetromino=focused_tet)
+                gravity.apply_gravity(grid, all_tets, cell_owners, focused_tet)
                 sleep(0.05)
             pygame.display.flip()
         input_handling.just_hard_dropped = False
@@ -157,11 +157,11 @@ def update(
 
     # Calls the gravity functions, as well as several related functions
     # periodically instead of every single frame.
-    if frame % gravity_rate == 0:
+    if focused_tetromino.gravity_frame % gravity_rate == 0:
         # Applies gravity to every piece, then updates the ghost piece
         # To account for the new changes.
         draw_game.print_grid(grid, ghost_piece_tiles)
-        gravity.apply_gravity(grid, all_tets, cell_owners)
+        gravity.apply_gravity(grid, all_tets, cell_owners, focused_tet)
         #movement.update_ghost_piece(grid, focused_tet, ghost_piece_tiles)
         
         # Checks for and clears filled rows.
@@ -170,10 +170,10 @@ def update(
         # updates the gravity rate.
         score += utility_funcs.update_scores(lines_just_cleared)
         lines_cleared += lines_just_cleared
-        if gravity_rate > 1:
+        if gravity_rate > 10:
             gravity_cooldown -= utility_funcs.update_gravity_rate(lines_cleared, lines_just_cleared)
-            if gravity_cooldown < 1:
-                gravity_cooldown = 1
+            if gravity_cooldown < 10:
+                gravity_cooldown = 10
 
         # Moves all lines down by the number of lines cleared
         if lines_just_cleared > 0 and instant_gravity_after_clearing:
@@ -189,7 +189,7 @@ def update(
                     draw_game.start_menu()
 
                 pygame.display.flip()
-                gravity.apply_gravity(grid, all_tets, cell_owners)
+                gravity.apply_gravity(grid, all_tets, cell_owners, focused_tet)
                 sleep(0.05) 
             pygame.display.flip()
     
@@ -295,8 +295,9 @@ if __name__ == "__main__":
             draw_game.start_menu()
 
             if not draw_settings_menu.settings_menu_open:
-                focused_tetromino.gravity_frame += (1 if not input_handling.soft_dropping else 30)
-                frame += 1
+                #focused_tetromino.gravity_frame += (1 if not input_handling.soft_dropping else 30)
+                #frame += 1
+                focused_tetromino.gravity_frame += 1
                 update(frame, grid, all_tetrominos, continue_game, gravity_cooldown, cell_owners, focused_tetromino, piece_sequence)
                 gravity_cooldown = 60
 
@@ -373,7 +374,12 @@ if __name__ == "__main__":
             # Runs all the functions that operate the game.
             if not draw_settings_menu.settings_menu_open:
                 update(frame, grid, all_tetrominos, continue_game, gravity_cooldown, cell_owners, focused_tetromino, piece_sequence)
-                frame += 1
+                focused_tetromino.gravity_frame += 1
+                if focused_tetromino.is_on_ground:
+                    focused_tetromino.locking_frame += 1
+                    if focused_tetromino.locking_frame == focused_tetromino.MAX_LOCKING_FRAME:
+                        focused_tetromino.can_move = False
+                        focused_tetromino.is_locked = True
 
             # Waits ~1/60 seconds to try and make the game run at 60 fps.
             dt = clock.tick(60) / 1000

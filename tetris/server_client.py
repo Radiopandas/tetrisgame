@@ -5,6 +5,9 @@ import json
 from time import sleep
 import leaderboard
 
+server_host: str
+server_port: int
+
 sock: socket.socket
 
 def send(data, _sock=None):

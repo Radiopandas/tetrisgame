@@ -17,6 +17,8 @@ class Tetromino:
     # Prevents gravity being applied multiple times
     has_moved: bool = False
 
+    is_locked: bool = False
+
     # What type of piece it is (1: I, 2: J, 3: L, 4: O, 5: S, 6: T or 7: Z).
     tet_type: int = 0
 
@@ -26,6 +28,10 @@ class Tetromino:
     # Allows gravity to be tied to each piece instead of a global clock,
     # thus reducing inconsistencies when pieces spawn.
     gravity_frame: int = 0
+
+    is_on_ground: bool = False
+    locking_frame: int = 0
+    MAX_LOCKING_FRAME: int = 30
 
     
     def __init__(self, _cells):

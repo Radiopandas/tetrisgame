@@ -1,7 +1,7 @@
 import pygame
 from input_box import InputBox, ACTIVE_COLOUR
 from json_parser import write_to_scoreboard, get_file_data
-import pygame.docs
+from copy import deepcopy
 
 pygame.init()
 
@@ -28,6 +28,8 @@ score_title_font = None
 score_title_font_size = 12 * screen_scale
 leaderboard_title_font = None
 leaderboard_title_font_size = 25 * screen_scale
+prompt_font = None
+prompt_font_size = 30 * screen_scale
 
 
 leaderboard_names_characterset: list[str] = [
@@ -45,6 +47,8 @@ name_input_box = InputBox(
     can_defocus=False,
     max_input_length=3
 )
+
+input_area_background_rect = None
 
 name_input_box.centred_text = True
 
@@ -126,7 +130,17 @@ def handle_entered_score(name: str, info: dict):
 
 
 def draw_input_box(screen: pygame.Surface):
-    global name_input_box, score_title_font, score_title_font_size
+    global name_input_box, score_title_font, score_title_font_size, prompt_font, prompt_font_size, input_area_background_rect
+    if not input_area_background_rect:
+        input_area_background_rect = pygame.Rect(0, 0, name_input_box.extra_width, 50)
+        input_area_background_rect.width += 15 * screen_scale
+        input_area_background_rect.height += 60 * screen_scale
+
+        input_area_background_rect.center = name_input_box.rect.center
+        input_area_background_rect.centery -= 5 * screen_scale
+
+    pygame.draw.rect(screen, "black", input_area_background_rect)
+    pygame.draw.rect(screen, "white", input_area_background_rect, width=screen_scale)
 
     # Renders the score.
     if not score_title_font:
@@ -136,7 +150,7 @@ def draw_input_box(screen: pygame.Surface):
     score_rect = score_surface.get_rect()
     score_rect.center = (
         screen_w * screen_scale // 2,
-        (screen_h * screen_scale // 2) + (input_box_font_size // 2)
+        (screen_h * screen_scale // 2) + (input_box_font_size // 2) + 5 * screen_scale
     )
 
     # Creates the background rect for the score
@@ -152,9 +166,21 @@ def draw_input_box(screen: pygame.Surface):
     pygame.draw.rect(screen, "black", score_background_rect)
     screen.blit(score_surface, score_rect)
 
-    
-
     # Draws the prompt.
+    if not prompt_font:
+        prompt_font = pygame.font.SysFont('Lexus', prompt_font_size)
+    
+    prompt_surface = prompt_font.render("Name", True, "white")
+    prompt_rect = prompt_surface.get_rect()
+    prompt_rect.center = center = (
+        screen_w * screen_scale // 2,
+        (screen_h * screen_scale // 2) - (input_box_font_size // 2) - 8 * screen_scale
+    )
+    
+    pygame.draw.rect(screen, "black", prompt_rect)
+    screen.blit(prompt_surface, prompt_rect)
+
+    
 
 
     # Draws the actual box that the user enters their name into.

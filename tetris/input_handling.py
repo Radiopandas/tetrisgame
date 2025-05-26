@@ -166,6 +166,11 @@ def get_inputs(
         "move_right": [grid, focused_tet, cell_owners, 1],
         "soft_drop": [grid, focused_tet, cell_owners, False],
     }
+
+    # Checks the tetromino should be able to move.
+    if focused_tet.locking_frame == focused_tet.MAX_LOCKING_FRAME:
+        return
+    
     pressed_keys = pygame.key.get_pressed()
 
     # If any key in the input map is pressed, gets set to True
@@ -198,7 +203,7 @@ def get_inputs(
                     if action_name == "hard_drop":
                         just_hard_dropped = True
                     
-                    singular_key_cooldowns[action_name] = True
+                    #singular_key_cooldowns[action_name] = True
             
             # If the key isn't pressed, resets its 'cooldown'.
             else:
