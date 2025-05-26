@@ -41,6 +41,8 @@ class Button:
     button_label: str = ""
     button_symbol: str = ""
     button_icon: pygame.Surface = None
+    corner_radius: int = -1
+    button_rect: pygame.Rect = None
 
 
     label_size: int = 0
@@ -63,7 +65,8 @@ class Button:
             label: str = "A Button",
             symbol: str = "",
             label_size: int = 0,
-            symbol_size: int = 0
+            symbol_size: int = 0,
+            corner_radius: int = -1
         ):
         self.x_coords = x_coords
         self.y_coords = y_coords
@@ -76,6 +79,7 @@ class Button:
         self.button_symbol = symbol
         self.label_size = label_size
         self.symbol_size = symbol_size
+        self.corner_radius = corner_radius
     
 
     def __str__(self):
@@ -102,14 +106,17 @@ class Button:
         draw_colour = self.default_colour if not self.button_pressed else self.pressed_colour
 
         # Draws the button as a pygame.Rect object
-        button_rect = pygame.Rect(
-                self.x_coords[0],
-                self.y_coords[0],
-                x_dif,
-                y_dif
-            )
+        if not self.button_rect:
+
+            self.button_rect = pygame.Rect(
+                    self.x_coords[0],
+                    self.y_coords[0],
+                    x_dif,
+                    y_dif
+                )
         if not self.button_icon:
-            pygame.draw.rect(screen, draw_colour, button_rect)
+            pygame.draw.rect(screen, draw_colour, self.button_rect, border_radius=self.corner_radius)
+            pygame.draw.rect(screen, "black", self.button_rect, width=1 * screen_scale, border_radius=self.corner_radius)
 
 
             # Draws the symbols inside the button
@@ -126,7 +133,7 @@ class Button:
             icon_width: int = self.button_icon.get_size()[0]
             new_icon_scale: float = x_dif / icon_width
             self.button_icon = pygame.transform.scale_by(self.button_icon, new_icon_scale)
-            screen.blit(self.button_icon, button_rect)
+            screen.blit(self.button_icon, self.button_rect)
 
 
         # Draws the text next to each button.
@@ -147,7 +154,7 @@ class Button:
             top, bottom = self.y_coords
             if left <= x <= right and top <= y <= bottom:
                 return True
-            return False
+        return False
     
 
     def set_is_pressed(self):

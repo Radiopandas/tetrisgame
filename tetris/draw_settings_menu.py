@@ -96,7 +96,7 @@ def initialise_settings_buttons():
         "controls_btns",
         "move_left_btn",
         "Move piece left",
-        get_button_keys(input_map, input_display, "move_left")
+        get_button_keys(input_map, input_display, "move_left"),
     )
 
     move_right_btn = Button(
@@ -111,7 +111,7 @@ def initialise_settings_buttons():
         "controls_btns",
         "move_right_btn",
         "Move piece right",
-        "D"
+        get_button_keys(input_map, input_display, "move_right"),
     )
 
     soft_drop_btn = Button(
@@ -126,7 +126,7 @@ def initialise_settings_buttons():
         "controls_btns",
         "soft_drop_btn",
         "Soft drop",
-        "S"
+        get_button_keys(input_map, input_display, "soft_drop"),
     )
 
     hard_drop_btn = Button(
@@ -141,7 +141,7 @@ def initialise_settings_buttons():
         "controls_btns",
         "hard_drop_btn",
         "Hard drop",
-        "W"
+        get_button_keys(input_map, input_display, "hard_drop"),
     )
 
     rotate_right_btn = Button(
@@ -156,7 +156,7 @@ def initialise_settings_buttons():
         "controls_btns",
         "rotate_right_btn",
         "Rotate right",
-        "E"
+        get_button_keys(input_map, input_display, "rotate_right"),
     )
 
     rotate_left_btn = Button(
@@ -171,7 +171,7 @@ def initialise_settings_buttons():
         "controls_btns",
         "rotate_left_btn",
         "Rotate left",
-        "Q"
+        get_button_keys(input_map, input_display, "rotate_left"),
     )
 
     hold_piece_btn = Button(
@@ -186,7 +186,7 @@ def initialise_settings_buttons():
         "controls_btns",
         "hold_piece_btn",
         "Hold piece",
-        "H" 
+        get_button_keys(input_map, input_display, "hold_piece"),
     )
 
     reset_controls_btn = Button(
@@ -201,6 +201,7 @@ def initialise_settings_buttons():
         "settings_util_btns",
         "reset_controls_btn",
         "Reset to defaults", 
+        corner_radius= 2 * screen_scale
     )
 
     reset_controls_btn.set_label_font_size(new_ratio=1.0)

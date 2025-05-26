@@ -13,6 +13,8 @@ pygame.init()
 ###################################################################################################
 #------------------------------------------ Global vars ------------------------------------------#
 ###################################################################################################
+SETTINGS_PROFILE: str = 'Profile1'
+
 # Maps pygame inputs to strings
 input_map: dict = {
     121: "move_left",
@@ -28,7 +30,7 @@ left_key: int
 right_key: int
 
 input_map = {}
-inputs = get_file_data('settings.json', 'Profile1', 'controls')
+inputs = get_file_data('settings.json', SETTINGS_PROFILE, 'controls')
 for action, key in inputs.items():
     if action == "move_left":
         left_key = key
@@ -48,7 +50,7 @@ for action, key in inputs.items():
 #}
 #
 ## Maps 
-input_display: dict = get_file_data('settings.json', 'Profile1', 'displayed_controls')
+input_display: dict = get_file_data('settings.json', SETTINGS_PROFILE, 'displayed_controls')
 for key, value in input_map.items():
     print(f"Key: {key}, action: {value}, symbol: {input_display[key]}")
 
@@ -113,7 +115,7 @@ def event_is_valid_control(event: pygame.event.Event):
                 return False
     
     if event.unicode:
-        if event.unicode in valid_events:
+        if event.unicode.lower() in valid_events:
             return True
     else:
         if event.key in valid_events:
@@ -202,6 +204,10 @@ def get_inputs(
                     action(*args)
                     if action_name == "hard_drop":
                         just_hard_dropped = True
+                        singular_key_cooldowns[action_name] = True
+                        # Breaks out of the input handling loop to avoid issues
+                        # with hard drop and hold piece being bound to the same key.
+                        break
                     
                     singular_key_cooldowns[action_name] = True
             
@@ -253,7 +259,7 @@ def reset_controls(controls_buttons: list[Button]):
 
     # Resets the input map to the defaults
     input_map = {}
-    inputs = get_file_data('settings.json', 'Profile1', 'controls')
+    inputs = get_file_data('settings.json', SETTINGS_PROFILE, 'controls')
     for action, key in inputs.items():
         input_map[action] = key
 

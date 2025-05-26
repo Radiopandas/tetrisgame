@@ -1,4 +1,3 @@
-
 Control Aliases:
 Left Arrow - 1073741904
 Right Arrow - 1073741903
