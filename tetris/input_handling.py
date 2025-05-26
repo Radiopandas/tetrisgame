@@ -203,7 +203,7 @@ def get_inputs(
                     if action_name == "hard_drop":
                         just_hard_dropped = True
                     
-                    #singular_key_cooldowns[action_name] = True
+                    singular_key_cooldowns[action_name] = True
             
             # If the key isn't pressed, resets its 'cooldown'.
             else:
