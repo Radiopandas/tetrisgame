@@ -1,5 +1,5 @@
 from tetromino import Tetromino
-from utility_funcs import get_range
+from utility_funcs import get_range, tet_to_pattern
 from copy import deepcopy
 
 # Wall kicks stuff
@@ -154,6 +154,7 @@ def rotate_tet(grid, focused_tet: Tetromino, cell_owners, clockwise: bool = True
     for cell in cur_cells:
         x, y = cell[0] + x_offset, cell[1] + y_offset
         bool_grid[y - min_y][x - min_x] = True
+
     # Rotates the grid, either clockwise or anti-clockwise.
     rotated_grid = rotate_grid(bool_grid, clockwise)
 

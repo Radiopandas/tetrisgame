@@ -321,7 +321,7 @@ def draw_grid(
                 cell_width
             )
             
-            pygame.draw.rect(screen, tetromino_colour, cell_rect)
+            #pygame.draw.rect(screen, tetromino_colour, cell_rect)
     
     
     
