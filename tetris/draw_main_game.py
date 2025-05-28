@@ -2,8 +2,10 @@ import pygame
 
 from tetromino import Tetromino
 from json_parser import get_file_data
-from utility_funcs import tet_to_pattern
+from utility_funcs import tet_to_pattern, set_cell_colour
 from random import choice, randint
+
+from math import sqrt
 
 pygame.init()
 
@@ -44,6 +46,9 @@ controls_title_font_size: int = 0 # 24
 board_offset: int = 0
 
 fun_mode: bool = True
+
+purple_monkey_dishwasher: pygame.Surface = None
+
 
 # Honestly this can just be deleted.
 fun_mode_colours = [
@@ -231,8 +236,6 @@ def initialise_controls_title_font(size: int):
     controls_title_font_size = size * screen_scale
     controls_title_font = pygame.font.SysFont(font, controls_title_font_size)
 
-
-
 ###################################################################################################
 #--------------------------------------- Utility functions ---------------------------------------#
 ###################################################################################################
@@ -278,12 +281,18 @@ def draw_grid(
         focused_tet: Tetromino,
         draw_ghost_piece: bool = True
     ):
-    global cell_width, board_offset
+    global cell_width, board_offset, purple_monkey_dishwasher
     # Calculates how wide to make each cell
     cell_width = (screen_h // (grid_height + 2)) * screen_scale
 
     # Calculates the board offset to have the grid centred
     board_offset = (screen_dimensions.current_w // 2) - cell_width * ((grid_width / 2) + 1)
+
+    if not purple_monkey_dishwasher:
+        purple_monkey_dishwasher = pygame.image.load(".\images\purple_monkey_dishwasher.jpg")
+        purple_monkey_dishwasher = pygame.transform.scale(purple_monkey_dishwasher, (grid_width * cell_width, grid_height * cell_width))
+    
+    #screen.blit(purple_monkey_dishwasher, (cell_width + board_offset, cell_width))
 
     # Draws the ghost piece
     if ghost_piece and draw_ghost_piece:
@@ -310,9 +319,10 @@ def draw_grid(
     # Draws the Tetrominos
     for tetromino in tetrominos:
         cells = tetromino.cells
-        tetromino_colour = set_draw_colour(tetromino.tet_type)
+        #tetromino_colour = set_draw_colour(tetromino.tet_type)
 
         for cell in cells:
+            tetromino_colour = set_cell_colour(round(sqrt(cell[0] ** 2 + cell[1] ** 2)))
             x, y = cell[0], cell[1]
             cell_rect = pygame.Rect(
                 cell_width * (x + 1) + board_offset, 
@@ -320,8 +330,17 @@ def draw_grid(
                 cell_width, 
                 cell_width
             )
+
+            image_rect = pygame.Rect(
+                cell_width * (x), 
+                cell_width * (y), 
+                cell_width, 
+                cell_width
+            )
             
-            #pygame.draw.rect(screen, tetromino_colour, cell_rect)
+            pygame.draw.rect(screen, tetromino_colour, cell_rect)
+            #screen.blit(purple_monkey_dishwasher, cell_rect)
+            screen.blit(purple_monkey_dishwasher.subsurface(image_rect), cell_rect)
     
     
     

@@ -78,3 +78,19 @@ class Tetromino:
                 left = x
         
         return (left, top)
+
+    def check_is_grounded(self, grid: list[list[bool]]) -> bool:
+        height = len(grid)
+        for cell in self.cells:
+            x, y = cell
+            # Checks if the cell is at the bottom of the grid.
+            if y == height - 1:
+                return True
+            
+            if [x, y + 1] in self.cells:
+                continue
+
+            if grid[y+1][x]:
+                return True
+        
+        return False

@@ -98,6 +98,7 @@ def restart_game():
     movement.set_grid_size(width, height)
     rotation.set_grid_size(width, height)
     draw_game.set_grid_size(width, height)
+    utility_funcs.init_colour_gradient(pygame.Color("Red"), pygame.Color("Blue"), width, height)
     shuffle(piece_sequence)
 
 
@@ -376,16 +377,21 @@ if __name__ == "__main__":
                 update(frame, grid, all_tetrominos, continue_game, gravity_cooldown, cell_owners, focused_tetromino, piece_sequence)
                 focused_tetromino.gravity_frame += 1
                 if focused_tetromino.is_on_ground:
-                    focused_tetromino.locking_frame += 1
-                    if focused_tetromino.locking_frame == focused_tetromino.MAX_LOCKING_FRAME:
-                        focused_tetromino.can_move = False
-                        focused_tetromino.is_locked = True
+                    if not focused_tetromino.check_is_grounded(grid):
+                        focused_tetromino.is_on_ground = False
+                        focused_tetromino.locking_frame = 0
+                    else:
+                        focused_tetromino.locking_frame += 1
+                        if focused_tetromino.locking_frame == focused_tetromino.MAX_LOCKING_FRAME:
+                            focused_tetromino.can_move = False
+                            focused_tetromino.is_locked = True
 
             # Waits ~1/60 seconds to try and make the game run at 60 fps.
             dt = clock.tick(60) / 1000
 
             # Reduces the cooldowns of all repeatable inputs by the deltaTime
-            input_handling.update_cooldowns(dt)
+            if not focused_tetromino.is_locked:
+                input_handling.update_cooldowns(dt)
 
             if not continue_game:
                 running = False
@@ -513,4 +519,8 @@ TODO Maybe:
 
  - Add a locking delay to pieces after they land.
  - Base gravity off of each piece instead of a global clock.
+
+When you clear a line and a singylar cell is left to drop, doesn't spawn a new piece until it has fallen completely.
+ - for Debugging, just make all the pieces lines to best recreate it.
 """
+
