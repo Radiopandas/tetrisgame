@@ -44,6 +44,7 @@ frame: int = 0
 instant_gravity_after_clearing: bool = True
 
 # Only to be used when displaying the game to people
+DEBUG_MODE: bool = True
 can_quit: bool = False
 use_server: bool = False
 
@@ -57,7 +58,8 @@ all_vars = [
 var_defaults = [
     10, 22, Tetromino([]), [], [], [],
     utility_funcs.create_grid(width, height, False), 0, 0, 60,
-    [1, 2, 3, 4, 5, 6, 7], 0, True, 0, 0, 0
+    [1, 2, 3, 4, 5, 6, 7] if not DEBUG_MODE else [1, 1, 1, 1, 1, 1, 1]
+    , 0, True, 0, 0, 0
 ]
 
 def reset_game():

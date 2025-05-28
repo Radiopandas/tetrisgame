@@ -289,7 +289,8 @@ def draw_grid(
     board_offset = (screen_dimensions.current_w // 2) - cell_width * ((grid_width / 2) + 1)
 
     if not purple_monkey_dishwasher:
-        purple_monkey_dishwasher = pygame.image.load(".\images\purple_monkey_dishwasher.jpg")
+        #purple_monkey_dishwasher = pygame.image.load(".\images\purple_monkey_dishwasher.jpg")
+        purple_monkey_dishwasher = pygame.image.load(".\images\Test.jpg")
         purple_monkey_dishwasher = pygame.transform.scale(purple_monkey_dishwasher, (grid_width * cell_width, grid_height * cell_width))
     
     #screen.blit(purple_monkey_dishwasher, (cell_width + board_offset, cell_width))
@@ -338,9 +339,14 @@ def draw_grid(
                 cell_width
             )
             
-            pygame.draw.rect(screen, tetromino_colour, cell_rect)
+            image = purple_monkey_dishwasher.subsurface(image_rect)
+            b = pygame.Surface((cell_width, cell_width))
+            b.blit(image, (0, 0, 0, 0))
+            b.fill(tetromino_colour, special_flags=pygame.BLEND_RGBA_ADD)
+            #pygame.draw.rect(screen, tetromino_colour, cell_rect)
             #screen.blit(purple_monkey_dishwasher, cell_rect)
-            screen.blit(purple_monkey_dishwasher.subsurface(image_rect), cell_rect)
+            #screen.blit(purple_monkey_dishwasher.subsurface(image_rect), cell_rect)
+            screen.blit(b, cell_rect)
     
     
     

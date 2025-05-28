@@ -18,6 +18,9 @@ GRAVITY_INTERVAL: int = 1 # How many lines have to be cleared to increment the g
 # greater than 1, gravity will be reduced every <interval> lines cleared by <interval * change>.
 GRAVITY_CHANGE: int = 5
 
+# If enabled, only spawns I pieces.
+DEBUG_MODE: bool = True
+
 def reset():
     """Resets all necessary local global variables."""
     global piece_sequence, piece_has_been_held, held_piece, var_defaults
@@ -81,7 +84,8 @@ def generate_tetromino(
     
     # Uses 'random bag' to add pieces to the queue if they are needed.
     if len(piece_sequence) < 7:
-        to_add = [1, 2, 3, 4, 5, 6, 7]
+        
+        to_add = [1, 2, 3, 4, 5, 6, 7] if not DEBUG_MODE else [1, 1, 1, 1, 1, 1 ,1]
         shuffle(to_add)
         piece_sequence += to_add
     
