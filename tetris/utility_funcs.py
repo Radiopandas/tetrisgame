@@ -1,5 +1,6 @@
 from tetromino import Tetromino
 from random import shuffle
+import debug_console
 from math import ceil, sqrt
 
 import pygame
@@ -85,7 +86,7 @@ def generate_tetromino(
     # Uses 'random bag' to add pieces to the queue if they are needed.
     if len(piece_sequence) < 7:
         
-        to_add = [1, 2, 3, 4, 5, 6, 7] if not DEBUG_MODE else [1, 1, 1, 1, 1, 1 ,1]
+        to_add = [1, 2, 3, 4, 5, 6, 7] if not debug_console.debug_mode else [1, 1, 1, 1, 1, 1 ,1]
         shuffle(to_add)
         piece_sequence += to_add
     

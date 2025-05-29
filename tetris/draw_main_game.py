@@ -4,6 +4,7 @@ from tetromino import Tetromino
 from json_parser import get_file_data
 from utility_funcs import tet_to_pattern, set_cell_colour
 from random import choice, randint
+import debug_console
 
 from math import sqrt
 
@@ -47,7 +48,7 @@ board_offset: int = 0
 
 fun_mode: bool = True
 
-purple_monkey_dishwasher: pygame.Surface = None
+background_image: pygame.Surface = None
 
 
 # Honestly this can just be deleted.
@@ -281,26 +282,44 @@ def draw_grid(
         focused_tet: Tetromino,
         draw_ghost_piece: bool = True
     ):
-    global cell_width, board_offset, purple_monkey_dishwasher
+    global cell_width, board_offset, background_image
     # Calculates how wide to make each cell
     cell_width = (screen_h // (grid_height + 2)) * screen_scale
+
+    if not debug_console.grid_width or not debug_console.grid_height or not debug_console.cell_width:
+        debug_console.set_grid_size(grid_width, grid_height, cell_width)
+        pass
 
     # Calculates the board offset to have the grid centred
     board_offset = (screen_dimensions.current_w // 2) - cell_width * ((grid_width / 2) + 1)
 
-    if not purple_monkey_dishwasher:
-        #purple_monkey_dishwasher = pygame.image.load(".\images\purple_monkey_dishwasher.jpg")
-        purple_monkey_dishwasher = pygame.image.load(".\images\Test.jpg")
-        purple_monkey_dishwasher = pygame.transform.scale(purple_monkey_dishwasher, (grid_width * cell_width, grid_height * cell_width))
+    if not background_image:
+        background_image = pygame.image.load(".\images\Test.jpg")
+        background_image = pygame.transform.scale(background_image, (grid_width * cell_width, grid_height * cell_width))
     
-    #screen.blit(purple_monkey_dishwasher, (cell_width + board_offset, cell_width))
 
     # Draws the ghost piece
     if ghost_piece and draw_ghost_piece:
-        ghost_piece_colour = set_draw_colour(ghost_piece.tet_type)
+        ghost_piece_colour: pygame.Color
+        if debug_console.colour_mode == 3:
+            ghost_piece_colour = choice(fun_mode_colours)
+        elif debug_console.colour_mode == 2:
+            ghost_piece_colour = pygame.Color("DodgerBlue")
+
+        if debug_console.colour_mode == 0:
+            ghost_piece_colour = set_draw_colour(ghost_piece.tet_type)
+        elif debug_console.colour_mode == 5:
+            ghost_piece_colour = choice(fun_mode_colours)
 
         ghost_layer.fill(background_colour)
         for cell in ghost_piece.cells:
+            # If the drawing mode is one that requires every cell to be a
+            # different colour, calculates it inside the loop instead of outside.
+            if debug_console.colour_mode == 1:
+                ghost_piece_colour  = set_cell_colour(round(sqrt(cell[0] ** 2 + cell[1] ** 2)))
+            elif debug_console.colour_mode == 4:
+                ghost_piece_colour = choice(fun_mode_colours)
+
             x, y = cell[0], cell[1]
             cell_rect = pygame.Rect(
                 cell_width * (x + 1), 
@@ -308,8 +327,26 @@ def draw_grid(
                 cell_width, 
                 cell_width
             )
-            
-            pygame.draw.rect(ghost_layer, ghost_piece_colour, cell_rect)
+            # One of the drawing modes allows for an image to replace
+            # the coloured grid. <mode 2>
+            if debug_console.draw_mode == 1:
+                image_rect = pygame.Rect(
+                    cell_width * (x), 
+                    cell_width * (y), 
+                    cell_width, 
+                    cell_width
+                )
+                
+
+                image = background_image.subsurface(image_rect)
+                tint_layer = pygame.Surface((cell_width, cell_width))
+                tint_layer.set_alpha(50)
+                tint_layer.fill(ghost_piece_colour)
+
+                ghost_layer.blit(image, cell_rect)
+                ghost_layer.blit(tint_layer, cell_rect)
+            else:
+                pygame.draw.rect(ghost_layer, ghost_piece_colour, cell_rect)
         # Positions the ghost_piece_layers
         ghost_layer_pos = (
             board_offset, 
@@ -317,13 +354,36 @@ def draw_grid(
         )
 
         screen.blit(ghost_layer, ghost_layer_pos)
+    
+    # Colour mode 3 makes the whole board flash a singluar, random system colour.
+    tetromino_colour: pygame.Color
+    if debug_console.colour_mode == 3:
+        tetromino_colour = choice(fun_mode_colours)
+    elif debug_console.colour_mode == 2:
+        tetromino_colour = pygame.Color("DodgerBlue")
+
+
     # Draws the Tetrominos
     for tetromino in tetrominos:
         cells = tetromino.cells
-        #tetromino_colour = set_draw_colour(tetromino.tet_type)
+
+        # Based on the drawing mode, sets the colour to draw each tetromino.
+        # Some drawing modes draw every cell a different colour, thus they
+        # are calculated inside the 'for cell in cells' loop.
+        if debug_console.colour_mode == 0:
+            tetromino_colour = set_draw_colour(tetromino.tet_type)
+        elif debug_console.colour_mode == 5:
+            tetromino_colour = choice(fun_mode_colours)
 
         for cell in cells:
-            tetromino_colour = set_cell_colour(round(sqrt(cell[0] ** 2 + cell[1] ** 2)))
+            # If the drawing mode is one that requires every cell to be a
+            # different colour, calculates it inside the loop instead of outside.
+            if debug_console.colour_mode == 1:
+                tetromino_colour = set_cell_colour(round(sqrt(cell[0] ** 2 + cell[1] ** 2)))
+            elif debug_console.colour_mode == 4:
+                tetromino_colour = choice(fun_mode_colours)
+
+            
             x, y = cell[0], cell[1]
             cell_rect = pygame.Rect(
                 cell_width * (x + 1) + board_offset, 
@@ -332,21 +392,28 @@ def draw_grid(
                 cell_width
             )
 
-            image_rect = pygame.Rect(
-                cell_width * (x), 
-                cell_width * (y), 
-                cell_width, 
-                cell_width
-            )
-            
-            image = purple_monkey_dishwasher.subsurface(image_rect)
-            b = pygame.Surface((cell_width, cell_width))
-            b.blit(image, (0, 0, 0, 0))
-            b.fill(tetromino_colour, special_flags=pygame.BLEND_RGBA_ADD)
-            #pygame.draw.rect(screen, tetromino_colour, cell_rect)
-            #screen.blit(purple_monkey_dishwasher, cell_rect)
-            #screen.blit(purple_monkey_dishwasher.subsurface(image_rect), cell_rect)
-            screen.blit(b, cell_rect)
+            # One of the drawing modes allows for an image to replace
+            # the coloured grid. <mode 2>
+            if debug_console.draw_mode == 1:
+                image_rect = pygame.Rect(
+                    cell_width * (x), 
+                    cell_width * (y), 
+                    cell_width,
+                    cell_width,
+                )
+
+                image = debug_console.background_image.subsurface(image_rect)
+                tint_layer = pygame.Surface((cell_width, cell_width))
+                tint_layer.set_alpha(50)
+                tint_layer.fill(tetromino_colour)
+
+                screen.blit(image, cell_rect)
+                screen.blit(tint_layer, cell_rect)
+            else:
+                if debug_console.draw_mode == 2:
+                    pygame.draw.rect(screen, tetromino_colour, cell_rect, border_radius=cell_width//2)
+                else:
+                    pygame.draw.rect(screen, tetromino_colour, cell_rect)
     
     
     

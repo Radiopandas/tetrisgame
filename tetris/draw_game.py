@@ -132,6 +132,7 @@ def draw_leaderboard() -> None:
     
     if leaderboard.draw_name_input:
         leaderboard.draw_input_box(screen)
+        
     else:
         leaderboard.name_input_box.visible = False
     

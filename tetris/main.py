@@ -12,6 +12,7 @@ import input_handling
 import leaderboard
 import draw_settings_menu
 import server_client
+import debug_console
 from random import shuffle #
 
 from time import sleep
@@ -58,7 +59,7 @@ all_vars = [
 var_defaults = [
     10, 22, Tetromino([]), [], [], [],
     utility_funcs.create_grid(width, height, False), 0, 0, 60,
-    [1, 2, 3, 4, 5, 6, 7] if not DEBUG_MODE else [1, 1, 1, 1, 1, 1, 1]
+    [1, 2, 3, 4, 5, 6, 7] if not debug_console.debug_mode else [1, 1, 1, 1, 1, 1, 1]
     , 0, True, 0, 0, 0
 ]
 
@@ -84,6 +85,9 @@ def reset_game():
         ghost_piece_tiles, score, lines_cleared, gravity_cooldown, \
         piece_sequence, held_piece, continue_game, movement_cooldown, \
         piece_spawn_cooldown, frame = defaults
+    
+    if debug_console.debug_mode:
+        piece_sequence = [1, 1, 1, 1, 1, 1, 1]
 
 
 def restart_game():
@@ -297,7 +301,7 @@ if __name__ == "__main__":
 
             draw_game.start_menu()
 
-            if not draw_settings_menu.settings_menu_open:
+            if not draw_settings_menu.settings_menu_open and not debug_console.console_visible:
                 #focused_tetromino.gravity_frame += (1 if not input_handling.soft_dropping else 30)
                 #frame += 1
                 focused_tetromino.gravity_frame += 1
@@ -341,14 +345,25 @@ if __name__ == "__main__":
                     running = False
                     #pygame.quit()
                 
-                if event.type == pygame.KEYDOWN and not draw_settings_menu.settings_menu_open:
+                if event.type == pygame.KEYDOWN:
                     # Key combo to quit the game.
                     if event.key == 45 and (event.mod == 8513 or event.mod == 8769): # ctrl+Lalt/Ralt+shift+capslock+'-'
                         running = False
                     
+                    elif event.key == pygame.K_SLASH and (event.mod == 8513 or event.mod == 8769):
+                        debug_console.console_visible = not debug_console.console_visible
+                        debug_console.command_input_box.flush_buffer()
+                        continue
+
+                    if debug_console.console_visible:
+                        command_entered: str = debug_console.command_input_box.handle_event(event)
+                        if command_entered:
+                            debug_console.handle_command(command_entered.lower())
+                    
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     mouse_coords = pygame.mouse.get_pos()
                     draw_settings_menu.check_pressed_buttons(mouse_coords, draw_game.screen)
+                
             
             
             if not running:
@@ -357,7 +372,7 @@ if __name__ == "__main__":
             
             # Handles repeating inputs (movement/soft drop) and
             # non-repeating inputs(rotation, hold, hard drop).
-            if not draw_settings_menu.settings_menu_open:
+            if not draw_settings_menu.settings_menu_open and not debug_console.console_visible:
                 input_handling.get_inputs(
                     grid,
                     cell_owners, 
@@ -371,11 +386,14 @@ if __name__ == "__main__":
             draw_ghost_piece = False if input_handling.just_hard_dropped else True
             draw_game.main_game(grid, cell_owners, 13, ghost_piece_tiles, score, lines_cleared, piece_sequence, all_tetrominos, focused_tetromino, utility_funcs.held_piece, draw_ghost_piece)
 
+            if debug_console.console_visible:
+                debug_console.draw_console(draw_game.screen)
             # Flips the updated display onto the screen.
             pygame.display.flip()
 
+
             # Runs all the functions that operate the game.
-            if not draw_settings_menu.settings_menu_open:
+            if not draw_settings_menu.settings_menu_open and not debug_console.console_visible:
                 update(frame, grid, all_tetrominos, continue_game, gravity_cooldown, cell_owners, focused_tetromino, piece_sequence)
                 focused_tetromino.gravity_frame += 1
                 if focused_tetromino.is_on_ground:
