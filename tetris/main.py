@@ -363,7 +363,6 @@ if __name__ == "__main__":
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     mouse_coords = pygame.mouse.get_pos()
                     draw_settings_menu.check_pressed_buttons(mouse_coords, draw_game.screen)
-                
             
             
             if not running:

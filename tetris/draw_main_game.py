@@ -293,9 +293,9 @@ def draw_grid(
     # Calculates the board offset to have the grid centred
     board_offset = (screen_dimensions.current_w // 2) - cell_width * ((grid_width / 2) + 1)
 
-    if not background_image:
-        background_image = pygame.image.load(".\images\Test.jpg")
-        background_image = pygame.transform.scale(background_image, (grid_width * cell_width, grid_height * cell_width))
+    #if not background_image:
+        #background_image = pygame.image.load(".\images\Test.jpg")
+        #background_image = pygame.transform.scale(background_image, (grid_width * cell_width, grid_height * cell_width))
     
 
     # Draws the ghost piece
@@ -338,7 +338,7 @@ def draw_grid(
                 )
                 
 
-                image = background_image.subsurface(image_rect)
+                image = debug_console.background_image.subsurface(image_rect)
                 tint_layer = pygame.Surface((cell_width, cell_width))
                 tint_layer.set_alpha(50)
                 tint_layer.fill(ghost_piece_colour)
@@ -346,7 +346,10 @@ def draw_grid(
                 ghost_layer.blit(image, cell_rect)
                 ghost_layer.blit(tint_layer, cell_rect)
             else:
-                pygame.draw.rect(ghost_layer, ghost_piece_colour, cell_rect)
+                if debug_console.draw_mode == 2:
+                    pygame.draw.rect(ghost_layer, ghost_piece_colour, cell_rect, border_radius=cell_width//2)
+                else:
+                    pygame.draw.rect(ghost_layer, ghost_piece_colour, cell_rect)
         # Positions the ghost_piece_layers
         ghost_layer_pos = (
             board_offset, 

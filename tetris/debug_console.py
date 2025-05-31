@@ -150,7 +150,7 @@ def handle_command(input: str):
             set_drawing_mode(command_value)
         case "setbackgroundimage":
             set_background_image(command_value)
-        
+    
 
 def draw_console(screen: pygame.Surface):
     command_input_box.visible = True
