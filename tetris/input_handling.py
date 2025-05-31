@@ -2,11 +2,9 @@ from tetromino import Tetromino
 import rotation
 from json_parser import get_file_data
 from draw_buttons import Button
+import debug_console
 import pygame
 import movement
-
-
-
 
 pygame.init()
 
@@ -16,20 +14,12 @@ pygame.init()
 SETTINGS_PROFILE: str = 'Profile1'
 
 # Maps pygame inputs to strings
-input_map: dict = {
-    121: "move_left",
-    pygame.K_d: "move_right",
-    pygame.K_w: "hard_drop",
-    pygame.K_s: "soft_drop",
-    pygame.K_e: "rotate_right",
-    pygame.K_q: "rotate_left",
-    pygame.K_h: "hold_piece"
-}
+input_map: dict = {}
 # Used to prevent move_left and move_right both being pressed.
 left_key: int
 right_key: int
 
-input_map = {}
+# Actually initialises the input map from the settings file.
 inputs = get_file_data('settings.json', SETTINGS_PROFILE, 'controls')
 for action, key in inputs.items():
     if action == "move_left":
@@ -39,22 +29,14 @@ for action, key in inputs.items():
     
     input_map[action] = key
 
-#input_map = {
-#    "move_left": pygame.K_a,
-#    "move_right": pygame.K_d,
-#    "hard_drop": pygame.K_w,
-#    "soft_drop": pygame.K_s,
-#    "rotate_right": pygame.K_e,
-#    "rotate_left": pygame.K_q,
-#    "hold_piece": pygame.K_h
-#}
-#
-## Maps 
+# Gets a seperate map of what to display for each action, such as
+# 'left' and 'right' to represent actions bound to arrow keys.
 input_display: dict = get_file_data('settings.json', SETTINGS_PROFILE, 'displayed_controls')
 for key, value in input_map.items():
     print(f"Key: {key}, action: {value}, symbol: {input_display[key]}")
 
-# Maps strings to functions to be called
+
+# Maps each action in the input map to its relevant function.
 action_map: dict = {
     "move_left": movement.move_tet,
     "move_right": movement.move_tet,
@@ -65,22 +47,20 @@ action_map: dict = {
     "hold_piece": movement.hold_piece
 }
 
-
+# List of what inputs the user is allowed to bind to actions.
+# For the most part, allows all numbers, keys, symbols and arrow keys.
 valid_events: list = get_file_data('settings.json', 'pygame_events_details', 'valid_events')
 
-
-singular_inputs_states: dict = {
-    "rotate_left": False, 
-    "rotate_right": False, 
-    "hold_piece": False, 
-    "hard_drop": False,
-}
-
 soft_dropping: bool = False
-
 just_hard_dropped: bool = False
 
+# Seperates all the actions into 'singular' and 'repeatable', which represents
+# whether an action should be repeated if the key is held down.
 singular_inputs: list = ["rotate_left", "rotate_right", "hold_piece", "hard_drop"]
+repeatable_inputs: list = ["move_left", "move_right", "soft_drop"]
+
+# Stores whether each 'singular' can be used. These values are set to true
+# when an action is pressed, then set to false when they are released.
 singular_key_cooldowns: dict[str, bool] = {
     "rotate_left": False, 
     "rotate_right": False, 
@@ -88,12 +68,15 @@ singular_key_cooldowns: dict[str, bool] = {
     "hard_drop": False,
 }
 
-repeatable_inputs: list = ["move_left", "move_right", "soft_drop"]
+# For each repeatable action, stores how long of a
+# cooldown it has left before it can be used again.
 repeatable_key_cooldowns: dict[str, float] = {
     "move_left": 0.0,
     "move_right": 0.0,
     "soft_drop": 0.0,
 }
+# How long, in seconds, of a cooldown there should be before repeating actions.
+repeatable_key_cooldown: float = 0.12
 
 ###################################################################################################
 #---------------------------------------- Setup functions ----------------------------------------#
@@ -157,7 +140,7 @@ def get_inputs(
         all_tets: list[Tetromino]
     ):
 
-    global just_hard_dropped
+    global just_hard_dropped, repeatable_key_cooldown
 
     action_args: dict = {
         "hard_drop": [grid, focused_tet, cell_owners, True],
@@ -194,7 +177,10 @@ def get_inputs(
                 args = action_args[action_name]
                 action(*args)
                 action_happened = True
-                repeatable_key_cooldowns[action_name] = 0.12
+                # Note: Takes the cooldown from the debug console because
+                # it is easier to change it there than it is to fix the
+                # import issues when I try to import this module from the console.
+                repeatable_key_cooldowns[action_name] = debug_console.input_cooldown_time
             
         else:
             if pressed_keys[key]:
@@ -204,12 +190,12 @@ def get_inputs(
                     action(*args)
                     if action_name == "hard_drop":
                         just_hard_dropped = True
-                        singular_key_cooldowns[action_name] = True
+                        singular_key_cooldowns[action_name] = debug_console.single_input_cooldowns
                         # Breaks out of the input handling loop to avoid issues
                         # with hard drop and hold piece being bound to the same key.
                         break
                     
-                    singular_key_cooldowns[action_name] = True
+                    singular_key_cooldowns[action_name] = debug_console.single_input_cooldowns
             
             # If the key isn't pressed, resets its 'cooldown'.
             else:
@@ -255,15 +241,20 @@ def attractor_input_processor(
 
 
 def reset_controls(controls_buttons: list[Button]):
-    global input_map, input_display
+    global input_map, input_display, left_key, right_key
 
     # Resets the input map to the defaults
     input_map = {}
     inputs = get_file_data('settings.json', SETTINGS_PROFILE, 'controls')
     for action, key in inputs.items():
+        if action == "move_left":
+            left_key = key
+        elif action == "move_right":
+            right_key = key
         input_map[action] = key
 
     # Updates all the controls buttons to display the default symbols.
     for button in controls_buttons:
+        # Disregards the last 4 characters, since they are always '_btn'
         name = button.button_name[0:-4]
         button.button_symbol = input_display[name]

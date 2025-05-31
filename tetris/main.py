@@ -46,7 +46,7 @@ instant_gravity_after_clearing: bool = True
 
 # Only to be used when displaying the game to people
 DEBUG_MODE: bool = True
-can_quit: bool = False
+can_quit: bool = True
 use_server: bool = False
 
 all_vars = [
