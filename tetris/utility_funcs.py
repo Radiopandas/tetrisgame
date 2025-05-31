@@ -1,6 +1,10 @@
 from tetromino import Tetromino
 from random import shuffle
-from time import sleep # Delete after
+import debug_console
+from math import ceil, sqrt
+
+import pygame
+pygame.init()
 
 piece_sequence: list[int] = []
 piece_has_been_held: bool = False
@@ -8,10 +12,15 @@ held_piece: int = 0
 
 var_defaults = [[], False, 0]
 
+gradient_colours: dict[int, pygame.Color] = {}
+
 GRAVITY_INTERVAL: int = 1 # How many lines have to be cleared to increment the gravity rate.
 # How much gravity is reduced by per line cleared. If gravity_interval is 
 # greater than 1, gravity will be reduced every <interval> lines cleared by <interval * change>.
 GRAVITY_CHANGE: int = 5
+
+# If enabled, only spawns I pieces.
+DEBUG_MODE: bool = True
 
 def reset():
     """Resets all necessary local global variables."""
@@ -76,7 +85,8 @@ def generate_tetromino(
     
     # Uses 'random bag' to add pieces to the queue if they are needed.
     if len(piece_sequence) < 7:
-        to_add = [1, 2, 3, 4, 5, 6, 7]
+        
+        to_add = [1, 2, 3, 4, 5, 6, 7] if not debug_console.debug_mode else [1, 1, 1, 1, 1, 1 ,1]
         shuffle(to_add)
         piece_sequence += to_add
     
@@ -190,3 +200,38 @@ def hold_piece(sequence: list[int], focused_tet: Tetromino) -> bool:
         return True
 
     return False
+
+def init_colour_gradient(
+        start: pygame.Color,
+        end: pygame.Color,
+        grid_width, 
+        grid_height, 
+        origin: tuple[int, int] = (0, 0)
+    ):
+    global gradient_colours
+    
+    dr = end.r - start.r
+    dg = end.g - start.g
+    db = end.b - start.b
+
+    x_dif = max(grid_width - origin[0], origin[0])
+    y_dif = max(grid_height - origin[1], origin[1])
+    max_distance = ceil(sqrt(x_dif ** 2 + y_dif ** 2))
+
+    gradient_colours = {}
+    for i in range(0, max_distance + 1):
+        new_colour = pygame.Color(
+            int(start.r + i * (dr / max_distance)),
+            int(start.g + i * (dg / max_distance)),
+            int(start.b + i * (db / max_distance))
+        )
+        
+        gradient_colours[i] = new_colour
+    
+    
+
+def set_cell_colour(distance: int):
+    global gradient_colours
+
+    return gradient_colours[distance]
+    

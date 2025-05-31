@@ -115,4 +115,9 @@ class InputBox:
         # Blits the text onto the screen.
         screen.blit(self.text_surface, (text_rect.x, text_rect.y + self.extra_width / 50))
         # Blits the outline rectangle onto the screen.
-        pygame.draw.rect(screen, self.colour, self.rect, 2)
+        pygame.draw.rect(screen, self.colour, self.rect, 4)
+    
+
+    def flush_buffer(self):
+        self.text = ""
+        self.text_surface = self.font.render(self.prompt + self.text, True, "white")
