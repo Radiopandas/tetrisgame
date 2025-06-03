@@ -53,7 +53,7 @@ all_vars = [
     width, height, focused_tetromino, grid, cell_owners, all_tetrominos,
     ghost_piece_tiles, score, lines_cleared, gravity_cooldown,
     piece_sequence, held_piece, continue_game, movement_cooldown,
-    piece_spawn_cooldown, frame\
+    piece_spawn_cooldown, frame
     ]
 
 var_defaults = [

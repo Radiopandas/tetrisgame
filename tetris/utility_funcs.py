@@ -17,7 +17,7 @@ gradient_colours: dict[int, pygame.Color] = {}
 GRAVITY_INTERVAL: int = 1 # How many lines have to be cleared to increment the gravity rate.
 # How much gravity is reduced by per line cleared. If gravity_interval is 
 # greater than 1, gravity will be reduced every <interval> lines cleared by <interval * change>.
-GRAVITY_CHANGE: int = 5
+GRAVITY_CHANGE: int = 1
 
 # If enabled, only spawns I pieces.
 DEBUG_MODE: bool = True
