@@ -69,7 +69,9 @@ command_input_box = InputBox(
     font_size = 32*screen_scale
 )
 command_input_box.centred_text = True
-command_input_box.rect.width += 250 * screen_scale
+#command_input_box.rect.width += 250 * screen_scale
+command_input_box.rect.width = screen_w * screen_scale
+command_input_box.rect.centery = 16 * screen_scale
 command_input_box.rect.centerx = screen_w * screen_scale // 2
 
 ###################################################################################################

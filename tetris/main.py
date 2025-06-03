@@ -343,7 +343,6 @@ if __name__ == "__main__":
             for event in pygame.event.get():
                 if event.type == pygame.QUIT and can_quit:
                     running = False
-                    #pygame.quit()
                 
                 if event.type == pygame.KEYDOWN:
                     # Key combo to quit the game.
@@ -363,7 +362,7 @@ if __name__ == "__main__":
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     mouse_coords = pygame.mouse.get_pos()
                     draw_settings_menu.check_pressed_buttons(mouse_coords, draw_game.screen)
-            
+
             
             if not running:
                 run_game = False
@@ -374,12 +373,12 @@ if __name__ == "__main__":
             if not draw_settings_menu.settings_menu_open and not debug_console.console_visible:
                 input_handling.get_inputs(
                     grid,
-                    cell_owners, 
+                    cell_owners,
                     focused_tetromino,
                     piece_sequence,
                     all_tetrominos
                 )
-
+            
             # Flushes the screen then draws the game.
             draw_game.screen.fill(draw_game.background_colour)
             draw_ghost_piece = False if input_handling.just_hard_dropped else True
