@@ -105,6 +105,8 @@ def restart_game():
     rotation.set_grid_size(width, height)
     draw_game.set_grid_size(width, height)
     utility_funcs.init_colour_gradient(pygame.Color("Red"), pygame.Color("Blue"), width, height)
+    debug_console.debug_piece_sequence = []
+    debug_console.debug_piece_sequence += debug_console.debug_base_sequence
     shuffle(piece_sequence)
 
 
@@ -149,7 +151,9 @@ def update(
                 draw_game.screen.fill(draw_game.background_colour)
                 draw_game.main_game(
                 grid, cell_owners, 13, ghost_piece_tiles, 
-                score, lines_cleared, piece_sequence, all_tetrominos, 
+                score, lines_cleared, 
+                piece_sequence if not debug_console.debug_mode else debug_console.debug_piece_sequence, 
+                all_tetrominos, 
                 focused_tetromino, utility_funcs.held_piece, False
                 )
                 if display_start_menu:
@@ -160,7 +164,6 @@ def update(
                 sleep(0.05)
             pygame.display.flip()
         input_handling.just_hard_dropped = False
-        #movement.update_ghost_piece(grid, focused_tet, ghost_piece_tiles)
 
     # Calls the gravity functions, as well as several related functions
     # periodically instead of every single frame.
@@ -168,7 +171,8 @@ def update(
         # Applies gravity to every piece, then updates the ghost piece
         # To account for the new changes.
         draw_game.print_grid(grid, ghost_piece_tiles)
-        gravity.apply_gravity(grid, all_tets, cell_owners, focused_tet)
+        if debug_console.gravity_enabled:
+            gravity.apply_gravity(grid, all_tets, cell_owners, focused_tet)
         #movement.update_ghost_piece(grid, focused_tet, ghost_piece_tiles)
         
         # Checks for and clears filled rows.
@@ -189,8 +193,10 @@ def update(
                 draw_game.screen.fill(draw_game.background_colour)
                 draw_game.main_game(
                 grid, cell_owners, 13, ghost_piece_tiles, 
-                score, lines_cleared, piece_sequence, all_tetrominos, focused_tetromino,
-                utility_funcs.held_piece, False
+                score, lines_cleared, 
+                piece_sequence if not debug_console.debug_mode else debug_console.debug_piece_sequence, 
+                all_tetrominos, 
+                focused_tetromino, utility_funcs.held_piece, False
                 )
                 if display_start_menu:
                     draw_game.start_menu()
@@ -295,9 +301,11 @@ if __name__ == "__main__":
             draw_game.screen.fill(draw_game.background_colour)
             draw_game.main_game(
                 grid, cell_owners, 13, ghost_piece_tiles, 
-                score, lines_cleared, piece_sequence, all_tetrominos, focused_tetromino,
-                utility_funcs.held_piece
-            )
+                score, lines_cleared, 
+                piece_sequence if not debug_console.debug_mode else debug_console.debug_piece_sequence, 
+                all_tetrominos, 
+                focused_tetromino, utility_funcs.held_piece
+                )
 
             draw_game.start_menu()
 
@@ -382,7 +390,13 @@ if __name__ == "__main__":
             # Flushes the screen then draws the game.
             draw_game.screen.fill(draw_game.background_colour)
             draw_ghost_piece = False if input_handling.just_hard_dropped else True
-            draw_game.main_game(grid, cell_owners, 13, ghost_piece_tiles, score, lines_cleared, piece_sequence, all_tetrominos, focused_tetromino, utility_funcs.held_piece, draw_ghost_piece)
+            draw_game.main_game(
+                grid, cell_owners, 13, ghost_piece_tiles, 
+                score, lines_cleared, 
+                piece_sequence if not debug_console.debug_mode else debug_console.debug_piece_sequence, 
+                all_tetrominos, 
+                focused_tetromino, utility_funcs.held_piece, draw_ghost_piece
+                )
 
             if debug_console.console_visible:
                 debug_console.draw_console(draw_game.screen)
@@ -426,7 +440,13 @@ if __name__ == "__main__":
         while not name_entered:
             # Continues drawing the game
             draw_game.screen.fill(draw_game.background_colour)
-            draw_game.main_game(grid, cell_owners, 13, ghost_piece_tiles, score, lines_cleared, piece_sequence, all_tetrominos, focused_tetromino, utility_funcs.held_piece, draw_ghost_piece)
+            draw_game.main_game(
+                grid, cell_owners, 13, ghost_piece_tiles, 
+                score, lines_cleared, 
+                piece_sequence if not debug_console.debug_mode else debug_console.debug_piece_sequence, 
+                all_tetrominos, 
+                focused_tetromino, utility_funcs.held_piece, draw_ghost_piece
+            )
 
             pygame.display.update()
             # Checks for quit events, then checks for the user typing

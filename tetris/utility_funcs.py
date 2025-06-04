@@ -84,19 +84,26 @@ def generate_tetromino(
                 break
     
     # Uses 'random bag' to add pieces to the queue if they are needed.
-    if len(piece_sequence) < 7:
-        
-        to_add = [1, 2, 3, 4, 5, 6, 7] if not debug_console.debug_mode else [1, 1, 1, 1, 1, 1 ,1]
-        shuffle(to_add)
-        piece_sequence += to_add
+    if not debug_console.debug_mode:
+        if len(piece_sequence) < 7:
+            to_add = [1, 2, 3, 4, 5, 6, 7] 
+            shuffle(to_add)
+            piece_sequence += to_add
+    else:
+        if len(debug_console.debug_piece_sequence) < 7:
+            debug_console.debug_piece_sequence += debug_console.debug_base_sequence
     
     # Checks that the spawn area isn't obstructed, then it
     # actually generates the coordinates of the new piece.
     if can_spawn:
         tet_cells: list[list[int]] = []
-
-        tetromino_type: int = piece_sequence[0]
-        piece_sequence.pop(0)
+        tetromino_type: int
+        if not debug_console.debug_mode:
+            tetromino_type = piece_sequence[0]
+            piece_sequence.pop(0)
+        else:
+            tetromino_type = debug_console.debug_piece_sequence[0]
+            debug_console.debug_piece_sequence.pop(0)
 
         # Based on 'pattern', generates the cells for the new piece.
         pattern = tet_to_pattern(tetromino_type)

@@ -37,6 +37,12 @@ debug_mode: bool = False
 1: Enabled, only spawns line pieces. Does not replace current queued pieces.
 """
 
+"""The piece sequence is the list that is read from and modified
+when spawning a new piece. The base sequence is the list that is added
+to the piece sequence when it is too short."""
+debug_base_sequence: list[int] = [1, 1, 1, 1, 1, 1, 1]
+debug_piece_sequence: list[int] = [1, 1, 1, 1, 1, 1, 1]
+
 colour_mode: int = 0
 """ Colour modes:
 0: Default tetris colour scheme.
@@ -53,6 +59,8 @@ draw_mode: int = 0
 1: Draws a background image.
 2: Default, except circles.
 """
+
+gravity_enabled: bool = True
 
 background_image: pygame.Surface = pygame.image.load(".\images\purple_monkey_dishwasher.jpg")
 
@@ -151,6 +159,37 @@ def set_singular_input_cooldowns(command: str):
     if command_value in [0, 1]:
         single_input_cooldowns = True if command_value == 1 else False
 
+def set_gravity(command: str):
+    command_value: int
+    try:
+        command_value = int(command)
+    except ValueError:
+        print("Invalid command value.")
+    
+    global gravity_enabled
+    if command_value in [0, 1]:
+        gravity_enabled = True if command_value == 1 else False
+
+def set_piece_sequence(command: str):
+    command_value: list[int] = []
+    try:
+        new_sequence: list[int] = []
+        for num in list(command):
+            int_num = int(num)
+            if 1 <= int_num <= 7:
+                new_sequence.append(int_num)
+            else:
+                print("Number isn't in range 1-7")
+        
+        command_value = new_sequence
+    except ValueError:
+        print("Please only enter numbers")
+    
+    global debug_base_sequence, debug_piece_sequence
+    debug_base_sequence = command_value
+    debug_piece_sequence = []
+    debug_piece_sequence += debug_base_sequence
+
 
 ###################################################################################################
 #---------------------------------------- Setup functions ----------------------------------------#
@@ -190,6 +229,10 @@ def handle_command(input: str):
             set_repeatable_input_cooldowns(command_value)
         case "setsingularcooldown":
             set_singular_input_cooldowns(command_value)
+        case "setpiecesequence":
+            set_piece_sequence(command_value)
+        case "setgravity":
+            set_gravity(command_value)
 
 def draw_console(screen: pygame.Surface):
     command_input_box.visible = True
