@@ -108,17 +108,20 @@ def print_grid(
 #---------------------------------- Main Game Drawing Functions ----------------------------------#
 ###################################################################################################
 
-def buttons():
+def buttons(force_draw_menu: bool = False, darken_screen: bool = True):
     global settings_initialised
     
     if not settings_initialised:
         settings_initialised = True
         draw_settings_menu.get_settings_icon()
         draw_settings_menu.initialise_settings_buttons()
-        
+    
     
     if draw_settings_menu.settings_menu_open:
-        draw_settings_menu.draw_settings_menu(screen)
+        draw_settings_menu.draw_settings_menu(screen, darken_screen)
+    elif force_draw_menu:
+        draw_settings_menu.draw_settings_menu(screen, darken_screen)
+        pass
 
     draw_settings_menu.draw_buttons(screen)
 
@@ -195,7 +198,7 @@ def start_menu() -> None:
     # Returns True if <key> is pressed, else False. 
 
     draw_leaderboard()
-    buttons()
+    buttons(True, False)
 
 
 

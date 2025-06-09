@@ -272,7 +272,14 @@ if __name__ == "__main__":
         background_iter = 0
         piece_sequence = attractor.setup_piece_sequence(piece_sequence)
         piece_sequence = attractor.setup_piece_sequence(piece_sequence)
+        settings_menu_opened: bool = False
         while display_start_menu:
+            if draw_game.settings_initialised and not settings_menu_opened:
+                settings_menu_opened = True
+                draw_settings_menu.change_menu_is_opened(False)
+
+                draw_settings_menu.settings_button_disabled = True
+
             # Allows you to quit whilst the attractor runs
             for event in pygame.event.get():
                 if event.type == pygame.QUIT and can_quit:
@@ -334,11 +341,14 @@ if __name__ == "__main__":
 
         # Resets (almost) all variables to undo changes made by the attractor.
         restart_game()
+        draw_settings_menu.settings_button_disabled = False
+        draw_settings_menu.change_menu_is_opened(False)
         
         # Spawns the starting piece.
         focused_tetromino = utility_funcs.spawn_tetromino(grid, focused_tetromino, piece_sequence, all_tetrominos, cell_owners)[1]
         all_tetrominos.append(focused_tetromino)
         utility_funcs.add_tetromino(focused_tetromino, grid, cell_owners)
+        
         
 
 
@@ -485,8 +495,6 @@ if __name__ == "__main__":
 
 """
 TODO:
- - Change the default controls.
- - Change the default 'use_server' and 'can_quit' to True/False respectively.
- - Change the gravity to be much faster (And maybe make the maximum gravity a constant).
+ - Nothing
 """
 
