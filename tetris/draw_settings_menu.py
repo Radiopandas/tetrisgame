@@ -20,6 +20,7 @@ settings_canvas_2 = pygame.Surface((screen_w * 0.25 * screen_scale, screen_h * s
 
 
 settings_menu_open: bool = False
+settings_button_disabled: bool = False
 
 # How much of a gap there is between the buttons as a multiple of their height.
 control_button_spacing: float = 1.5 
@@ -250,11 +251,12 @@ def update_button_symbol(button: Button, event: pygame.event.Event):
 
 
 def call_button(button: Button, screen: pygame.Surface):
-    global settings_menu_open
+    global settings_menu_open, settings_button_disabled
     match button.button_group:
         case "settings_btns":
-            settings_menu_open = not settings_menu_open
-            change_menu_is_opened()
+            if not settings_button_disabled:
+                settings_menu_open = not settings_menu_open
+                change_menu_is_opened()
         case "controls_btns":
             # Gets an input from the user.
             button.set_is_pressed()
@@ -279,14 +281,14 @@ def call_button(button: Button, screen: pygame.Surface):
             print("Unknown button group detected")
             
 
-def change_menu_is_opened():
+def change_menu_is_opened(toggle_settings_menu_opened: bool = True):
     """Toggles each button between being visible and hidden."""
     global buttons
 
     for button in buttons.values():
         if button.button_group != "settings_btns":
             button.button_active = not button.button_active
-        elif button.button_group == "settings_btns":
+        elif button.button_group == "settings_btns" and toggle_settings_menu_opened:
             button.set_is_pressed()
 
     update_all_buttons(buttons)
@@ -316,7 +318,7 @@ def draw_buttons(screen: pygame.Surface):
         else:
             button.draw_self(settings_canvas_2)
 
-def draw_settings_menu(screen: pygame.Surface):
+def draw_settings_menu(screen: pygame.Surface, darken_screen: bool = True):
     global controls_title_font, controls_title_font_size, \
         controls_instructions_font, controls_instructions_font_size
     
@@ -330,7 +332,8 @@ def draw_settings_menu(screen: pygame.Surface):
     screen.blit(settings_canvas_2, (0, 0, 0, 0))
 
     # Darkens the rest of the screen slightly.
-    screen.blit(settings_canvas_1, (screen_w * 0.25 * screen_scale, 0, 0, 0))
+    if darken_screen:
+        screen.blit(settings_canvas_1, (screen_w * 0.25 * screen_scale, 0, 0, 0))
 
 
     # Draws text to make it clear that the controls are being displayed
