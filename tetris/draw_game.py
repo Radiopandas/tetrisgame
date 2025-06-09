@@ -74,7 +74,7 @@ leaderboard_initialised = False
 #--------------------------------------- Utility Functions ---------------------------------------#
 ###################################################################################################
 
-game_controls = json_parser.get_file_data('settings.json', "Profile1", "displayed_controls")
+game_controls = json_parser.get_file_data('settings.json', "Profile3", "displayed_controls")
 
 def reset():
     """Resets all necessary local global variables."""

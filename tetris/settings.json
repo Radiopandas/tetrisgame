@@ -47,22 +47,24 @@
 
     "Profile3" : {
         "controls" : {
-            "move_left": [1073741904],
-            "move_right": [1073741903],
-            "soft_drop": [1073741905],
-            "hard_drop": [" "],
-            "rotate_left": ["z"],
-            "rotate_right": [1073741906],
-            "hold_piece": ["c"],
-            "start_game": ["0"]
+            "move_left": 1073741904,
+            "move_right": 1073741903,
+            "soft_drop": 1073741905,
+            "hard_drop": 32,
+            "rotate_left": 122,
+            "rotate_right": 1073741906,
+            "hold_piece": 99
         },
 
         "displayed_controls": 
         {
-            "Movement": "Left/Right",
-            "Soft/hard drop": "Down/Space",
-            "Rotation": "Up/Z",
-            "Hold piece": "C"
+            "move_left": "Left",
+            "move_right": "Right",
+            "soft_drop": "Down",
+            "hard_drop": "Space",
+            "rotate_left": "Z",
+            "rotate_right": "Up",
+            "hold_piece": "C"
         }
     },
 
