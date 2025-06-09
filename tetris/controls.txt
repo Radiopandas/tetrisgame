@@ -1,4 +1,0 @@
-Movement : A/D
-Soft/hard drop : S/W
-Rotation : E/Q
-Hold piece : H

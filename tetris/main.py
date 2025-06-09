@@ -31,6 +31,7 @@ score: int = 0
 lines_cleared: int = 0
 
 gravity_cooldown: int = 60
+MIN_GRAVITY_COOLDOWN: int = 5
 piece_sequence: list[int] = [1, 2, 3, 4, 5, 6, 7]
 held_piece: int = 0
 
@@ -46,8 +47,8 @@ instant_gravity_after_clearing: bool = True
 
 # Only to be used when displaying the game to people
 DEBUG_MODE: bool = True
-can_quit: bool = True
-use_server: bool = False
+can_quit: bool = False
+use_server: bool = True
 
 all_vars = [
     width, height, focused_tetromino, grid, cell_owners, all_tetrominos,
@@ -138,10 +139,10 @@ def update(
         # updates the gravity rate.
         score += utility_funcs.update_scores(lines_just_cleared)
         lines_cleared += lines_just_cleared
-        if gravity_rate > 10:
+        if gravity_rate > MIN_GRAVITY_COOLDOWN:
             gravity_cooldown -= utility_funcs.update_gravity_rate(lines_cleared, lines_just_cleared)
-            if gravity_cooldown < 10:
-                gravity_cooldown = 10
+            if gravity_cooldown < MIN_GRAVITY_COOLDOWN:
+                gravity_cooldown = MIN_GRAVITY_COOLDOWN
 
         # Moves all lines down by the number of lines cleared
         if lines_just_cleared > 0 and instant_gravity_after_clearing:
@@ -181,10 +182,10 @@ def update(
         # updates the gravity rate.
         score += utility_funcs.update_scores(lines_just_cleared)
         lines_cleared += lines_just_cleared
-        if gravity_rate > 10:
+        if gravity_rate > MIN_GRAVITY_COOLDOWN:
             gravity_cooldown -= utility_funcs.update_gravity_rate(lines_cleared, lines_just_cleared)
-            if gravity_cooldown < 10:
-                gravity_cooldown = 10
+            if gravity_cooldown < MIN_GRAVITY_COOLDOWN:
+                gravity_cooldown = MIN_GRAVITY_COOLDOWN
 
         # Moves all lines down by the number of lines cleared
         if lines_just_cleared > 0 and instant_gravity_after_clearing:
@@ -484,81 +485,8 @@ if __name__ == "__main__":
 
 """
 TODO:
-get_range - utility_funcs
-rotate_grid - utility_funcs
-add_tetromino - utility_funcs
-split_tetrominos - line_clearing
-try_move_down - gravity
-apply_gravity - gravity
-delete_rows - line_clearing
-check_rows - line_clearing
-tet_to_pattern - utility_funcs
-spawn_tetromino - utility_funcs
-move_tet - movement
-get_wall_kicks - rotation
-check_rotation_validity - rotation
-rotate_tet - rotation
-quick_drop - movement
-ghost_piece - movement
-update_score - utility_funcs
-
-# TODO pygame specific
-pygame_get_movement - movement
-event_handler - movement
-
-set_draw_colour - draw_grid  
-draw_grid - draw_grid
-draw_stats - draw_grid
-draw_next_piece - draw_grid
-draw_gui - draw_grid
-
-Make the buttons change colour slightly when being hovered over
-
-Add a local scoreboard (or, if there is time, a scoreboard that syncs across the network.)
-
-Issue 1:
-    When you hard drop a piece, line clearing gets automatically called.
-    apply_gravity() then gets called, during which time all cells are marked as able to move.
-    Problem occurs when line clearing clears all the cells of the piece.
-    When this happens, the gravity function basically skips it and thus it is never marked as
-    unable to move, causing a new piece to never be spawned.
-    FIXED - Gravity now checks that tetrominos actually have pieces before modifying them.
-
-Issue 2:
-    When you hard drop a piece into a line clear, you are able to move it for a few frames
-    When the game is trying to run gravity extra times to move pieces down after clearing a line
-    FIXED - Gravity now takes an optional 'focused_tet' argument. It checks if this isn't None
-        and if input_handling.just_hard_dropped is true, in which case it sets 
-        'focused_tet'.can_move back to False after applying gravity to everything
-
-Issue 3:
-    When you hard drop a piece and lines get cleared, the ghost piece gets drawn when it really shouldn't.
-    FIXED(I think) - Before calling gravity repeatedly after clearing lines, sets the ghost piece's cells to be empty.
-
-If performance is an issue, could make a gravity function that just moves every cell above
-a certain row down a certain amount to be used after line clearing.
-
-
-Change draw_settings_menu and draw_leaderboard to draw everything onto mini canvases that can then be blitted onto the screen
-This way, we can save on processing by only redrawing their canvases when they are updated.
-Also makes layering easier and would allow the settings menu to have a solid background.
- - draw_settings_menu DONE
- - draw_leaderboard
-
-Change the name entering to:
- - Display what score you got.
- - Only allow 3 characters
- - have the box that they enter the name into be underneath the question.
-
-TODO Maybe:
- - Change the customising controls to allow for null binds. Either
-   - Allow for a key to be bound to multiple things (Flip the input map so that the action names are the 'keys' and the pygame keys are the 'values')
-   - Make it so that when you bind a control that is already bound, it unbinds the previous action. (eg; LeftArrow is bound to move_left. The user tries to map LeftArrow to rotate_left. This succeeds and move_left is now mapped to nothing.)
-
- - Add a locking delay to pieces after they land.
- - Base gravity off of each piece instead of a global clock.
-
-When you clear a line and a singylar cell is left to drop, doesn't spawn a new piece until it has fallen completely.
- - for Debugging, just make all the pieces lines to best recreate it.
+ - Change the default controls.
+ - Change the default 'use_server' and 'can_quit' to True/False respectively.
+ - Change the gravity to be much faster (And maybe make the maximum gravity a constant).
 """
 
